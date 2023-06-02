@@ -1,0 +1,8 @@
+#include "CGameMode.h"
+
+#include "Global.h"
+
+ACGameMode::ACGameMode()
+{
+	CHelpers::GetClass<APawn>(&DefaultPawnClass, "Blueprint'/Game/Character/Player/BP_Player.BP_Player_C'");
+}
