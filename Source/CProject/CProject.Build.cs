@@ -9,9 +9,9 @@ public class CProject : ModuleRules
 		PublicIncludePaths.Add(ModuleDirectory);
 		
 		PublicDependencyModuleNames.Add("Core");
+		PublicDependencyModuleNames.Add("CoreUObject");
+		PublicDependencyModuleNames.Add("Engine");
 		
-		PrivateDependencyModuleNames.Add("CoreUObject");
-		PrivateDependencyModuleNames.Add("Engine");
 		PrivateDependencyModuleNames.Add("InputCore");
 		PrivateDependencyModuleNames.Add("Niagara");
 		

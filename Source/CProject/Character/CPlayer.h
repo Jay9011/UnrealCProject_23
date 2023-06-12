@@ -9,11 +9,16 @@ class CPROJECT_API ACPlayer : public ACBaseCharacter
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	class UCMovementComponent* Movement;
+	
 public:
 	ACPlayer();
 	
