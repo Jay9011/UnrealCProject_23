@@ -18,6 +18,9 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UCMovementComponent* Movement;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "State")
+	class UCStateComponent* State;
 	
 public:
 	ACPlayer();
@@ -27,4 +30,10 @@ protected:
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+/*
+ * Getters
+ */
+public:
+	const UCStateComponent& GetState() const { return *State; }
 };

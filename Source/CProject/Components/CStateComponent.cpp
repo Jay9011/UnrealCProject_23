@@ -11,9 +11,41 @@ void UCStateComponent::BeginPlay()
 
 }
 
-void UCStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCStateComponent::ChangeType(EStateType InType)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	EStateType PrevType = Type;
+	Type = InType;
 
+	if (OnStateTypeChanged.IsBound())
+		OnStateTypeChanged.Broadcast(PrevType, Type);
 }
 
+void UCStateComponent::SetIdleMode()
+{
+	ChangeType(EStateType::Idle);
+}
+
+void UCStateComponent::SetBackStepMode()
+{
+	ChangeType(EStateType::BackStep);
+}
+
+void UCStateComponent::SetEquipMode()
+{
+	ChangeType(EStateType::Equip);
+}
+
+void UCStateComponent::SetHittedMode()
+{
+	ChangeType(EStateType::Hitted);
+}
+
+void UCStateComponent::SetDeadMode()
+{
+	ChangeType(EStateType::Dead);
+}
+
+void UCStateComponent::SetActionMode()
+{
+	ChangeType(EStateType::Action);
+}
