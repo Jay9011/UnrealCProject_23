@@ -3,9 +3,9 @@
 
 #include "CAnimInstance.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CEvadeComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CStateComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ACPlayer::ACPlayer()
@@ -16,8 +16,7 @@ ACPlayer::ACPlayer()
 	Camera = this->CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
-	Movement = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
-	State = this->CreateDefaultSubobject<UCStateComponent>("State");
+	Evade = this->CreateDefaultSubobject<UCEvadeComponent>("Evade");
 
 	//====================================================================================================
 	SpringArm->SetRelativeLocation(FVector(0, 0, 140));
@@ -37,6 +36,8 @@ void ACPlayer::BeginPlay()
 
 	Movement->SetSpeed(ESpeedType::Run);
 	Movement->DisableControlRotation();
+
+	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -50,4 +51,19 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, Movement, &UCMovementComponent::OnWalk);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, Movement, &UCMovementComponent::OnRun);
+	
+	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, Evade, &UCEvadeComponent::OnEvade);
+}
+
+void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+	case EStateType::Evade: IIEvadeAction::Execute_Evade(Evade); break;
+	}
+}
+
+void ACPlayer::End_Evade()
+{
+	IIEvadeAction::Execute_EndEvade(Evade);
 }

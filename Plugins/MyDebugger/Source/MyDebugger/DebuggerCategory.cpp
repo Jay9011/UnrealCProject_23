@@ -37,7 +37,8 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 
 		if (EnumState != nullptr)
 		{
-			FString StateString = EnumState->GetDisplayNameTextByIndex((int64)CPlayer->GetState().GetType()).ToString();
+			UCStateComponent* State = Cast<UCStateComponent>(CPlayer->GetComponentByClass(UCStateComponent::StaticClass()));
+			FString StateString = EnumState->GetDisplayNameTextByIndex((int64)State->GetType()).ToString();
 			PlayerPawnData.State = StateString;
 		}
 	}

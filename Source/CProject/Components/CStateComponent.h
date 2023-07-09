@@ -9,7 +9,7 @@ enum class EStateType : uint8
 {
 	Idle = 0,
 	Equip, Action, Hitted, Blocking, Parrying, Parryed,
-	BackStep, Roll,
+	Evade,
 	Parkour,
 	Dead, Wait,
 	Max
@@ -43,19 +43,19 @@ private:
 
 public:
 	void SetIdleMode();
-	void SetBackStepMode();
 	void SetEquipMode();
 	void SetHittedMode();
 	void SetDeadMode();
 	void SetActionMode();
+	void SetEvadeMode();
 	
 public:
 	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
-	FORCEINLINE bool IsBackstepMode() const { return Type == EStateType::BackStep; }
 	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsHittedMode() const { return Type == EStateType::Hitted; }
 	FORCEINLINE bool IsDeadMode() const { return Type == EStateType::Dead; }
 	FORCEINLINE bool IsActionMode() const { return Type == EStateType::Action; }
+	FORCEINLINE bool IsEvadeMode() const { return Type == EStateType::Evade; }
 
 /*
  * Getters

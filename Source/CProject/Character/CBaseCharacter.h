@@ -8,6 +8,14 @@ UCLASS()
 class CPROJECT_API ACBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere)
+	class UCMovementComponent* Movement;
+
+	UPROPERTY(VisibleAnywhere, Category = "State")
+	class UCStateComponent* State;
+
 public:
 	ACBaseCharacter();
 

@@ -2,10 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Character/CBaseCharacter.h"
+#include "Components/CStateComponent.h"
+#include "Components/IStateNotify.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
-class CPROJECT_API ACPlayer : public ACBaseCharacter
+class CPROJECT_API ACPlayer
+	: public ACBaseCharacter
+	, public IIStateNotify
 {
 	GENERATED_BODY()
 private:
@@ -16,11 +20,8 @@ private:
 	class UCameraComponent* Camera;
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	class UCMovementComponent* Movement;
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "State")
-	class UCStateComponent* State;
+	UPROPERTY(VisibleAnywhere, Category = "Evade")
+	class UCEvadeComponent* Evade;
 	
 public:
 	ACPlayer();
@@ -32,8 +33,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 /*
- * Getters
+ * State 관련
  */
+private:
+	UFUNCTION()
+	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+
+// IIStateNotify
 public:
-	const UCStateComponent& GetState() const { return *State; }
+	virtual void End_Evade() override;
 };

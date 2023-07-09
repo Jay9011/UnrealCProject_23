@@ -25,11 +25,6 @@ void UCStateComponent::SetIdleMode()
 	ChangeType(EStateType::Idle);
 }
 
-void UCStateComponent::SetBackStepMode()
-{
-	ChangeType(EStateType::BackStep);
-}
-
 void UCStateComponent::SetEquipMode()
 {
 	ChangeType(EStateType::Equip);
@@ -48,4 +43,9 @@ void UCStateComponent::SetDeadMode()
 void UCStateComponent::SetActionMode()
 {
 	ChangeType(EStateType::Action);
+}
+
+void UCStateComponent::SetEvadeMode()
+{
+	ChangeType(EStateType::Evade);
 }
