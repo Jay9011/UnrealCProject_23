@@ -2,6 +2,7 @@
 
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -9,6 +10,7 @@ ACBaseCharacter::ACBaseCharacter()
 {
 	Movement = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
 	State = this->CreateDefaultSubobject<UCStateComponent>("State");
+	Weapon = this->CreateDefaultSubobject<UCWeaponComponent>("Weapon");
 	
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));

@@ -10,11 +10,14 @@ class CPROJECT_API ACBaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UCMovementComponent* Movement;
 
 	UPROPERTY(VisibleAnywhere, Category = "State")
 	class UCStateComponent* State;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	class UCWeaponComponent* Weapon;
 
 public:
 	ACBaseCharacter();

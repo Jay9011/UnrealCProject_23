@@ -6,6 +6,7 @@
 #include "Components/CEvadeComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ACPlayer::ACPlayer()
@@ -53,6 +54,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, Movement, &UCMovementComponent::OnRun);
 	
 	PlayerInputComponent->BindAction("Avoid", EInputEvent::IE_Pressed, Evade, &UCEvadeComponent::OnEvade);
+	
+	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetBladeMode);
 }
 
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)

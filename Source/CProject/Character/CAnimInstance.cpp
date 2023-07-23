@@ -9,7 +9,13 @@ void UCAnimInstance::NativeBeginPlay()
 
 	OwnerCharacter = Cast<ACharacter>(TryGetPawnOwner());
 	CheckNull(OwnerCharacter);
-	
+
+	//WeaponComponent를 찾아서 WeaponTypeChanged 델리게이트에 OnWeaponTypeChanged를 바인딩해 무기 변경을 감지한다.
+	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	if(!!Weapon)
+	{
+		Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance::OnWeaponTypeChanged);
+	}
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -27,4 +33,9 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Direction = PrevRotation.Yaw;
 
 	Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+}
+
+void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
+{
+	WeaponType = InNewType;
 }
