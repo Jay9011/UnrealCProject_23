@@ -5,6 +5,7 @@
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/CDoAction.h"
 #include "Weapons/CEquipment.h"
 
 UCWeaponComponent::UCWeaponComponent()
@@ -21,9 +22,9 @@ void UCWeaponComponent::BeginPlay()
 	for(int32 i = 0; i < static_cast<int32>(EWeaponType::Max); i++)
 	{
 		//WeaponAsset이 존재한다면 각 WeaponAsset의 BeginPlay를 호출한다.
-		if(!!WeaponAsset[i])
+		if(!!WeaponAssets[i])
 		{
-			WeaponAsset[i]->BeginPlay(OwnerCharacter);
+			WeaponAssets[i]->BeginPlay(OwnerCharacter);
 		}
 	}
 }
@@ -32,7 +33,6 @@ void UCWeaponComponent::BeginPlay()
 void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
@@ -49,9 +49,9 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	if(!!WeaponAsset[static_cast<int32>(InType)])
+	if(!!WeaponAssets[static_cast<int32>(InType)])
 	{
-		WeaponAsset[static_cast<int32>(InType)]->GetEquipment()->Equip();
+		WeaponAssets[static_cast<int32>(InType)]->GetEquipment()->Equip();
 
 		ChangeType(InType);
 	}
@@ -68,20 +68,36 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 	}
 }
 
+void UCWeaponComponent::DoAction()
+{
+	if (!!GetDoAction())
+	{
+		GetDoAction()->DoAction();
+	}
+}
+
 ACAttachment* UCWeaponComponent::GetAttachment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
-	CheckFalseResult(!!WeaponAsset[static_cast<int32>(Type)], nullptr)
+	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
 
-	return WeaponAsset[static_cast<int32>(Type)]->GetAttachment();
+	return WeaponAssets[static_cast<int32>(Type)]->GetAttachment();
 }
 
 UCEquipment* UCWeaponComponent::GetEquipment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
-	CheckFalseResult(!!WeaponAsset[static_cast<int32>(Type)], nullptr)
+	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
 
-	return WeaponAsset[static_cast<int32>(Type)]->GetEquipment();
+	return WeaponAssets[static_cast<int32>(Type)]->GetEquipment();
+}
+
+UCDoAction* UCWeaponComponent::GetDoAction()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr)
+	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
+
+	return WeaponAssets[static_cast<int32>(Type)]->GetDoAction();
 }
 
 void UCWeaponComponent::SetUnarmedMode()
@@ -89,7 +105,6 @@ void UCWeaponComponent::SetUnarmedMode()
 	CheckFalse(IsIdleMode())
 	
 	GetEquipment()->Unequip();
-
 	ChangeType(EWeaponType::Max);
 }
 

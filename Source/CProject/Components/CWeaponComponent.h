@@ -11,7 +11,7 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Blade,
-	Max
+	Max UMETA(DisplayName = "Unarmed") // UEnum으로 문자열로 표시될 때 Unarmed로 표시되도록 함
 };
 
 /*
@@ -27,10 +27,6 @@ class CPROJECT_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "DataAsset")
-	class UCWeaponAsset* WeaponAsset[static_cast<int32>(EWeaponType::Max)];
-	
 public:	
 	UCWeaponComponent();
 
@@ -45,27 +41,40 @@ private:
 	void ChangeType(EWeaponType InType);
 
 public:
+	void DoAction();
+	
+public:
 	class ACAttachment* GetAttachment();
 	class UCEquipment* GetEquipment();
+	class UCDoAction* GetDoAction();
 	
 public:
 	void SetUnarmedMode();
 	void SetBladeMode();
+	
+private:
+	bool IsIdleMode();
 
-public:
-	FWeaponTypeChanged OnWeaponTypeChanged;
-
+/*
+ * Member
+ */
+private:
+	UPROPERTY(EditAnywhere, Category = "DataAsset")
+	class UCWeaponAsset* WeaponAssets[static_cast<int32>(EWeaponType::Max)];
+	
 private:
 	class ACharacter* OwnerCharacter;
 	EWeaponType Type = EWeaponType::Max;
 
+public:
+	FWeaponTypeChanged OnWeaponTypeChanged;
+
 /*
  * Getter
  */
-private:
-	bool IsIdleMode();
-	
 public:
 	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::Max; }
 	FORCEINLINE bool IsBladeMode() { return Type == EWeaponType::Blade; }
+	
+	FORCEINLINE EWeaponType GetType() { return Type; }
 };

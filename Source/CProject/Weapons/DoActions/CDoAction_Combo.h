@@ -26,4 +26,10 @@ private:
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
 	FORCEINLINE void DisableCombo() { bEnable = false; }
+
+// IIDoActionDebugData
+#if WITH_EDITOR
+  public:
+	virtual TArray<FString> GetDebugInfo() const override;
+#endif
 };

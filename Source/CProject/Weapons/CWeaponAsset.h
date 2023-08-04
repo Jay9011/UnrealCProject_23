@@ -12,29 +12,39 @@ class CPROJECT_API UCWeaponAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ACAttachment> AttachmentClass;
-
-	UPROPERTY(EditAnywhere)
-	FEquipmentData EquipmentData;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UCEquipment> EquipmentClass;
-
 public:
 	UCWeaponAsset();
 
 	void BeginPlay(class ACharacter* InOwner);
 	
 private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ACAttachment> AttachmentClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCEquipment> EquipmentClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCDoAction> DoActionClass;
+
+//Datas
+	UPROPERTY(EditAnywhere, Category = "Equipment")
+	FEquipmentData EquipmentData;
+	
+	UPROPERTY(EditAnywhere, Category = "DoAction")
+	TArray<FDoActionData> DoActionDatas;
+	
+private:
 	UPROPERTY()
 	class ACAttachment* Attachment;
 	UPROPERTY()
 	class UCEquipment* Equipment;
+	UPROPERTY()
+	class UCDoAction* DoAction;
 
-// Getter
+//Getter
 public:
 	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE class UCEquipment* GetEquipment() { return Equipment; }
+	FORCEINLINE class UCDoAction* GetDoAction() { return DoAction; }
 };

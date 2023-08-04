@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "CWeaponStructures.h"
+#include "IDoActionDebugData.h"
 #include "UObject/NoExportTypes.h"
 #include "CDoAction.generated.h"
 
@@ -10,6 +11,7 @@
  */
 UCLASS(Abstract, NotBlueprintable)
 class CPROJECT_API UCDoAction : public UObject
+	, public IIDoActionDebugData
 {
 	GENERATED_BODY()
 

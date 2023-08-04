@@ -1,6 +1,7 @@
 #include "Weapons/CWeaponAsset.h"
 
 #include "CAttachment.h"
+#include "CDoAction.h"
 #include "CEquipment.h"
 #include "GameFramework/Character.h"
 
@@ -8,6 +9,7 @@ UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
+	DoActionClass = UCDoAction::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
@@ -31,4 +33,10 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 			Equipment->OnEquipmentUnequip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
 		}
 	}// if(!!EquipmentClass)
+
+	if(!!DoActionClass)
+	{
+		DoAction = NewObject<UCDoAction>(this, DoActionClass);
+		DoAction->BeginPlay(Attachment, Equipment, InOwner, DoActionDatas);
+	}// if(!!DoActionClass)
 }

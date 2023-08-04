@@ -32,4 +32,9 @@ void UCDoAction::Begin_DoAction()
 void UCDoAction::End_DoAction()
 {
 	bBeginAction = false;
+
+	StateComponent->SetIdleMode();
+
+	MovementComponent->Move();
+	MovementComponent->DisableFixedCamera();
 }
