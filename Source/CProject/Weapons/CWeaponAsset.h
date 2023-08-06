@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/IEvadeAction.h"
 #include "Engine/DataAsset.h"
 #include "Weapons/CWeaponStructures.h"
 #include "CWeaponAsset.generated.h"
@@ -18,6 +19,7 @@ public:
 	void BeginPlay(class ACharacter* InOwner);
 	
 private:
+	//사용 할 클래스 선택
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ACAttachment> AttachmentClass;
 	
@@ -27,7 +29,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCDoAction> DoActionClass;
 
-//Datas
+private:
+	//Datas
 	UPROPERTY(EditAnywhere, Category = "Equipment")
 	FEquipmentData EquipmentData;
 	
@@ -35,6 +38,7 @@ private:
 	TArray<FDoActionData> DoActionDatas;
 	
 private:
+	//실제 사용할 인스턴스
 	UPROPERTY()
 	class ACAttachment* Attachment;
 	UPROPERTY()

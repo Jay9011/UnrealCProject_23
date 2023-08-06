@@ -18,7 +18,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 	{
 		FActorSpawnParameters Parameters;
 		Parameters.Owner = InOwner;
-		
+
 		Attachment = InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, Parameters);
 	}// if(!!AttachmentClass)
 
@@ -29,6 +29,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 
 		if(!!Attachment)
 		{
+			//Attachment가 있다면 Equip관련 이벤트에 Attachmnet의 함수를 바인딩
 			Equipment->OnEquipmentBeginEquip.AddDynamic(Attachment, &ACAttachment::OnBeginEquip);
 			Equipment->OnEquipmentUnequip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
 		}

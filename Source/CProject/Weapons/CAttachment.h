@@ -19,6 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	//장착시 호출 될 이벤트
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBeginEquip();
 	
@@ -26,6 +27,7 @@ public:
 	void OnUnequip();
 	
 protected:
+	//AttachActorToComponent를 간소화하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Attachment")
 	void AttachTo(FName InSocketName);
 	

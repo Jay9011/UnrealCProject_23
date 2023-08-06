@@ -50,13 +50,15 @@ class CPROJECT_API IIEvadeAction
 	GENERATED_BODY()
 
 public:
+	// 회피시 호출되는 함수
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Evade")
 	void Evade();
 	virtual void Evade_Implementation() {}
-
+	// 회피 종료시 호출되는 함수
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Evade")
 	void EndEvade();
 	virtual void EndEvade_Implementation() {}
 
+	// 회피 버튼을 눌렀을 때 호출되는 함수
 	virtual void OnEvade() {}
 };
