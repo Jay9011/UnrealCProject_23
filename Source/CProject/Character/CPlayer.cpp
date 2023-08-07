@@ -64,11 +64,13 @@ void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
 	{
-	case EStateType::Evade: IIEvadeAction::Execute_Evade(Evade); break;
+	case EStateType::Evade:
+		Evade->OnBeginEvadeDelegate.Broadcast();
+		break;
 	}
 }
 
 void ACPlayer::End_Evade()
 {
-	IIEvadeAction::Execute_EndEvade(Evade);
+	Evade->OnEndEvadeDelegate.Broadcast();
 }

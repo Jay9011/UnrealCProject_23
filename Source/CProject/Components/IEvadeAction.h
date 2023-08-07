@@ -5,7 +5,7 @@
 #include "IEvadeAction.generated.h"
 
 UENUM(BlueprintType)
-enum class EEvdeDir : uint8
+enum class EEvadeDir : uint8
 {
 	FRONT, BACK, LEFT, RIGHT,
 	MAX
@@ -21,7 +21,7 @@ struct FEvadeData
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Data")
-	EEvdeDir Dir;
+	EEvadeDir Dir;
 	
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	class UAnimMontage* Montage;

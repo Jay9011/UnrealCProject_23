@@ -5,13 +5,15 @@
 #include "Components/ActorComponent.h"
 #include "CEvadeComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBeginEvadeDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndEvadeDelegate);
+
 /**
  * @brief 회피 컴포넌트
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCEvadeComponent
 	: public UActorComponent
-	, public IIEvadeAction
 {
 	GENERATED_BODY()
 
@@ -20,22 +22,33 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
-/*
- * (IIEvadeAction) 비무장 상태의 기본 회피 동작을 정의
- */	
+
 public:
-	virtual void OnEvade() override;
-	virtual void Evade_Implementation() override;
-	virtual void EndEvade_Implementation() override;
+	UFUNCTION()
+	void OnEvade();
+	UFUNCTION()
+	void OnBeginEvade();
+	UFUNCTION()
+	void OnEndEvade();
+
+public:
+	void DelegateInit();
+	
+public:
+	FBeginEvadeDelegate OnBeginEvadeDelegate;
+	FEndEvadeDelegate OnEndEvadeDelegate;
 
 private:
+	// 회피 데이터
 	UPROPERTY(EditAnywhere, Category = "Evade")
 	TArray<FEvadeData> EvadeData;
 	TArray<FEvadeData*> EvadeDataPtr;
 
 private:
+	UPROPERTY()
 	class ACBaseCharacter* Owner;
+	UPROPERTY()
 	class UCMovementComponent* Movement;
+	UPROPERTY()
 	class UCStateComponent* State;
 };

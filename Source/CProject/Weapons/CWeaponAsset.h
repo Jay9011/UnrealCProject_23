@@ -11,6 +11,7 @@
 UCLASS()
 class CPROJECT_API UCWeaponAsset : public UDataAsset
 {
+private:
 	GENERATED_BODY()
 
 public:
@@ -29,6 +30,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCDoAction> DoActionClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCEvadeAction> EvadeActionClass;
+	
 private:
 	//Datas
 	UPROPERTY(EditAnywhere, Category = "Equipment")
@@ -36,6 +40,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "DoAction")
 	TArray<FDoActionData> DoActionDatas;
+
+	UPROPERTY(EditAnywhere, Category = "Evade")
+	TArray<FEvadeData> EvadeData;
 	
 private:
 	//실제 사용할 인스턴스
@@ -45,10 +52,13 @@ private:
 	class UCEquipment* Equipment;
 	UPROPERTY()
 	class UCDoAction* DoAction;
+	UPROPERTY()
+	class UCEvadeAction* EvadeAction;
 
 //Getter
 public:
 	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
 	FORCEINLINE class UCEquipment* GetEquipment() { return Equipment; }
 	FORCEINLINE class UCDoAction* GetDoAction() { return DoAction; }
+	FORCEINLINE class UCEvadeAction* GetEvadeAction() { return EvadeAction; }
 };
