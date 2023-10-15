@@ -40,10 +40,10 @@ void UCEvadeAction_Blade::BeginEvade()
 		float ForwardDot = FVector::DotProduct(Forward, InputDir);
 		float RightDot = FVector::DotProduct(Right, InputDir);
 
-		if (ForwardDot > 0.7) Dir = EEvadeDir::FRONT;
-		if (ForwardDot < -0.7) Dir = EEvadeDir::BACK; 
-		if (RightDot > 0.7) Dir = EEvadeDir::RIGHT;
-		if (RightDot < -0.7) Dir = EEvadeDir::LEFT;
+		if (ForwardDot > 0.7f) Dir = EEvadeDir::FRONT;
+		if (ForwardDot < -0.7f) Dir = EEvadeDir::BACK; 
+		if (RightDot > 0.7f) Dir = EEvadeDir::RIGHT;
+		if (RightDot < -0.7f) Dir = EEvadeDir::LEFT;
 	}
 	
 	EvadeDataPtr[static_cast<int32>(Dir)]->PlayMontage(OwnerCharacter);

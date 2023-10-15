@@ -20,13 +20,13 @@ private:
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	float Speed;
+	float Speed = 0.0f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	float Pitch;
+	float Pitch = 0.0f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
-	float Direction;
+	float Direction = 0.0f;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
@@ -35,6 +35,7 @@ protected:
 private:
 	class ACharacter* OwnerCharacter;
 	class UCWeaponComponent* Weapon;
+	
 
 private:
 	FRotator PrevRotation;
