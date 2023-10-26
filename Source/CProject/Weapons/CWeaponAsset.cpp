@@ -2,6 +2,7 @@
 
 #include "CAttachment.h"
 #include "CDoAction.h"
+#include "CDoSubAction.h"
 #include "CEquipment.h"
 #include "CEvadeAction.h"
 #include "GameFramework/Character.h"
@@ -10,8 +11,6 @@ UCWeaponAsset::UCWeaponAsset()
 {
 	AttachmentClass = ACAttachment::StaticClass();
 	EquipmentClass = UCEquipment::StaticClass();
-	DoActionClass = UCDoAction::StaticClass();
-	EvadeActionClass = UCEvadeAction::StaticClass();
 }
 
 void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
@@ -43,6 +42,12 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 		DoAction->BeginPlay(Attachment, Equipment, InOwner, DoActionDatas);
 	}// if(!!DoActionClass)
 
+	if(!!DoSubAction)
+	{
+		DoSubAction = NewObject<UCDoSubAction>(this, DoSubActionClass);
+		DoSubAction->BeginPlay(InOwner, Attachment, DoAction);
+	}// if(!!DoSubAction)
+
 	if(!!EvadeActionClass)
 	{
 		EvadeAction = NewObject<UCEvadeAction>(this, EvadeActionClass);
@@ -53,5 +58,5 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 			Equipment->OnEquipmentBeginEquip.AddDynamic(EvadeAction, &UCEvadeAction::OnBeginEquip);
 			Equipment->OnEquipmentUnequip.AddDynamic(EvadeAction, &UCEvadeAction::OnUnequip);
 		}
-	}// if(!!EvadeActionClass
+	}// if(!!EvadeActionClass)
 }

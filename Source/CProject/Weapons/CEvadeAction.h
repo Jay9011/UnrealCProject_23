@@ -8,7 +8,7 @@
 /**
  * @brief 무기 회피 클래스
  */
-UCLASS()
+UCLASS(Abstract, NotBlueprintable)
 class CPROJECT_API UCEvadeAction : public UObject
 {
 	GENERATED_BODY()

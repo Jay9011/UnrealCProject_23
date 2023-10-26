@@ -1,8 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/IEvadeAction.h"
+#include "IExcuteAction.h"
 #include "Engine/DataAsset.h"
+#include "Components/IEvadeAction.h"
 #include "Weapons/CWeaponStructures.h"
 #include "CWeaponAsset.generated.h"
 /**
@@ -20,7 +21,9 @@ public:
 	void BeginPlay(class ACharacter* InOwner);
 	
 private:
-	//사용 할 클래스 선택
+	/*
+	 * 사용 할 클래스 선택용
+	 */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ACAttachment> AttachmentClass;
 	
@@ -30,6 +33,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCDoAction> DoActionClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCDoSubAction> DoSubActionClass;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCEvadeAction> EvadeActionClass;
 	
@@ -45,13 +51,17 @@ private:
 	TArray<FEvadeData> EvadeData;
 	
 private:
-	//실제 사용할 인스턴스
+	/*
+	 * 실제 사용할 인스턴스
+	 */
 	UPROPERTY()
 	class ACAttachment* Attachment;
 	UPROPERTY()
 	class UCEquipment* Equipment;
 	UPROPERTY()
 	class UCDoAction* DoAction;
+	UPROPERTY()
+	class UCDoSubAction* DoSubAction;
 	UPROPERTY()
 	class UCEvadeAction* EvadeAction;
 
@@ -61,4 +71,10 @@ public:
 	FORCEINLINE class UCEquipment* GetEquipment() { return Equipment; }
 	FORCEINLINE class UCDoAction* GetDoAction() { return DoAction; }
 	FORCEINLINE class UCEvadeAction* GetEvadeAction() { return EvadeAction; }
+	FORCEINLINE class UCDoSubAction* GetDoSubAction() { return DoSubAction; }
+
+private:
+	// 현재 예약된 액션
+	UPROPERTY()
+	UIExcuteAction* ExcuteAction;
 };

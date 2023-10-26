@@ -41,12 +41,18 @@ private:
 	void ChangeType(EWeaponType InType);
 
 public:
+	// 액션 동작
 	void DoAction();
+	// 보조 액션 동작 중 누르고 있는 동작
+	void SubAction_Pressed();
+	// 보조 액션 동작 중 버튼을 뗄 때의 동작
+	void SubAction_Released();
 	
 public:
 	class ACAttachment* GetAttachment();
 	class UCEquipment* GetEquipment();
 	class UCDoAction* GetDoAction();
+	class UCDoSubAction* GetSubAction();
 	
 public:
 	void SetUnarmedMode();

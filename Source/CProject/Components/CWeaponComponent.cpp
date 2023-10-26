@@ -6,6 +6,7 @@
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CAttachment.h"
 #include "Weapons/CDoAction.h"
+#include "Weapons/CDoSubAction.h"
 #include "Weapons/CEquipment.h"
 
 UCWeaponComponent::UCWeaponComponent()
@@ -33,6 +34,9 @@ void UCWeaponComponent::BeginPlay()
 void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if(!!GetSubAction())
+		GetSubAction()->Tick(DeltaTime);
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
@@ -76,6 +80,18 @@ void UCWeaponComponent::DoAction()
 	}
 }
 
+void UCWeaponComponent::SubAction_Pressed()
+{
+	if(!!GetSubAction())
+		GetSubAction()->Pressed();
+}
+
+void UCWeaponComponent::SubAction_Released()
+{
+	if(!!GetSubAction())
+		GetSubAction()->Released();
+}
+
 ACAttachment* UCWeaponComponent::GetAttachment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
@@ -98,6 +114,14 @@ UCDoAction* UCWeaponComponent::GetDoAction()
 	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
 
 	return WeaponAssets[static_cast<int32>(Type)]->GetDoAction();
+}
+
+UCDoSubAction* UCWeaponComponent::GetSubAction()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+
+	return WeaponAssets[(int32)Type]->GetDoSubAction();
 }
 
 void UCWeaponComponent::SetUnarmedMode()

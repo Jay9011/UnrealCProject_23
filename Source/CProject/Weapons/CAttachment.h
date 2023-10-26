@@ -5,7 +5,7 @@
 #include "CAttachment.generated.h"
 
 /**
- * @brief 무기 외형 관련 액터
+ * @brief 무기 외형 정보와 캡슐 정보를 가지고 있는 액터
  */
 UCLASS()
 class CPROJECT_API ACAttachment : public AActor

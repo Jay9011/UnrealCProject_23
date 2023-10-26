@@ -32,12 +32,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:
-	FStateTypeChanged OnStateTypeChanged;
-
-private:
-	EStateType Type;
-
 private:
 	void ChangeType(EStateType InType);
 
@@ -48,6 +42,12 @@ public:
 	void SetDeadMode();
 	void SetActionMode();
 	void SetEvadeMode();
+
+	/*
+	 * 서브 액션은 다른 동작 중에도 할 수 있게 하기 위해 따로 처리
+	 */
+	void OnSubActionMode() { bInSubActionMode = true; };
+	void OffSubActionMode() { bInSubActionMode = false; };
 	
 public:
 	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
@@ -57,9 +57,19 @@ public:
 	FORCEINLINE bool IsActionMode() const { return Type == EStateType::Action; }
 	FORCEINLINE bool IsEvadeMode() const { return Type == EStateType::Evade; }
 
+	FORCEINLINE bool IsSubActionMode() const { return bInSubActionMode; }
+	
 /*
  * Getters
  */
 public:
 	FORCEINLINE EStateType GetType() const { return Type; }
+
+	
+public:
+	FStateTypeChanged OnStateTypeChanged;
+
+private:
+	EStateType Type;
+	bool bInSubActionMode = false; // subAction을 처리하기 위한 별도의 상태(Enum과 별개로 처리)
 };

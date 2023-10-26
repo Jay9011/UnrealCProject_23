@@ -26,6 +26,8 @@ private:
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
 	FORCEINLINE void DisableCombo() { bEnable = false; }
+	FORCEINLINE int32 GetIndex() { return Index; }
+	
 
 // IIDoActionDebugData
 #if WITH_EDITOR
