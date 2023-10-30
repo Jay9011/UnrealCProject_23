@@ -1,9 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "IExcuteAction.h"
+#include "IDoActionDebugData.h"
 #include "Engine/DataAsset.h"
 #include "Components/IEvadeAction.h"
+#include "Weapons/IExcuteAction.h"
 #include "Weapons/CWeaponStructures.h"
 #include "CWeaponAsset.generated.h"
 /**
@@ -65,16 +66,19 @@ private:
 	UPROPERTY()
 	class UCEvadeAction* EvadeAction;
 
-//Getter
+//Getter, Setter
 public:
 	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
-	FORCEINLINE class UCEquipment* GetEquipment() { return Equipment; }
-	FORCEINLINE class UCDoAction* GetDoAction() { return DoAction; }
-	FORCEINLINE class UCEvadeAction* GetEvadeAction() { return EvadeAction; }
-	FORCEINLINE class UCDoSubAction* GetDoSubAction() { return DoSubAction; }
+	FORCEINLINE class UCEquipment* GetEquipment() const { return Equipment; }
+	FORCEINLINE class UCDoAction* GetDoAction() const { return DoAction; }
+	FORCEINLINE class UCEvadeAction* GetEvadeAction() const { return EvadeAction; }
+	FORCEINLINE class UCDoSubAction* GetDoSubAction() const { return DoSubAction; }
+	FORCEINLINE IIExcuteAction* GetCurrentAction() const { return CurrentAction; }
+
+	FORCEINLINE void SetCurrentAction(IIExcuteAction* InCurrentAction) { CurrentAction = InCurrentAction; }
 
 private:
 	// 현재 예약된 액션
-	UPROPERTY()
-	UIExcuteAction* ExcuteAction;
+	IIExcuteAction* CurrentAction;
+	
 };

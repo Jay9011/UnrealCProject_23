@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapons/IDoActionDebugData.h"
 #include "CWeaponComponent.generated.h"
 
 /**
@@ -24,6 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, In
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCWeaponComponent : public UActorComponent
+	, public IIDoActionDebugData
 {
 	GENERATED_BODY()
 
@@ -53,6 +55,7 @@ public:
 	class UCEquipment* GetEquipment();
 	class UCDoAction* GetDoAction();
 	class UCDoSubAction* GetSubAction();
+	class IIExcuteAction* GetCurrentAction();
 	
 public:
 	void SetUnarmedMode();
@@ -83,4 +86,12 @@ public:
 	FORCEINLINE bool IsBladeMode() { return Type == EWeaponType::Blade; }
 	
 	FORCEINLINE EWeaponType GetType() { return Type; }
+
+/*
+ * Debugger
+ */
+#if WITH_EDITOR
+public:
+	virtual TArray<FString> GetDebugInfo() override;
+#endif
 };

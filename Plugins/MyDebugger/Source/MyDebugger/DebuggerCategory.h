@@ -27,7 +27,9 @@ private:
 		FString Name;
 		FVector Location;
 		FString State;
+		bool SubAction;
 		FString WeaponType;
+		TArray<FString> WeaponAssetDebugInfo;
 		TArray<FString> DoActionDebugInfo;
 	};
 

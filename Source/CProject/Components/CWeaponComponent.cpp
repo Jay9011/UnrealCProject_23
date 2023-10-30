@@ -121,7 +121,15 @@ UCDoSubAction* UCWeaponComponent::GetSubAction()
 	CheckTrueResult(IsUnarmedMode(), nullptr);
 	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
 
-	return WeaponAssets[(int32)Type]->GetDoSubAction();
+	return WeaponAssets[static_cast<int32>(Type)]->GetDoSubAction();
+}
+
+IIExcuteAction* UCWeaponComponent::GetCurrentAction()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+
+	return WeaponAssets[(int32)Type]->GetCurrentAction();
 }
 
 void UCWeaponComponent::SetUnarmedMode()
@@ -142,3 +150,18 @@ bool UCWeaponComponent::IsIdleMode()
 {
 	return Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()))->IsIdleMode();
 }
+
+#if WITH_EDITOR
+TArray<FString> UCWeaponComponent::GetDebugInfo()
+{
+	if (IsUnarmedMode()) return {};
+	
+	FString Attachment = "Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None");
+	FString Equipment = "Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None");
+	FString DoAction = "DoAction: " + (GetDoAction() ? GetDoAction()->GetName() : "None");
+	FString SubAction = "SubAction: " + (GetSubAction() ? GetSubAction()->GetName() : "None");
+	FString CurrentAction = "CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->_getUObject()->GetName() : "None");
+	
+	return {Attachment, Equipment, DoAction, SubAction, CurrentAction};
+}
+#endif

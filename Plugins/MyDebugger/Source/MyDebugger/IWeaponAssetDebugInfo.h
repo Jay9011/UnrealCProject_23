@@ -2,19 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "IDoActionDebugData.generated.h"
+#include "IWeaponAssetDebugInfo.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UIDoActionDebugData : public UInterface
+class UIWeaponAssetDebugInfo : public UInterface
 {
 	GENERATED_BODY()
 };
 
 /**
- * @brief DoAction 관련 디버그 데이터 인터페이스
+ * @brief WeaponAsset 관련 디버그 데이터 인터페이스
  */
-class CPROJECT_API IIDoActionDebugData
+class MYDEBUGGER_API IIWeaponAssetDebugInfo
 {
 	GENERATED_BODY()
 

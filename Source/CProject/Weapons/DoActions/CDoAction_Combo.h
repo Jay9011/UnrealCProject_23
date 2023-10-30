@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Weapons/CComboState.h"
 #include "Weapons/CDoAction.h"
+#include "Weapons/IComboState.h"
 #include "CDoAction_Combo.generated.h"
 
 /**
@@ -9,29 +11,33 @@
  */
 UCLASS()
 class CPROJECT_API UCDoAction_Combo : public UCDoAction
+	, public IIComboState
 {
+private:
 	GENERATED_BODY()
 
 public:
-	void DoAction() override;
-	void Begin_DoAction() override;
-	void End_DoAction() override;
+	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACAttachment* InAttachment, UCEquipment* InEquipment, ACharacter* InOwner, const TArray<FDoActionData>& InDoActionDatas) override;
 	
-private:
-	int32 Index;
-
-	bool bEnable;
-	bool bExist;
+public:
+	virtual void DoAction() override;
+	virtual void Begin_DoAction() override;
+	virtual void End_DoAction() override;
 
 public:
-	FORCEINLINE void EnableCombo() { bEnable = true; }
-	FORCEINLINE void DisableCombo() { bEnable = false; }
-	FORCEINLINE int32 GetIndex() { return Index; }
+	virtual void Begin_Action() override;
+	virtual void End_Action() override;
+
+public:
+	virtual UCComboState* GetComboState() override { return ComboState; }
 	
+private:
+	UPROPERTY()
+	UCComboState* ComboState;
 
 // IIDoActionDebugData
 #if WITH_EDITOR
   public:
-	virtual TArray<FString> GetDebugInfo() const override;
+	virtual TArray<FString> GetDebugInfo() override;
 #endif
 };

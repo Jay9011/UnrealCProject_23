@@ -1,6 +1,7 @@
 #include "DebuggerCategory.h"
 
 #include "CanvasItem.h"
+#include "IWeaponAssetDebugInfo.h"
 #include "Character/CPlayer.h"
 #include "Components/CStateComponent.h"
 #include "Components/CWeaponComponent.h"
@@ -48,6 +49,7 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 			UCStateComponent* State = Cast<UCStateComponent>(CPlayer->GetComponentByClass(UCStateComponent::StaticClass()));
 			FString StateString = EnumState->GetDisplayNameTextByIndex(static_cast<int64>(State->GetType())).ToString();
 			PlayerPawnData.State = StateString;
+			PlayerPawnData.SubAction = State->IsSubActionMode();
 		}
 
 		if(!!EnumWeapon)
@@ -56,6 +58,17 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 			UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(CPlayer->GetComponentByClass(UCWeaponComponent::StaticClass()));
 			FString WeaponString = EnumWeapon->GetDisplayNameTextByIndex(static_cast<int64>(Weapon->GetType())).ToString();
 			PlayerPawnData.WeaponType = WeaponString;
+
+			//각 무기의 WeaponAsset에 대한 디버깅 정보를 가져온다.
+			IIDoActionDebugData* WeaponDebugInfo = Cast<IIDoActionDebugData>(Weapon);
+			if(!!WeaponDebugInfo)
+			{
+				PlayerPawnData.WeaponAssetDebugInfo = WeaponDebugInfo->GetDebugInfo();
+			}
+			else
+			{
+				PlayerPawnData.DoActionDebugInfo.Empty();
+			}
 			
 			//각 무기의 DoAction에 대한 디버깅 정보를 가져온다.
 			IIDoActionDebugData* DoActionDebugData = Cast<IIDoActionDebugData>(Weapon->GetDoAction());
@@ -76,7 +89,7 @@ void FDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCa
 	FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
 
 	// 2D 직사각형 타일을 그린다.
-	FCanvasTileItem TileItem(FVector2D(10, 10), FVector2D(300, 215), FLinearColor(0, 0, 0, 0.2f));
+	FCanvasTileItem TileItem(FVector2D(10, 10), FVector2D(300, 250), FLinearColor(0, 0, 0, 0.2f));
 	TileItem.BlendMode = ESimpleElementBlendMode::SE_BLEND_AlphaBlend;
 	CanvasContext.DrawItem(TileItem, CanvasContext.CursorX, CanvasContext.CursorY);
 
@@ -84,11 +97,24 @@ void FDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCa
 	CanvasContext.Printf(FColor::Green, L"Player: %s", *PlayerPawnData.Name);
 	CanvasContext.Printf(FColor::White, L"Location: %s", *PlayerPawnData.Location.ToString());
 	CanvasContext.Printf(FColor::Red, L"State: %s", *PlayerPawnData.State);
+	CanvasContext.Printf(FColor::Red, L"SubAction: %s", PlayerPawnData.SubAction ? L"SubAction" : L"False");
 	CanvasContext.Printf(FColor::White, L"---");
 	CanvasContext.Printf(FColor::Red, L"Weapon: %s", *PlayerPawnData.WeaponType);
-	for (const FString& DebugInfo : PlayerPawnData.DoActionDebugInfo)
+	if(PlayerPawnData.WeaponAssetDebugInfo.Num() > 0)
 	{
-		CanvasContext.Printf(FColor::Red, L"%s", *DebugInfo);
+		for (const FString& DebugInfo : PlayerPawnData.WeaponAssetDebugInfo)
+		{
+			CanvasContext.Printf(FColor::Black, L"%s", *DebugInfo);
+		}
+		CanvasContext.Printf(FColor::White, L"---");
 	}
-	CanvasContext.Printf(FColor::White, L"---");
+
+	if (PlayerPawnData.DoActionDebugInfo.Num() > 0)
+	{
+		for (const FString& DebugInfo : PlayerPawnData.DoActionDebugInfo)
+		{
+			CanvasContext.Printf(FColor::Red, L"%s", *DebugInfo);
+		}
+		CanvasContext.Printf(FColor::White, L"---");
+	}
 }

@@ -17,11 +17,16 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(weapon);
-	CheckNull(weapon->GetDoAction());
+	CheckNull(weapon->GetCurrentAction());
 
-	UCDoAction_Combo* combo = Cast<UCDoAction_Combo>(weapon->GetDoAction());
+	IIExcuteAction* action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	CheckNull(action);
+	
+	IIComboState* comboState = Cast<IIComboState>(action);
+	CheckNull(comboState);
+	UCComboState* combo = comboState->GetComboState();
 	CheckNull(combo);
-
+	
 	//모든 조건이 충족되었으므로 콤보를 활성화한다.
 	combo->EnableCombo();
 }
@@ -36,7 +41,12 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnim
 	CheckNull(weapon);
 	CheckNull(weapon->GetDoAction());
 
-	UCDoAction_Combo* combo = Cast<UCDoAction_Combo>(weapon->GetDoAction());
+	IIExcuteAction* action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	CheckNull(action);
+	
+	IIComboState* comboState = Cast<IIComboState>(action);
+	CheckNull(comboState);
+	UCComboState* combo = comboState->GetComboState();
 	CheckNull(combo);
 
 	//모든 조건이 충족되었으므로 콤보를 비활성화한다.

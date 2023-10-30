@@ -8,13 +8,14 @@ UCDoSubAction::UCDoSubAction()
 {
 }
 
-void UCDoSubAction::BeginPlay(ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
+void UCDoSubAction::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
 {
-	Owner = InOwner;
+	OwnerWeaponAsset = InOwnerWeaponAsset;
+	OwnerCharacter = InOwner;
 	Attachment = InAttachment;
 	DoAction = InDoAction;
 
-	StateComponent = Cast<UCStateComponent>(Owner->GetComponentByClass(UCStateComponent::StaticClass()));
-	MovementComponent = Cast<UCMovementComponent>(Owner->GetComponentByClass(UCMovementComponent::StaticClass()));
+	StateComponent = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
+	MovementComponent = Cast<UCMovementComponent>(OwnerCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
 }
 

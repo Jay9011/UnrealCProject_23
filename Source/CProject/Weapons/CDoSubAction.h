@@ -1,6 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CWeaponAsset.h"
+#include "IDoActionDebugData.h"
+#include "IExcuteAction.h"
 #include "UObject/NoExportTypes.h"
 #include "CDoSubAction.generated.h"
 
@@ -9,6 +12,8 @@
  */
 UCLASS(Abstract, NotBlueprintable)
 class CPROJECT_API UCDoSubAction : public UObject
+	, public IIDoActionDebugData
+	, public IIExcuteAction
 {
 	GENERATED_BODY()
 
@@ -16,7 +21,7 @@ public:
 	UCDoSubAction();
 
 public:
-	virtual void BeginPlay(class ACharacter* InOwner, class ACAttachment* InAttachment, class UCDoAction* InDoAction);
+	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, class ACharacter* InOwner, class ACAttachment* InAttachment, class UCDoAction* InDoAction);
 
 public:
 	// 누르고 있는 동작을 재정의
@@ -40,11 +45,22 @@ public:
 	void Tick(float InDeltaTime);
 	virtual void Tick_Implementation(float InDeltaTime) {};
 
+public:
+	virtual void Begin_Action() override {};
+	virtual void End_Action() override {};
+	
 protected:
-	class ACharacter* Owner;
+	UPROPERTY()
+	class UCWeaponAsset* OwnerWeaponAsset;
+	UPROPERTY()
+	class ACharacter* OwnerCharacter;
+	UPROPERTY()
 	class ACAttachment* Attachment;
+	UPROPERTY()
 	class UCDoAction* DoAction;
 
+	UPROPERTY()
 	class UCStateComponent* StateComponent;
+	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
 };

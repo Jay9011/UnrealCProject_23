@@ -39,13 +39,13 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 	if(!!DoActionClass)
 	{
 		DoAction = NewObject<UCDoAction>(this, DoActionClass);
-		DoAction->BeginPlay(Attachment, Equipment, InOwner, DoActionDatas);
+		DoAction->BeginPlay(this, Attachment, Equipment, InOwner, DoActionDatas);
 	}// if(!!DoActionClass)
 
-	if(!!DoSubAction)
+	if(!!DoSubActionClass)
 	{
 		DoSubAction = NewObject<UCDoSubAction>(this, DoSubActionClass);
-		DoSubAction->BeginPlay(InOwner, Attachment, DoAction);
+		DoSubAction->BeginPlay(this, InOwner, Attachment, DoAction);
 	}// if(!!DoSubAction)
 
 	if(!!EvadeActionClass)
