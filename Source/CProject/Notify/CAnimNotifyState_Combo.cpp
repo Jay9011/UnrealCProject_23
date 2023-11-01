@@ -15,16 +15,16 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent * MeshComp, UAn
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(weapon);
 	CheckNull(weapon->GetCurrentAction());
 
-	IIExcuteAction* action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
 	CheckNull(action);
 	
-	IIComboState* comboState = Cast<IIComboState>(action);
+	comboState = Cast<IIComboState>(action);
 	CheckNull(comboState);
-	UCComboState* combo = comboState->GetComboState();
+	combo = comboState->GetComboState();
 	CheckNull(combo);
 	
 	//모든 조건이 충족되었으므로 콤보를 활성화한다.
@@ -37,16 +37,16 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent * MeshComp, UAnim
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(weapon);
 	CheckNull(weapon->GetDoAction());
 
-	IIExcuteAction* action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
 	CheckNull(action);
 	
-	IIComboState* comboState = Cast<IIComboState>(action);
+	comboState = Cast<IIComboState>(action);
 	CheckNull(comboState);
-	UCComboState* combo = comboState->GetComboState();
+	combo = comboState->GetComboState();
 	CheckNull(combo);
 
 	//모든 조건이 충족되었으므로 콤보를 비활성화한다.

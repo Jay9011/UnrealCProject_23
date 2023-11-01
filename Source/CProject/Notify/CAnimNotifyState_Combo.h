@@ -17,4 +17,10 @@ public:
 
 	virtual void NotifyBegin(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, float TotalDuration) override;
 	virtual void NotifyEnd(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation) override;
+
+private:
+	class UCWeaponComponent* weapon;
+	class IIExcuteAction* action;
+	class IIComboState* comboState;
+	class UCComboState* combo;
 };

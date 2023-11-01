@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Weapons/CDoSubAction.h"
 #include "Weapons/CWeaponStructures.h"
+#include "Weapons/IComboState.h"
 #include "CDoSubAction_HeavyAttack.generated.h"
 
 /**
@@ -10,6 +11,7 @@
  */
 UCLASS(Blueprintable)
 class CPROJECT_API UCDoSubAction_HeavyAttack : public UCDoSubAction
+	, public IIComboState 
 {
 	GENERATED_BODY()
 
@@ -25,6 +27,9 @@ public:
 public:
 	virtual void Begin_Action() override;
 	virtual void End_Action() override;
+
+public:
+	virtual UCComboState* GetComboState() override { return ComboState;}
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Actions")

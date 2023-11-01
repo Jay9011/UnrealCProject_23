@@ -15,11 +15,11 @@ void UCAnimNotify_BeginAction::Notify(USkeletalMeshComponent * MeshComp, UAnimSe
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 
-	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(weapon);
 	CheckNull(weapon->GetCurrentAction());
 
-	IIExcuteAction* action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
 	CheckNull(action);
 
 	action->Begin_Action();

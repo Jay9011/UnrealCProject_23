@@ -19,6 +19,7 @@ void UCDoAction_Combo::DoAction()
 	{
 		ComboState->DisableCombo();
 		ComboState->ReserveCombo();
+		OwnerWeaponAsset->SetCurrentAction(this);
 
 		return;
 	}

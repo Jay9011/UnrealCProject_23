@@ -4,6 +4,8 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "CAnimNotify_BeginAction.generated.h"
 
+class UCWeaponComponent;
+class IIExcuteAction;
 /**
  * @brief Action의 시작 Notify
  */
@@ -16,4 +18,8 @@ public:
 	FString GetNotifyName_Implementation() const override;
 
 	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+
+private:
+	UCWeaponComponent* weapon;
+	IIExcuteAction* action;
 };

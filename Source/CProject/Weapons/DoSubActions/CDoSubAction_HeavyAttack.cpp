@@ -16,7 +16,7 @@ void UCDoSubAction_HeavyAttack::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACh
 
 void UCDoSubAction_HeavyAttack::Pressed()
 {
-	CheckTrue(StateComponent->IsSubActionMode()); // 서브액션 도중이면 실행 무시
+	// CheckTrue(StateComponent->IsSubActionMode()); // 서브액션 도중이면 실행 무시
 	CheckFalse(HeavyAttackDatas.IsValidIndex(ComboState->GetIndex()));
 
 	// 콤보를 예약할 수 있는 상태면서 다음 강공격 콤보가 존재한다면 강공격 콤보를 예약
@@ -46,6 +46,7 @@ void UCDoSubAction_HeavyAttack::BeginSubAction_Implementation()
 	Super::BeginSubAction_Implementation();
 
 	ComboState->ExpireCombo();
+	StateComponent->OnSubActionMode();
 	OwnerWeaponAsset->SetCurrentAction(this);
 	HeavyAttackDatas[ComboState->IncreaseCombo()].DoAction(OwnerCharacter);
 }
