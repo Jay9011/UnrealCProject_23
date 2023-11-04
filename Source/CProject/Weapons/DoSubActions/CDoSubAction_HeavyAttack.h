@@ -29,6 +29,7 @@ public:
 	virtual void End_Action() override;
 
 public:
+	virtual void ChangingProcess() override;
 	virtual UCComboState* GetComboState() override { return ComboState;}
 
 private:

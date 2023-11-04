@@ -70,3 +70,8 @@ void UCDoSubAction_HeavyAttack::End_Action()
 {
 	EndSubAction_Implementation();
 }
+
+void UCDoSubAction_HeavyAttack::ChangingProcess()
+{
+	StateComponent->OffSubActionMode();
+}

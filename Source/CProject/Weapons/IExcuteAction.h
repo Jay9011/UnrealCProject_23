@@ -21,4 +21,6 @@ class CPROJECT_API IIExcuteAction
 public:
 	virtual void Begin_Action() = 0;
 	virtual void End_Action() = 0;
+
+	virtual void ChangingProcess() {};
 };

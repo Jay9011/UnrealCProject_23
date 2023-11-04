@@ -75,10 +75,16 @@ public:
 	FORCEINLINE class UCDoSubAction* GetDoSubAction() const { return DoSubAction; }
 	FORCEINLINE IIExcuteAction* GetCurrentAction() const { return CurrentAction; }
 
-	FORCEINLINE void SetCurrentAction(IIExcuteAction* InCurrentAction) { CurrentAction = InCurrentAction; }
+	FORCEINLINE void SetCurrentAction(IIExcuteAction* InCurrentAction)
+	{
+		PrevAction = CurrentAction;
+		CurrentAction = InCurrentAction;
+	}
 
 private:
 	// 현재 예약된 액션
 	IIExcuteAction* CurrentAction;
+	// 이전 진행된 액션
+	IIExcuteAction* PrevAction;
 	
 };
