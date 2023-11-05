@@ -58,11 +58,19 @@ void UCDoAction_Combo::End_Action()
 }
 
 #if WITH_EDITOR
-TArray<FString> UCDoAction_Combo::GetDebugInfo()
+bool UCDoAction_Combo::IsDebugEnable()
 {
-	FString IndexString = "Index : " + FString::FromInt(ComboState->GetIndex());
-	FString bEnableString = "Combo Enable : " + FString(ComboState->IsEnable() ? "true" : "false");
-	FString bExistString = "Combo Exist : " + FString(ComboState->IsExist() ? "true" : "false");
-	return { IndexString, bEnableString, bExistString };
+	return !!ComboState;
+}
+
+FDebugInfo UCDoAction_Combo::GetDebugInfo()
+{
+	FDebugInfo DebugInfo;
+
+	DebugInfo.Data.Add({"Index : " + FString::FromInt(ComboState->GetIndex()), FColor::Red});
+	DebugInfo.Data.Add({"Combo Enable : " + FString(ComboState->IsEnable() ? "true" : "false"), FColor::Red});
+	DebugInfo.Data.Add({"Combo Exist : " + FString(ComboState->IsExist() ? "true" : "false"), FColor::Red});
+
+	return DebugInfo;
 }
 #endif

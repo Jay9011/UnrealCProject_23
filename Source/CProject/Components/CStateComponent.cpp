@@ -63,12 +63,13 @@ FDebugInfo UCStateComponent::GetDebugInfo()
 {
 	FDebugInfo DebugInfo;
 	DebugInfo.Priority = 0;
-	DebugInfo.Color = FColor::Red;
-
+	
 	UEnum* StateEnum = StaticEnum<EStateType>();
 	FString StateString = "State : " + StateEnum->GetNameStringByValue(static_cast<uint8>(Type));
-	DebugInfo.Data.Add(StateString);
+	DebugInfo.Data.Add({StateString, FColor::Red});
 
+	DebugInfo.Data.Add({"SubAction : " + FString(bInSubActionMode ? "true" : "false"), FColor::Red});
+	
 	return DebugInfo;
 }
 #endif

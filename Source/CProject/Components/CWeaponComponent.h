@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Weapons/IDoActionDebugData.h"
+#include "MyDebugger/IDebugCollector.h"
 #include "CWeaponComponent.generated.h"
 
 /**
@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, In
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCWeaponComponent : public UActorComponent
-	, public IIDoActionDebugData
+	, public IIDebugCollector
 {
 	GENERATED_BODY()
 
@@ -92,6 +92,7 @@ public:
  */
 #if WITH_EDITOR
 public:
-	virtual TArray<FString> GetDebugInfo() override;
+	virtual bool IsDebugEnable() override;
+	virtual FDebugInfo GetDebugInfo() override;
 #endif
 };

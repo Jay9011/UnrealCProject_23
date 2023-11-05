@@ -32,4 +32,7 @@ private:
 		FString Name;
 		FVector Location;
 	} PlayerPawnData;
+
+	float MaxTileWidth = 0.f;
+	float TotalTileHeight = 0.f;
 };

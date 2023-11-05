@@ -4,6 +4,7 @@
 #include "Weapons/CComboState.h"
 #include "Weapons/CDoAction.h"
 #include "Weapons/IComboState.h"
+#include "MyDebugger/IDebugCollector.h"
 #include "CDoAction_Combo.generated.h"
 
 /**
@@ -12,6 +13,7 @@
 UCLASS()
 class CPROJECT_API UCDoAction_Combo : public UCDoAction
 	, public IIComboState
+	, public IIDebugCollector
 {
 private:
 	GENERATED_BODY()
@@ -35,9 +37,10 @@ private:
 	UPROPERTY()
 	UCComboState* ComboState;
 
-// IIDoActionDebugData
+// IIDebugCollector
 #if WITH_EDITOR
   public:
-	virtual TArray<FString> GetDebugInfo() override;
+	virtual bool IsDebugEnable() override;
+	virtual FDebugInfo GetDebugInfo() override;
 #endif
 };

@@ -2,6 +2,7 @@
 
 #include "CStateComponent.h"
 #include "GameFramework/Character.h"
+#include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CAttachment.h"
@@ -28,6 +29,11 @@ void UCWeaponComponent::BeginPlay()
 			WeaponAssets[i]->BeginPlay(OwnerCharacter);
 		}
 	}
+
+#if WITH_EDITOR
+	if(UDebuggerComponent* Debugger = GetOwner()->FindComponentByClass<UDebuggerComponent>())
+		Debugger->AddCollector(this);
+#endif
 }
 
 
@@ -152,16 +158,42 @@ bool UCWeaponComponent::IsIdleMode()
 }
 
 #if WITH_EDITOR
-TArray<FString> UCWeaponComponent::GetDebugInfo()
+bool UCWeaponComponent::IsDebugEnable()
 {
-	if (IsUnarmedMode()) return {};
+	if (IsUnarmedMode())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+FDebugInfo UCWeaponComponent::GetDebugInfo()
+{
+	FDebugInfo DebugInfo;
+	DebugInfo.Priority = 1;
+
+	DebugInfo.Data.Add({"Weapon: " + StaticEnum<EWeaponType>()->GetNameStringByValue(static_cast<uint8>(Type)), FColor::Red});
+
+	UCDoAction* DoAction = GetDoAction();
+	if (!!DoAction)
+	{
+		IIDebugCollector* DoActionData = Cast<IIDebugCollector>(DoAction);
+		if (!!DoActionData)
+		{
+			if(DoActionData->IsDebugEnable())
+			{
+				DebugInfo.Data.Append(DoActionData->GetDebugInfo().Data);
+			}
+		}
+	}
 	
-	FString Attachment = "Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None");
-	FString Equipment = "Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None");
-	FString DoAction = "DoAction: " + (GetDoAction() ? GetDoAction()->GetName() : "None");
-	FString SubAction = "SubAction: " + (GetSubAction() ? GetSubAction()->GetName() : "None");
-	FString CurrentAction = "CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->_getUObject()->GetName() : "None");
+	DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->_getUObject()->GetName() : "None"), FColor::Black});
 	
-	return {Attachment, Equipment, DoAction, SubAction, CurrentAction};
+	return DebugInfo;
 }
 #endif

@@ -13,7 +13,6 @@
  */
 UCLASS(Abstract, NotBlueprintable)
 class CPROJECT_API UCDoAction : public UObject
-	, public IIDoActionDebugData
 	, public IIExcuteAction
 {
 	GENERATED_BODY()

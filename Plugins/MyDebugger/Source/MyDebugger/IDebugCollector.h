@@ -5,40 +5,35 @@
 #include "IDebugCollector.generated.h"
 
 /**
+ * @struct FDebugInfo
  * @brief 디버깅 데이터
- * @param Priority 출력 우선순위
- * @param bCollect 데이터 수집 여부
- * @param Color 디버깅 색상
- * @param Data 디버깅 데이터
  */
 struct FDebugInfo
 {
-	int32 Priority;
-	FColor Color;
-	TArray<FString> Data;
+	/**
+	 * @struct FDebugText
+	 * @brief 디버깅 텍스트 
+	 */
+	struct FDebugText
+	{
+		FColor Color = FColor::White; /// 텍스트 색상
+		FString Text; /// 텍스트 내용
+
+		FDebugText(FString InText, FColor InColor = FColor::White)
+			: Color(InColor), Text(InText)
+		{}
+	};
+	
+	int32 Priority; /// 디버깅 데이터 우선순위
+	TArray<FDebugText> Data; /// 디버깅 데이터
 
 	FDebugInfo()
-		: Priority(0) , Color(FColor::White)
+		: Priority(0)
 	{}
-
-	FDebugInfo(FDebugInfo&& Other) noexcept
-		: Priority(Other.Priority), Color(Other.Color), Data(MoveTemp(Other.Data))
-	{}
-
+	
 	bool operator<(const FDebugInfo& Other) const
 	{
 		return Priority < Other.Priority;
-	}
-
-	FDebugInfo& operator=(FDebugInfo&& Other) noexcept
-	{
-		if(this != &Other)
-		{
-			Priority = MoveTemp(Other.Priority);
-			Color = MoveTemp(Other.Color);
-			Data = MoveTemp(Other.Data);
-		}
-		return *this;
 	}
 };
 
