@@ -36,8 +36,7 @@ public class MyDebugger : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"GameplayDebugger", 
-				"CProject",
+				"GameplayDebugger"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -14,6 +14,6 @@ public class CProject : ModuleRules
 		
 		PrivateDependencyModuleNames.Add("InputCore");
 		PrivateDependencyModuleNames.Add("Niagara");
-		
+		PrivateDependencyModuleNames.Add("MyDebugger");
 	}
 }

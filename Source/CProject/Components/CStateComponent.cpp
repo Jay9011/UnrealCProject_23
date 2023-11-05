@@ -1,5 +1,7 @@
 #include "Components/CStateComponent.h"
 
+#include "MyDebugger/DebuggerCategory.h"
+
 UCStateComponent::UCStateComponent()
 {
 
@@ -8,7 +10,6 @@ UCStateComponent::UCStateComponent()
 void UCStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void UCStateComponent::ChangeType(EStateType InType)
@@ -48,4 +49,17 @@ void UCStateComponent::SetActionMode()
 void UCStateComponent::SetEvadeMode()
 {
 	ChangeType(EStateType::Evade);
+}
+
+FDebugInfo UCStateComponent::GetDebugInfo()
+{
+	FDebugInfo DebugInfo;
+	DebugInfo.Priority = 0;
+	DebugInfo.Color = FColor::Red;
+
+	UEnum* StateEnum = StaticEnum<EStateType>();
+	FString StateString = "State : " + StateEnum->GetNameStringByValue(static_cast<uint8>(Type));
+	DebugInfo.Data.Add(StateString);
+
+	return DebugInfo;
 }

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "MyDebugger/IDebugCollector.h"
 #include "CStateComponent.generated.h"
 
 UENUM()
@@ -23,7 +24,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, EStateType, InPr
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCStateComponent : public UActorComponent
+	, public IIDebugCollector
 {
+private:
 	GENERATED_BODY()
 
 public:	
@@ -72,4 +75,10 @@ public:
 private:
 	EStateType Type;
 	bool bInSubActionMode = false; // subAction을 처리하기 위한 별도의 상태(Enum과 별개로 처리)
+
+#if WITH_EDITOR
+public:
+	virtual bool IsDebugEnable() override { return true; } // 상태 여부는 항상 디버깅
+	virtual FDebugInfo GetDebugInfo() override;
+#endif
 };

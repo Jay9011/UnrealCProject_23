@@ -1,13 +1,8 @@
 #include "DebuggerCategory.h"
 
 #include "CanvasItem.h"
-#include "IWeaponAssetDebugInfo.h"
-#include "Character/CPlayer.h"
-#include "Components/CStateComponent.h"
-#include "Components/CWeaponComponent.h"
+#include "IDebugCollector.h"
 #include "GameFramework/Character.h"
-#include "Weapons/IDoActionDebugData.h"
-#include "Weapons/CDoAction.h"
 
 FDebuggerCategory::FDebuggerCategory()
 {
@@ -24,6 +19,19 @@ TSharedRef<FGameplayDebuggerCategory> FDebuggerCategory::MakeInstance()
 	return MakeShareable(new FDebuggerCategory());
 }
 
+void FDebuggerCategory::RegistDebugObject(UObject* DebugObject)
+{
+	if (DebugObject->Implements<UIDebugCollector>())
+	{
+		DebugObjects.AddUnique(DebugObject);
+	}
+}
+
+void FDebuggerCategory::UnregistDebugObject(UObject* DebugObject)
+{
+	DebugObjects.Remove(DebugObject);
+}
+
 void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugActor)
 {
 	FGameplayDebuggerCategory::CollectData(OwnerPC, DebugActor);
@@ -31,57 +39,31 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 	const ACharacter* PlayerPawn = OwnerPC->GetPawn<ACharacter>();
 
 	if(PlayerPawn == nullptr) return;
+	PlayerPawnData.bDraw = true;
+	PlayerPawnData.Name = PlayerPawn->GetName();
+	PlayerPawnData.Location = PlayerPawn->GetActorLocation();
 	
-	const ACPlayer* CPlayer = Cast<ACPlayer>(PlayerPawn);
-	// Enum을 String으로 변환하기 위해 UEnum을 가져온다.
-	const UEnum* EnumState = FindObject<UEnum>(ANY_PACKAGE, TEXT("EStateType"), true);
-	const UEnum* EnumWeapon = FindObject<UEnum>(ANY_PACKAGE, TEXT("EWeaponType"), true);
 
-	//Player
+	DebugInfoList.Empty();
+	for(TWeakObjectPtr<UObject>& DebugInfo : DebugObjects)
 	{
-		PlayerPawnData.bDraw = true;
-		PlayerPawnData.Name = PlayerPawn->GetName();
-		PlayerPawnData.Location = PlayerPawn->GetActorLocation();
-
-		if (!!EnumState)
+		if (DebugInfo.IsValid())
 		{
-			//EStateType을 UEnum으로 가져올 수 있다면, StateComponent의 State를 가져와서 String으로 변환한다. 
-			UCStateComponent* State = Cast<UCStateComponent>(CPlayer->GetComponentByClass(UCStateComponent::StaticClass()));
-			FString StateString = EnumState->GetDisplayNameTextByIndex(static_cast<int64>(State->GetType())).ToString();
-			PlayerPawnData.State = StateString;
-			PlayerPawnData.SubAction = State->IsSubActionMode();
-		}
-
-		if(!!EnumWeapon)
-		{
-			//EWeaponType을 UEnum으로 가져올 수 있다면, WeaponComponent의 Type을 가져와서 String으로 변환한다.
-			UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(CPlayer->GetComponentByClass(UCWeaponComponent::StaticClass()));
-			FString WeaponString = EnumWeapon->GetDisplayNameTextByIndex(static_cast<int64>(Weapon->GetType())).ToString();
-			PlayerPawnData.WeaponType = WeaponString;
-
-			//각 무기의 WeaponAsset에 대한 디버깅 정보를 가져온다.
-			IIDoActionDebugData* WeaponDebugInfo = Cast<IIDoActionDebugData>(Weapon);
-			if(!!WeaponDebugInfo)
-			{
-				PlayerPawnData.WeaponAssetDebugInfo = WeaponDebugInfo->GetDebugInfo();
-			}
-			else
-			{
-				PlayerPawnData.DoActionDebugInfo.Empty();
-			}
+			IIDebugCollector* DebugInfoObject = Cast<IIDebugCollector>(DebugInfo.Get());
 			
-			//각 무기의 DoAction에 대한 디버깅 정보를 가져온다.
-			IIDoActionDebugData* DoActionDebugData = Cast<IIDoActionDebugData>(Weapon->GetDoAction());
-			if(!!DoActionDebugData)
-			{
-				PlayerPawnData.DoActionDebugInfo = DoActionDebugData->GetDebugInfo();
-			}
-			else
-			{
-				PlayerPawnData.DoActionDebugInfo.Empty();
-			}
+			if (DebugInfoObject == nullptr
+				&& !DebugInfoObject->IsDebugEnable())	// 디버깅 불가능한 상태라면 넘어간다.
+					continue;
+			
+			DebugInfoList.Add(DebugInfoObject->GetDebugInfo());
+		}
+		else
+		{
+			DebugObjects.Remove(DebugInfo);
 		}
 	}
+
+	DebugInfoList.Sort();
 }
 
 void FDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext)
@@ -96,25 +78,14 @@ void FDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCa
 	// 데이터 텍스트를 출력한다.
 	CanvasContext.Printf(FColor::Green, L"Player: %s", *PlayerPawnData.Name);
 	CanvasContext.Printf(FColor::White, L"Location: %s", *PlayerPawnData.Location.ToString());
-	CanvasContext.Printf(FColor::Red, L"State: %s", *PlayerPawnData.State);
-	CanvasContext.Printf(FColor::Red, L"SubAction: %s", PlayerPawnData.SubAction ? L"SubAction" : L"False");
-	CanvasContext.Printf(FColor::White, L"---");
-	CanvasContext.Printf(FColor::Red, L"Weapon: %s", *PlayerPawnData.WeaponType);
-	if(PlayerPawnData.WeaponAssetDebugInfo.Num() > 0)
-	{
-		for (const FString& DebugInfo : PlayerPawnData.WeaponAssetDebugInfo)
-		{
-			CanvasContext.Printf(FColor::Black, L"%s", *DebugInfo);
-		}
-		CanvasContext.Printf(FColor::White, L"---");
-	}
 
-	if (PlayerPawnData.DoActionDebugInfo.Num() > 0)
+	// 데이터 리스트를 출력한다.
+	for (FDebugInfo& Info : DebugInfoList)
 	{
-		for (const FString& DebugInfo : PlayerPawnData.DoActionDebugInfo)
+		FColor Color = Info.Color;
+		for (FString& DataString : Info.Data)
 		{
-			CanvasContext.Printf(FColor::Red, L"%s", *DebugInfo);
+			CanvasContext.Printf(Color, L"%s", *DataString);
 		}
-		CanvasContext.Printf(FColor::White, L"---");
 	}
 }
