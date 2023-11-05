@@ -1,6 +1,5 @@
 #include "MyDebuggerModule.h"
 #include "DebuggerCategory.h"
-
 #include "GameplayDebugger.h"
 
 #define LOCTEXT_NAMESPACE "MyDebuggerModule"

@@ -1,6 +1,8 @@
 #include "Components/CStateComponent.h"
 
 #include "MyDebugger/DebuggerCategory.h"
+#include "MyDebugger/DebuggerComponent.h"
+#include "MyDebugger/MyDebuggerModule.h"
 
 UCStateComponent::UCStateComponent()
 {
@@ -10,6 +12,11 @@ UCStateComponent::UCStateComponent()
 void UCStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+#if WITH_EDITOR
+	if(UDebuggerComponent* Debugger = GetOwner()->FindComponentByClass<UDebuggerComponent>())
+		Debugger->AddCollector(this);
+#endif
 }
 
 void UCStateComponent::ChangeType(EStateType InType)
@@ -51,6 +58,7 @@ void UCStateComponent::SetEvadeMode()
 	ChangeType(EStateType::Evade);
 }
 
+#if WITH_EDITOR
 FDebugInfo UCStateComponent::GetDebugInfo()
 {
 	FDebugInfo DebugInfo;
@@ -63,3 +71,4 @@ FDebugInfo UCStateComponent::GetDebugInfo()
 
 	return DebugInfo;
 }
+#endif

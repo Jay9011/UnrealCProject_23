@@ -12,17 +12,7 @@ class CPROJECT_API ACPlayer
 	, public IIStateNotify
 {
 	GENERATED_BODY()
-private:
-	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;
-
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Evade")
-	class UCEvadeComponent* Evade;
-	
 public:
 	ACPlayer();
 	
@@ -42,4 +32,21 @@ private:
 // IIStateNotify
 public:
 	virtual void End_Evade() override;
+	
+private:
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Evade")
+	class UCEvadeComponent* Evade;
+
+#if WITH_EDITOR
+public:
+	UPROPERTY(VisibleDefaultsOnly, Category = "Debug")
+	class UDebuggerComponent* Debugger;
+#endif
 };

@@ -1,7 +1,8 @@
 #include "DebuggerCategory.h"
 
 #include "CanvasItem.h"
-#include "IDebugCollector.h"
+#include "MyDebugger/IDebugCollector.h"
+#include "MyDebugger/DebuggerComponent.h"
 #include "GameFramework/Character.h"
 
 FDebuggerCategory::FDebuggerCategory()
@@ -19,19 +20,6 @@ TSharedRef<FGameplayDebuggerCategory> FDebuggerCategory::MakeInstance()
 	return MakeShareable(new FDebuggerCategory());
 }
 
-void FDebuggerCategory::RegistDebugObject(UObject* DebugObject)
-{
-	if (DebugObject->Implements<UIDebugCollector>())
-	{
-		DebugObjects.AddUnique(DebugObject);
-	}
-}
-
-void FDebuggerCategory::UnregistDebugObject(UObject* DebugObject)
-{
-	DebugObjects.Remove(DebugObject);
-}
-
 void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugActor)
 {
 	FGameplayDebuggerCategory::CollectData(OwnerPC, DebugActor);
@@ -42,10 +30,13 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 	PlayerPawnData.bDraw = true;
 	PlayerPawnData.Name = PlayerPawn->GetName();
 	PlayerPawnData.Location = PlayerPawn->GetActorLocation();
-	
 
 	DebugInfoList.Empty();
-	for(TWeakObjectPtr<UObject>& DebugInfo : DebugObjects)
+	// ACharacter의 DebuggerComponent를 가져온다.
+	UDebuggerComponent* DebuggerComponent = PlayerPawn->FindComponentByClass<UDebuggerComponent>();
+	if(DebuggerComponent == nullptr) return;
+	
+	for(const TWeakObjectPtr<UObject>& DebugInfo : DebuggerComponent->GetCollectors())
 	{
 		if (DebugInfo.IsValid())
 		{
@@ -59,7 +50,7 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 		}
 		else
 		{
-			DebugObjects.Remove(DebugInfo);
+			DebuggerComponent->RemoveCollector(Cast<IIDebugCollector>(DebugInfo.Get()));
 		}
 	}
 

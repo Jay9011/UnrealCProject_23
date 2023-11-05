@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+class FDebuggerCategory;
+
 class FMyDebuggerModule : public IModuleInterface
 {
 public:

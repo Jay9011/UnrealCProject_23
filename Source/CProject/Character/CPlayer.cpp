@@ -8,6 +8,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "MyDebugger/DebuggerComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -29,6 +30,10 @@ ACPlayer::ACPlayer()
 
 	TSubclassOf<UCAnimInstance> AnimInstance = ConstructorHelpers::FClassFinder<UCAnimInstance>(TEXT("AnimBlueprint'/Game/Character/ABP_BaseCharacter.ABP_BaseCharacter_C'")).Class;
 	GetMesh()->SetAnimClass(AnimInstance);
+
+#if WITH_EDITOR
+	Debugger = this->CreateDefaultSubobject<UDebuggerComponent>("Debugger");
+#endif
 }
 
 void ACPlayer::BeginPlay()
