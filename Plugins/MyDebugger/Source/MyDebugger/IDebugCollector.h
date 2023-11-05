@@ -21,9 +21,24 @@ struct FDebugInfo
 		: Priority(0) , Color(FColor::White)
 	{}
 
+	FDebugInfo(FDebugInfo&& Other) noexcept
+		: Priority(Other.Priority), Color(Other.Color), Data(MoveTemp(Other.Data))
+	{}
+
 	bool operator<(const FDebugInfo& Other) const
 	{
 		return Priority < Other.Priority;
+	}
+
+	FDebugInfo& operator=(FDebugInfo&& Other) noexcept
+	{
+		if(this != &Other)
+		{
+			Priority = MoveTemp(Other.Priority);
+			Color = MoveTemp(Other.Color);
+			Data = MoveTemp(Other.Data);
+		}
+		return *this;
 	}
 };
 

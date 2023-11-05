@@ -46,7 +46,7 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 				&& !DebugInfoObject->IsDebugEnable())	// 디버깅 불가능한 상태라면 넘어간다.
 					continue;
 			
-			DebugInfoList.Add(DebugInfoObject->GetDebugInfo());
+			DebugInfoList.Emplace(DebugInfoObject->GetDebugInfo());
 		}
 		else
 		{
