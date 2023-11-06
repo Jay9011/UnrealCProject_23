@@ -52,6 +52,6 @@ class MYDEBUGGER_API IIDebugCollector
 	GENERATED_BODY()
 
 public:
-	virtual bool IsDebugEnable() = 0;
-	virtual FDebugInfo GetDebugInfo() = 0;
+	virtual bool IsDebugEnable() { return false; };
+	virtual FDebugInfo GetDebugInfo() { return FDebugInfo(); };
 };
