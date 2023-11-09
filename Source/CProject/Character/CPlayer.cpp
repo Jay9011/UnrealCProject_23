@@ -9,9 +9,14 @@
 #include "Components/CWeaponComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MyDebugger/DebuggerComponent.h"
+#include "Utilities/UDirectionalUtilities.h"
 
 ACPlayer::ACPlayer()
 {
+#if WITH_EDITOR
+	PrimaryActorTick.bCanEverTick = true;
+#endif
+	
 	SpringArm = this->CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->SetupAttachment(GetMesh());
 	
@@ -44,6 +49,10 @@ void ACPlayer::BeginPlay()
 	Movement->DisableControlRotation();
 
 	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
+
+#if WITH_EDITOR
+	Debugger->AddCollector(this);
+#endif
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -82,3 +91,33 @@ void ACPlayer::End_Evade()
 {
 	Evade->OnEndEvadeDelegate.Broadcast();
 }
+
+#if WITH_EDITOR
+FDebugInfo ACPlayer::GetDebugInfo()
+{
+	FDebugInfo Info;
+	Info.Priority = -1;
+
+	// InputDir의 X와 Y만 출력
+	FVector InputDir = {GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"), 0}; 
+	Info.Data.Add({FString::Printf(TEXT("Input Value: X=%.3f Y=%.3f"), InputDir.X, InputDir.Y), FColor::White});
+
+	FVector Directional = UDirectionalUtil::GetWorldDirectionFromInputAxis(this, "MoveForward", "MoveRight");
+	Info.Data.Add({FString::Printf(TEXT("Character,Input Axis: X=%.3f Y=%.3f"), Directional.X, Directional.Y), FColor::White});
+	
+	InputDir.Normalize();
+	// 캐릭터의 각 방향 벡터를 구한다.
+	FVector Forward = GetActorForwardVector();
+	FVector Right = GetActorRightVector();
+	Forward.Z = 0;
+	Right.Z = 0;
+	Info.Data.Add({FString::Printf(TEXT("Forward: X=%.3f Y=%.3f , Right: X=%.3f Y=%.3f"), Forward.X, Forward.Y, Right.X, Right.Y), FColor::White});
+
+	// 내적을 통해 더 가까운 방향을 구한다.
+	float ForwardDot = FVector::DotProduct(Forward, Directional);
+	float RightDot = FVector::DotProduct(Right, Directional);
+	Info.Data.Add({FString::Printf(TEXT("ForwardDot: %.3f RightDot: %.3f"), ForwardDot, RightDot), FColor::White});
+
+	return Info;
+}
+#endif

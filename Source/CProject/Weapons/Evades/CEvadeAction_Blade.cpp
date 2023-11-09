@@ -1,8 +1,10 @@
 #include "Weapons/Evades/CEvadeAction_Blade.h"
 
 #include "Components/CEvadeComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
+#include "Utilities/UDirectionalUtilities.h"
 
 void UCEvadeAction_Blade::OnBeginEquip()
 {
@@ -25,25 +27,45 @@ void UCEvadeAction_Blade::BeginEvade()
 
 	EEvadeDir Dir = EEvadeDir::FRONT;
 
-	FVector InputDir = OwnerCharacter->GetLastMovementInputVector();
-	if(!InputDir.IsNearlyZero())
+	FVector TargetDir = UDirectionalUtil::GetWorldDirectionFromInputAxis(OwnerCharacter, "MoveForward", "MoveRight");
+	if(!TargetDir.IsNearlyZero())
 	{
-		InputDir.Normalize();
-		// forward 벡터와 right 벡터를 구한다.
-		FVector Forward = OwnerCharacter->GetActorForwardVector();
-		FVector Right = OwnerCharacter->GetActorRightVector();
+		FDirectionalValue DirectionalValue =  UDirectionalUtil::GetDirectionalValue(TargetDir, OwnerCharacter);
 
-		Forward.Z = 0;
-		Right.Z = 0;
+		if (DirectionalValue.Forward > 0.7f) Dir = EEvadeDir::FRONT;
+		else if (DirectionalValue.Forward < -0.7f) Dir = EEvadeDir::BACK; 
+		else if (DirectionalValue.Right > 0.7f) Dir = EEvadeDir::RIGHT;
+		else if (DirectionalValue.Right < -0.7f) Dir = EEvadeDir::LEFT;
+	}
 
-		// 내적을 통해 어느 방향으로 회피할지 결정한다.
-		float ForwardDot = FVector::DotProduct(Forward, InputDir);
-		float RightDot = FVector::DotProduct(Right, InputDir);
+	// 컨트롤러에 캐릭터의 방향을 고정시키지 않기 위해 기존의 ControlRotation을 저장하면서 고정을 푼다.
+	MovementComponent->BackupControlRotation();
+	MovementComponent->DisableControlRotation();
+	
+	// 입력 방향으로 캐릭터를 회전시킨다.
+	if (!TargetDir.IsNearlyZero())
+	{
+		FVector TargetNormal = TargetDir.GetSafeNormal();
 
-		if (ForwardDot > 0.7f) Dir = EEvadeDir::FRONT;
-		if (ForwardDot < -0.7f) Dir = EEvadeDir::BACK; 
-		if (RightDot > 0.7f) Dir = EEvadeDir::RIGHT;
-		if (RightDot < -0.7f) Dir = EEvadeDir::LEFT;
+		FQuat TargetQuat;
+
+		switch (Dir)
+		{
+		case EEvadeDir::FRONT:
+			TargetQuat = FQuat::FindBetweenNormals(OwnerCharacter->GetActorForwardVector().GetSafeNormal(), TargetDir);
+			break;
+		case EEvadeDir::BACK:
+			TargetQuat = FQuat::FindBetweenNormals(OwnerCharacter->GetActorForwardVector().GetSafeNormal(), -TargetDir);
+			break;
+		case EEvadeDir::LEFT:
+			TargetQuat = FQuat::FindBetweenNormals(OwnerCharacter->GetActorRightVector().GetSafeNormal(), -TargetDir);
+			break;
+		case EEvadeDir::RIGHT:
+			TargetQuat = FQuat::FindBetweenNormals(OwnerCharacter->GetActorRightVector().GetSafeNormal(), TargetDir);
+			break;
+		}
+
+		OwnerCharacter->SetActorRotation(TargetQuat * OwnerCharacter->GetActorQuat());
 	}
 	
 	EvadeDataPtr[static_cast<int32>(Dir)]->PlayMontage(OwnerCharacter);
@@ -52,5 +74,6 @@ void UCEvadeAction_Blade::BeginEvade()
 void UCEvadeAction_Blade::EndEvade()
 {
 	Super::EndEvade();
+	MovementComponent->RestoreControlRotation();
 	StateComponent->SetIdleMode();
 }

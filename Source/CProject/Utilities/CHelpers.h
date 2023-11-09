@@ -47,7 +47,7 @@ public:
 		ConstructorHelpers::FClassFinder<T> asset(*InPath);
 		*OutClass = asset.Class;
 	}
-
+	
 	template <typename T>
 	static T* FindActor(UWorld* InWorld)
 	{

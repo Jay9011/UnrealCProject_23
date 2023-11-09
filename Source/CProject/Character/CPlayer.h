@@ -10,6 +10,7 @@ UCLASS()
 class CPROJECT_API ACPlayer
 	: public ACBaseCharacter
 	, public IIStateNotify
+	, public IIDebugCollector
 {
 	GENERATED_BODY()
 
@@ -33,6 +34,12 @@ private:
 public:
 	virtual void End_Evade() override;
 	
+#if WITH_EDITOR
+public:
+	virtual bool IsDebugEnable() override { return true; } // 플레이어의 디버거 정보는 항상 출력
+	virtual FDebugInfo GetDebugInfo() override;
+#endif
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;

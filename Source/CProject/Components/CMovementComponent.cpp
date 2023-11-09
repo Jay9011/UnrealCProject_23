@@ -91,3 +91,15 @@ void UCMovementComponent::OnVerticalLook(float InAxis)
 
 	OwnerCharacter->AddControllerPitchInput(InAxis * VerticalLook * GetWorld()->GetDeltaSeconds());
 }
+
+void UCMovementComponent::BackupControlRotation()
+{
+	bBackupRotationYaw = OwnerCharacter->bUseControllerRotationYaw;
+	bBackupOrientRotationToMovement = OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement;
+}
+
+void UCMovementComponent::RestoreControlRotation()
+{
+	OwnerCharacter->bUseControllerRotationYaw = bBackupRotationYaw;
+	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = bBackupOrientRotationToMovement;
+}

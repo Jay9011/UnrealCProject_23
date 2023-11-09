@@ -37,5 +37,7 @@ protected:
 	UPROPERTY()
 	class UCStateComponent* StateComponent;
 	UPROPERTY()
+	class UCMovementComponent* MovementComponent;
+	UPROPERTY()
 	class UCEvadeComponent* EvadeComponent;
 };
