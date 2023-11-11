@@ -23,13 +23,9 @@ protected:
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-/*
- * State 관련
- */
-private:
-	UFUNCTION()
-	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
-
+public:
+	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
+	
 // IIStateNotify
 public:
 	virtual void End_Evade() override;
@@ -40,6 +36,9 @@ public:
 	virtual FDebugInfo GetDebugInfo() override;
 #endif
 
+/*
+ * 카메라 관련
+ */
 private:
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
@@ -47,8 +46,24 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 
+/*
+ *	기본 컴포넌트 
+ */
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Evade")
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCMontagesComponent* Montages;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCMovementComponent* Movement;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCWeaponComponent* Weapon;
+
+/*
+ * 확장 컴포넌트
+ */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Extension")
 	class UCEvadeComponent* Evade;
 
 #if WITH_EDITOR

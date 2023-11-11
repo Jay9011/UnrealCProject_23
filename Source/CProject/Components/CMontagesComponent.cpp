@@ -37,3 +37,18 @@ void UCMontagesComponent::BeginPlay()
 	}// for(int32 i = 0; i < static_cast<int32>(EStateType::Max); i++)
 	
 }
+
+void UCMontagesComponent::PlayAnimMontage(EStateType InType)
+{
+	CheckNull(OwnerCharacter);
+
+	FMontagesData* data = MontagesData[static_cast<int32>(InType)];
+
+	if (data == nullptr)
+		return;
+
+	if (data->Montage == nullptr)
+		return;
+
+	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+}

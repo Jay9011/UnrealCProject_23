@@ -4,6 +4,7 @@
 #include "CAnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CEvadeComponent.h"
+#include "Components/CMontagesComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
@@ -23,6 +24,10 @@ ACPlayer::ACPlayer()
 	Camera = this->CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
+	Montages = this->CreateDefaultSubobject<UCMontagesComponent>("Montages");
+	Movement = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
+	Weapon = this->CreateDefaultSubobject<UCWeaponComponent>("Weapon");
+	
 	Evade = this->CreateDefaultSubobject<UCEvadeComponent>("Evade");
 
 	//====================================================================================================

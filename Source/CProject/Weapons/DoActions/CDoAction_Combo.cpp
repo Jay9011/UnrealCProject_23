@@ -2,6 +2,7 @@
 
 #include "Components/CStateComponent.h"
 #include "Utilities/CheckMacros.h"
+#include "Utilities/CLog.h"
 
 void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACAttachment* InAttachment, UCEquipment* InEquipment, ACharacter* InOwner, const TArray<FDoActionData>& InDoActionDatas)
 {
@@ -55,6 +56,15 @@ void UCDoAction_Combo::Begin_Action()
 void UCDoAction_Combo::End_Action()
 {
 	End_DoAction();
+}
+
+void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+{
+	CheckNull(InOther);
+
+	CLog::Log("UCDoAction_Combo::OnAttachmentBeginOverlap");
+	
+	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 }
 
 #if WITH_EDITOR

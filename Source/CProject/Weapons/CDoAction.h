@@ -46,6 +46,19 @@ public:
 	virtual void Begin_Action() override {};
 	virtual void End_Action() override {};
 
+/*
+ * 충돌체 관련 바운딩 함수
+ */	
+public:
+	UFUNCTION()
+	virtual void OnAttachmentBeginCollision(){}
+	UFUNCTION()
+	virtual void OnAttachmentEndCollision(){}
+	UFUNCTION()
+	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther){}
+	UFUNCTION()
+	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther){}
+	
 protected:
 	bool bBeginAction;
 

@@ -30,6 +30,16 @@ public:
 	virtual void Begin_Action() override;
 	virtual void End_Action() override;
 
+/*
+ * 충돌 관련 바운딩 함수
+ */
+public:
+	virtual void OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther) override;
+
+
+/*
+ * Getter / Setter
+ */
 public:
 	virtual UCComboState* GetComboState() override { return ComboState; }
 	

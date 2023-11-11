@@ -28,10 +28,6 @@ class CPROJECT_API UCMontagesComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditAnywhere, Category = "DataTable")
-	UDataTable* MontagesTable;
-
 public:	
 	UCMontagesComponent();
 
@@ -39,5 +35,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	class ACharacter* OwnerCharacter;
+	void PlayAnimMontage(EStateType InType);
+
+private:
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UDataTable* MontagesTable = nullptr;
+
+	FMontagesData* MontagesData[(int32)EStateType::Max] = { nullptr };
+	
+private:
+	class ACharacter* OwnerCharacter = nullptr;
 };
