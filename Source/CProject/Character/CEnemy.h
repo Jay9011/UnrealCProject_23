@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Character/CBaseCharacter.h"
-#include "Components/CStateComponent.h"
 #include "CEnemy.generated.h"
 
 /**
@@ -18,4 +17,21 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	void Hitted();
+	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
+
+private:
+	struct FDamagedData
+	{
+		float Damage;
+		class ACharacter* Character;
+		class AActor* Causer;
+
+		struct FActionDamageEvent* Event;
+	} Damaged;
 };

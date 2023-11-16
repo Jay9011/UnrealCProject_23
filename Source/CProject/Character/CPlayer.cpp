@@ -53,8 +53,6 @@ void ACPlayer::BeginPlay()
 	Movement->SetSpeed(ESpeedType::Run);
 	Movement->DisableControlRotation();
 
-	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
-
 #if WITH_EDITOR
 	Debugger->AddCollector(this);
 #endif

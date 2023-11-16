@@ -1,8 +1,8 @@
 #include "Weapons/DoActions/CDoAction_Combo.h"
 
 #include "Components/CStateComponent.h"
+#include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
-#include "Utilities/CLog.h"
 
 void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACAttachment* InAttachment, UCEquipment* InEquipment, ACharacter* InOwner, const TArray<FDoActionData>& InDoActionDatas)
 {
@@ -60,11 +60,11 @@ void UCDoAction_Combo::End_Action()
 
 void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-	CheckNull(InOther);
-
-	CLog::Log("UCDoAction_Combo::OnAttachmentBeginOverlap");
-	
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+	CheckNull(InOther);
+	CheckTrue(DoActionDatas.Num() <= ComboState->GetIndex());
+	
+	DoActionDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
 }
 
 #if WITH_EDITOR

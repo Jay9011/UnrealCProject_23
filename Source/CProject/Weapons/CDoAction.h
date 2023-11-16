@@ -34,7 +34,8 @@ public:
 		class UCWeaponAsset* InOwnerWeaponAsset,
 		class ACAttachment* InAttachment,
 		class UCEquipment* InEquipment,
-		class ACharacter* InOwner, const TArray<FDoActionData>& InDoActionDatas
+		class ACharacter* InOwner,
+		const TArray<FDoActionData>& InDoActionDatas
 	);
 	
 public:

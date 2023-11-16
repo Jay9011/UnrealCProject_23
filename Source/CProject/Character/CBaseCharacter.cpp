@@ -19,4 +19,6 @@ ACBaseCharacter::ACBaseCharacter()
 void ACBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	State->OnStateTypeChanged.AddDynamic(this, &ACBaseCharacter::OnStateTypeChanged);
 }
