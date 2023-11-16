@@ -51,6 +51,7 @@ public:
 	void SendDamage(class ACharacter* InAttacker, class AActor* InAttackCauser, class ACharacter* InOther);
 	void PlayMontage(class ACharacter* InOwner);
 	void PlayHitStop(UWorld* InWorld);
+	void PlaySoundWave(class ACharacter* InOwner);
 };
 
 /**

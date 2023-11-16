@@ -2,6 +2,7 @@
 
 #include "Components/CMovementComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Utilities/CheckMacros.h"
 #include "Utilities/GTimeController.h"
 
@@ -60,4 +61,14 @@ void FHitData::PlayHitStop(UWorld* InWorld)
 	CheckTrue(FMath::IsNearlyZero(StopTime));
 
 	UGTimeController::SetTimeDilationOnlyActors(InWorld, 1e-3f, StopTime);
+}
+
+void FHitData::PlaySoundWave(ACharacter* InOwner)
+{
+	CheckNull(Sound);
+
+	UWorld* World = InOwner->GetWorld();
+	FVector Location = InOwner->GetActorLocation();
+
+	UGameplayStatics::SpawnSoundAtLocation(World, Sound, Location);
 }

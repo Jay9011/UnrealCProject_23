@@ -37,6 +37,7 @@ void ACEnemy::Hitted()
 
 	HitData->PlayMontage(this);
 	HitData->PlayHitStop(GetWorld());
+	HitData->PlaySoundWave(this);
 
 	// 중복 피격 방지
 	Damaged.Damage = 0;
