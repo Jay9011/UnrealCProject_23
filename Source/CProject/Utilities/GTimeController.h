@@ -13,11 +13,11 @@ class CPROJECT_API UGTimeController : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	static void SetTimeDilation(class UWorld* InWorld, float InTimeDilation, float InDuration, TArray<AActor*> InIgnoreActors = TArray<AActor*>());
+	static void SetTimeDilation(const class UWorld* InWorld, float InTimeDilation, float InDuration, const TArray<AActor*>& InIgnoreActors = TArray<AActor*>());
 	
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	static void SetTimeDilationOnlyActors(class UWorld* InWorld, float InTimeDilation, float InDuration);
 
 	UFUNCTION(BlueprintCallable, Category = "Time")
-	static void SetTimeDilationOnlyActorsAddIgnoreActors(class UWorld* InWorld, float InTimeDilation, float InDuration, TArray<AActor*> InIgnoreActors);
+	static void SetTimeDilationOnlyActorsAddIgnoreActors(UWorld* InWorld, float InTimeDilation, float InDuration, TArray<AActor*>& InIgnoreActors);
 };

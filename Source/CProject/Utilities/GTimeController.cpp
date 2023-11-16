@@ -3,13 +3,13 @@
 #include "CheckMacros.h"
 #include "GameFramework/Character.h"
 
-void UGTimeController::SetTimeDilation(UWorld* InWorld, float InTimeDilation, float InDuration,
-	TArray<AActor*> InIgnoreActors)
+void UGTimeController::SetTimeDilation(const UWorld* InWorld, float InTimeDilation, float InDuration,
+                                       const TArray<AActor*>& InIgnoreActors)
 {
 	if(!InWorld) return;
 	CheckTrue(FMath::IsNearlyZero(InTimeDilation));
 
-	bool bIsIgnoreActors = InIgnoreActors.Num() > 0;
+	const bool bIsIgnoreActors = InIgnoreActors.Num() > 0;
 
 	TArray<APawn*> Pawns;
 	for (AActor* Actor : InWorld->GetCurrentLevel()->Actors)
@@ -17,8 +17,8 @@ void UGTimeController::SetTimeDilation(UWorld* InWorld, float InTimeDilation, fl
 		APawn* Pawn = Cast<ACharacter>(Actor);
 		if (!!Pawn && (!bIsIgnoreActors || !InIgnoreActors.Contains(Pawn)))
 		{
-			Pawns.Add(Pawn);
 			Pawn->CustomTimeDilation = InTimeDilation;
+			Pawns.Add(Pawn);
 		}
 	}
 
@@ -27,6 +27,9 @@ void UGTimeController::SetTimeDilation(UWorld* InWorld, float InTimeDilation, fl
 	{
 		for (APawn* Pawn : Pawns)
 		{
+			if (!IsValid(Pawn))
+				continue;
+			
 			Pawn->CustomTimeDilation = 1.f;
 		}
 	});
@@ -41,7 +44,7 @@ void UGTimeController::SetTimeDilationOnlyActors(UWorld* InWorld, float InTimeDi
 }
 
 void UGTimeController::SetTimeDilationOnlyActorsAddIgnoreActors(UWorld* InWorld, float InTimeDilation, float InDuration,
-	TArray<AActor*> InIgnoreActors)
+                                                                TArray<AActor*>& InIgnoreActors)
 {
 	SetTimeDilation(InWorld, InTimeDilation, InDuration, InIgnoreActors);
 }
