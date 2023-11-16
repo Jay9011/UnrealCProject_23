@@ -13,6 +13,8 @@ class CPROJECT_API UGTimeController : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+	static void SetTimeDilation(class UWorld* InWorld, float InTimeDilation, float InDuration, TArray<AActor*> InIgnoreActors = TArray<AActor*>());
+	
 	UFUNCTION(BlueprintCallable, Category = "Time")
 	static void SetTimeDilationOnlyActors(class UWorld* InWorld, float InTimeDilation, float InDuration);
 
