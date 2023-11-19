@@ -103,3 +103,69 @@ void UCMovementComponent::RestoreControlRotation()
 	OwnerCharacter->bUseControllerRotationYaw = bBackupRotationYaw;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = bBackupOrientRotationToMovement;
 }
+
+void UCMovementComponent::SetLandMode()
+{
+	// 이전 상태가 공중 상태였다면, 공중 상태의 종류에 따라 Standing Type을 변경.
+	CheckTrue(AirState == EAirState::Normal);
+
+	// 적에 의해 날아가는 상태라면, 넉다운 상태로 변경.
+	if (AirState == EAirState::Airborne)
+		ChangeStandingType(EStandingType::KnockDown);
+	else
+		ChangeStandingType(EStandingType::Standing);
+
+	ChangeAirState(EAirState::Normal);
+}
+
+void UCMovementComponent::SetJumpMode()
+{
+	ChangeAirState(EAirState::Jump);
+}
+
+void UCMovementComponent::SetFallMode()
+{
+	ChangeAirState(EAirState::Fall);
+}
+
+void UCMovementComponent::SetAirborneMode()
+{
+	ChangeAirState(EAirState::Airborne);
+}
+
+void UCMovementComponent::SetStandingMode()
+{
+	ChangeStandingType(EStandingType::Standing);
+}
+
+void UCMovementComponent::SetCrouchMode()
+{
+	ChangeStandingType(EStandingType::Crouch);
+}
+
+void UCMovementComponent::SetKnockDownMode()
+{
+	ChangeStandingType(EStandingType::KnockDown);
+}
+
+void UCMovementComponent::ChangeAirState(EAirState InState)
+{
+	EAirState PrevState = AirState;
+	AirState = InState;
+
+	if (OnAirStateChanged.IsBound())
+	{
+		OnAirStateChanged.Broadcast(PrevState, AirState);		
+	}
+}
+
+void UCMovementComponent::ChangeStandingType(EStandingType InType)
+{
+	EStandingType PrevType = StandingType;
+	StandingType = InType;
+
+	if (OnStandingTypeChanged.IsBound())
+	{
+		OnStandingTypeChanged.Broadcast(PrevType, StandingType);
+	}
+}
