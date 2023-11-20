@@ -101,26 +101,32 @@ FDebugInfo ACPlayer::GetDebugInfo()
 	FDebugInfo Info;
 	Info.Priority = -1;
 
-	// InputDir의 X와 Y만 출력
-	FVector InputDir = {GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"), 0}; 
-	Info.Data.Add({FString::Printf(TEXT("Input Value: X=%.3f Y=%.3f"), InputDir.X, InputDir.Y), FColor::White});
+	// // InputDir의 X와 Y만 출력
+	// FVector InputDir = {GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"), 0}; 
+	// Info.Data.Add({FString::Printf(TEXT("Input Value: X=%.3f Y=%.3f"), InputDir.X, InputDir.Y), FColor::White});
+	//
+	// FVector Directional = UDirectionalUtil::GetWorldDirectionFromInputAxis(this, "MoveForward", "MoveRight");
+	// Info.Data.Add({FString::Printf(TEXT("Character,Input Axis: X=%.3f Y=%.3f"), Directional.X, Directional.Y), FColor::White});
+	//
+	// InputDir.Normalize();
+	// // 캐릭터의 각 방향 벡터를 구한다.
+	// FVector Forward = GetActorForwardVector();
+	// FVector Right = GetActorRightVector();
+	// Forward.Z = 0;
+	// Right.Z = 0;
+	// Info.Data.Add({FString::Printf(TEXT("Forward: X=%.3f Y=%.3f , Right: X=%.3f Y=%.3f"), Forward.X, Forward.Y, Right.X, Right.Y), FColor::White});
+	//
+	// // 내적을 통해 더 가까운 방향을 구한다.
+	// float ForwardDot = FVector::DotProduct(Forward, Directional);
+	// float RightDot = FVector::DotProduct(Right, Directional);
+	// Info.Data.Add({FString::Printf(TEXT("ForwardDot: %.3f RightDot: %.3f"), ForwardDot, RightDot), FColor::White});
 
-	FVector Directional = UDirectionalUtil::GetWorldDirectionFromInputAxis(this, "MoveForward", "MoveRight");
-	Info.Data.Add({FString::Printf(TEXT("Character,Input Axis: X=%.3f Y=%.3f"), Directional.X, Directional.Y), FColor::White});
+	// Standing 타입 출력
+	Info.Data.Add({"Standing Type : " + StaticEnum<EStandingType>()->GetNameStringByIndex(static_cast<int32>(Movement->GetStandingType())), FColor::Red});
 	
-	InputDir.Normalize();
-	// 캐릭터의 각 방향 벡터를 구한다.
-	FVector Forward = GetActorForwardVector();
-	FVector Right = GetActorRightVector();
-	Forward.Z = 0;
-	Right.Z = 0;
-	Info.Data.Add({FString::Printf(TEXT("Forward: X=%.3f Y=%.3f , Right: X=%.3f Y=%.3f"), Forward.X, Forward.Y, Right.X, Right.Y), FColor::White});
-
-	// 내적을 통해 더 가까운 방향을 구한다.
-	float ForwardDot = FVector::DotProduct(Forward, Directional);
-	float RightDot = FVector::DotProduct(Right, Directional);
-	Info.Data.Add({FString::Printf(TEXT("ForwardDot: %.3f RightDot: %.3f"), ForwardDot, RightDot), FColor::White});
-
+	// Air 상태 출력
+	Info.Data.Add({"Air Type : " + StaticEnum<EAirState>()->GetNameStringByIndex(static_cast<int32>(Movement->GetAirState())), FColor::Red});
+	
 	return Info;
 }
 #endif
