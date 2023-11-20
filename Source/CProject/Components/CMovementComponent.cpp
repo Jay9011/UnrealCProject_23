@@ -14,6 +14,9 @@ void UCMovementComponent::BeginPlay()
 	Super::BeginPlay();
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
+
+	CheckNull(OwnerCharacter);
+	OwnerCharacter->LandedDelegate.AddDynamic(this, &UCMovementComponent::OnFLanded);
 }
 
 void UCMovementComponent::SetSpeed(ESpeedType InType)
@@ -168,4 +171,9 @@ void UCMovementComponent::ChangeStandingType(EStandingType InType)
 	{
 		OnStandingTypeChanged.Broadcast(PrevType, StandingType);
 	}
+}
+
+void UCMovementComponent::OnFLanded(const FHitResult& Hit)
+{
+	SetLandMode();
 }

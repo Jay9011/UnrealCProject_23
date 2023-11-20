@@ -86,6 +86,12 @@ public:
 private:
 	void ChangeAirState(EAirState InState);
 	void ChangeStandingType(EStandingType InType);
+
+	/*
+	 * Delegate 전달 함수
+	 */
+private:
+	void OnFLanded(const FHitResult& Hit);
 	
 /*
  * Getter / Setter
