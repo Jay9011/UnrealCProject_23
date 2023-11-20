@@ -13,38 +13,37 @@ struct FHitData
 	GENERATED_BODY()
 	// 기본 데이터
 	public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage = 0;
 
-	UPROPERTY(EditAnywhere)
-	FVector Launch = FVector::ZeroVector;
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	FVector DamagedLaunch = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
-	float StopTime = 0;
-
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool bCanMove = true;
+	
 	// 피격시 피격자의 행동 정보
 	public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	class UAnimMontage* Montage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	float PlayRate = 1;
 
-	// 피격시 특수 효과	
-	public:
-	UPROPERTY(EditAnywhere)
-	bool bCanMove = true;
-
-	UPROPERTY(EditAnywhere)
+	// 피격시 특수 효과
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	float StopTime = 0;
+	
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	class USoundWave* Sound;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	class UFXSystemAsset* Effect;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectLocation = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectScale = FVector::OneVector;
 
 public:
@@ -85,25 +84,28 @@ struct FDoActionData
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	class UAnimMontage* ActionMontage;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	float PlayRate = 1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	FVector MovementLaunch = FVector::ZeroVector;
+	
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	bool bCanMove = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	bool bFixedCamera = false;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	class UFXSystemAsset* Effect;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectLocation = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectScale = FVector::OneVector;
 
 	// 데미지 관련 데이터 셋
