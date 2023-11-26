@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/HitMontageComponent.h"
 #include "UObject/NoExportTypes.h"
 #include "CWeaponStructures.generated.h"
 
@@ -8,22 +9,27 @@
  * @brief DamageEvent와 관련된 데이터 셋
  */
 USTRUCT()
-struct FHitData
+struct FHitData : public FTableRowBase
 {
 	GENERATED_BODY()
 	// 기본 데이터
-	public:
+public:
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	EHitType HitType = EHitType::Normal;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	FVector DamagedLaunch = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	bool bCanMove = true;
+
+	UPROPERTY(EditAnywhere, Category = "Attaker")
+	FVector AttackerLaunch = FVector::ZeroVector;
 	
 	// 피격시 피격자의 행동 정보
-	public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	class UAnimMontage* Montage;
 
@@ -36,6 +42,9 @@ struct FHitData
 	
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	class USoundWave* Sound;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	class UMatineeCameraShake* Shake;
 	
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	class UFXSystemAsset* Effect;
@@ -51,13 +60,15 @@ public:
 	void PlayMontage(class ACharacter* InOwner);
 	void PlayHitStop(UWorld* InWorld);
 	void PlaySoundWave(class ACharacter* InOwner);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
+	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
 
 /**
  * @brief 장착 관련 데이터 셋
  */
 USTRUCT()
-struct FEquipmentData
+struct FEquipmentData : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -78,8 +89,8 @@ public:
 /**
  * @brief DoAction과 관련된 데이터 셋
  */
-USTRUCT()
-struct FDoActionData
+USTRUCT(BlueprintType)
+struct FDoActionData : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -108,10 +119,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectScale = FVector::OneVector;
 
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool bGuardBreakable = false;
+	
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool bSuspensionInAir = false;
+	
 	// 데미지 관련 데이터 셋
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	FHitData DamagedData;
-	
+
 public:
 	void DoAction(class ACharacter* InOwner);
 };

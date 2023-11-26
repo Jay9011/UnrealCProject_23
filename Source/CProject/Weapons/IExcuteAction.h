@@ -23,4 +23,6 @@ public:
 	virtual void End_Action() = 0;
 
 	virtual void ChangingProcess() {};
+
+	virtual FString GetActionName() { return TEXT("IIExcuteAction"); }
 };
