@@ -29,13 +29,23 @@ void UCMontagesComponent::BeginPlay()
 		{
 			if(static_cast<EStateType>(i) == Data->Type)
 			{
-				Datas[i] = Data;
+				MontagesData[i] = Data;
 				
 				continue;
 			}
 		}// for(FMontagesData* Data : Datas)
 	}// for(int32 i = 0; i < static_cast<int32>(EStateType::Max); i++)
 	
+}
+
+void UCMontagesComponent::Idle()
+{
+	PlayAnimMontage(EStateType::Idle);
+}
+
+void UCMontagesComponent::Dead()
+{
+	PlayAnimMontage(EStateType::Dead);
 }
 
 void UCMontagesComponent::PlayAnimMontage(EStateType InType)

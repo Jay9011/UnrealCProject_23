@@ -34,6 +34,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	void Idle();
+	void Dead();
+	
 private:
 	void PlayAnimMontage(EStateType InType);
 
