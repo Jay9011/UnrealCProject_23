@@ -32,7 +32,35 @@ public:
 	virtual void ChangingProcess() override;
 	virtual UCComboState* GetComboState() override { return ComboState;}
 
-private:
+	/*
+	 * 충돌체 관련 바운딩 함수
+	 */	
+	public:
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttachmentBeginCollision();
+	virtual void OnAttachmentBeginCollision_Implementation(){}
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttachmentEndCollision();
+	virtual void OnAttachmentEndCollision_Implementation(){}
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
+	virtual void OnAttachmentBeginOverlap_Implementation(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther){}
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
+	virtual void OnAttachmentEndOverlap_Implementation(class ACharacter* InAttacker, class ACharacter* InOther){}
+	
+/*
+ * 데이터 관리
+ */
+protected:
+	void InitDoActionData();
+	
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UDataTable* HeavyAttackDataTable = nullptr;
+	
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<FDoActionData> HeavyAttackDatas;
 	

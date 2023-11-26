@@ -17,9 +17,9 @@ void UCAnimNotify_BeginAction::Notify(USkeletalMeshComponent * MeshComp, UAnimSe
 
 	weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(weapon);
-	CheckNull(weapon->GetCurrentAction());
+	CheckNull(weapon->GetReservedAction());
 
-	action = Cast<IIExcuteAction>(weapon->GetCurrentAction());
+	action = Cast<IIExcuteAction>(weapon->GetReservedAction());
 	CheckNull(action);
 
 	action->Begin_Action();

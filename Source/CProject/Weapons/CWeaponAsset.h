@@ -44,9 +44,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Equipment")
 	FEquipmentData EquipmentData;
 	
-	UPROPERTY(EditAnywhere, Category = "DoAction")
-	TArray<FDoActionData> DoActionDatas;
-
 	UPROPERTY(EditAnywhere, Category = "Evade")
 	TArray<FEvadeData> EvadeData;
 	
@@ -65,6 +62,17 @@ private:
 	UPROPERTY()
 	class UCEvadeAction* EvadeAction;
 
+/*
+ * Action 예약 관련
+ */
+public:
+	void UpdateActions();
+	
+private:
+	IIExcuteAction* PrevAction;		// 이전 Action
+	IIExcuteAction* CurrentAction;	// 현재 Action
+	IIExcuteAction* ReservedAction;	// 예약된 Action
+	
 //Getter, Setter
 public:
 	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
@@ -72,18 +80,23 @@ public:
 	FORCEINLINE class UCDoAction* GetDoAction() const { return DoAction; }
 	FORCEINLINE class UCEvadeAction* GetEvadeAction() const { return EvadeAction; }
 	FORCEINLINE class UCDoSubAction* GetDoSubAction() const { return DoSubAction; }
+	
 	FORCEINLINE IIExcuteAction* GetCurrentAction() const { return CurrentAction; }
+	FORCEINLINE IIExcuteAction* GetReservedAction() const { return ReservedAction; }
 
 	FORCEINLINE void SetCurrentAction(IIExcuteAction* InCurrentAction)
 	{
-		PrevAction = CurrentAction;
+		if(!!CurrentAction)
+			PrevAction = CurrentAction;
+		
 		CurrentAction = InCurrentAction;
 	}
-
-private:
-	// 현재 예약된 액션
-	IIExcuteAction* CurrentAction;
-	// 이전 진행된 액션
-	IIExcuteAction* PrevAction;
-	
+	FORCEINLINE void ReserveAction(IIExcuteAction* InReserveAction)
+	{
+		// CurrentAction이 없다면 예약된 Action을 바로 실행
+		if(!!CurrentAction)
+			ReservedAction = InReserveAction;
+		else
+			SetCurrentAction(InReserveAction);
+	}
 };

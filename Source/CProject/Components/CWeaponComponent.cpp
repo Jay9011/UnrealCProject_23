@@ -138,6 +138,14 @@ IIExcuteAction* UCWeaponComponent::GetCurrentAction()
 	return WeaponAssets[(int32)Type]->GetCurrentAction();
 }
 
+IIExcuteAction* UCWeaponComponent::GetReservedAction()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+
+	return WeaponAssets[(int32)Type]->GetReservedAction();
+}
+
 void UCWeaponComponent::SetUnarmedMode()
 {
 	CheckFalse(IsIdleMode())
@@ -190,9 +198,10 @@ FDebugInfo UCWeaponComponent::GetDebugInfo()
 	
 	DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
 	DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->_getUObject()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
 	
 	return DebugInfo;
 }

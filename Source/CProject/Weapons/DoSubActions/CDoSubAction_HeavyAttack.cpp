@@ -8,6 +8,8 @@ void UCDoSubAction_HeavyAttack::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACh
 {
 	Super::BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
 
+	InitDoActionData();
+
 	DoAction_Combo = Cast<UCDoAction_Combo>(InDoAction);
 	CheckNull(DoAction_Combo);
 
@@ -25,7 +27,7 @@ void UCDoSubAction_HeavyAttack::Pressed()
 	{
 		ComboState->DisableCombo();
 		ComboState->ReserveCombo();
-		OwnerWeaponAsset->SetCurrentAction(this);
+		OwnerWeaponAsset->ReserveAction(this);
 
 		return;
 	}
@@ -47,7 +49,7 @@ void UCDoSubAction_HeavyAttack::BeginSubAction_Implementation()
 
 	ComboState->ExpireCombo();
 	StateComponent->OnSubActionMode();
-	OwnerWeaponAsset->SetCurrentAction(this);
+	OwnerWeaponAsset->UpdateActions();
 	HeavyAttackDatas[ComboState->IncreaseCombo()].DoAction(OwnerCharacter);
 }
 
@@ -57,7 +59,7 @@ void UCDoSubAction_HeavyAttack::EndSubAction_Implementation()
 
 	DoAction_Combo->End_Action();
 	StateComponent->OffSubActionMode();
-	OwnerWeaponAsset->SetCurrentAction(nullptr);
+	OwnerWeaponAsset->UpdateActions();
 }
 
 void UCDoSubAction_HeavyAttack::Begin_Action()
@@ -74,4 +76,20 @@ void UCDoSubAction_HeavyAttack::End_Action()
 void UCDoSubAction_HeavyAttack::ChangingProcess()
 {
 	StateComponent->OffSubActionMode();
+}
+
+void UCDoSubAction_HeavyAttack::InitDoActionData()
+{
+	if (!!HeavyAttackDataTable)
+	{
+		TArray<FDoActionData*> DoActionData;
+		HeavyAttackDataTable->GetAllRows<FDoActionData>("", DoActionData);
+
+		for (FDoActionData* Data : DoActionData)
+			HeavyAttackDatas.Add(*Data);
+	}
+	else if (HeavyAttackDatas.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("HeavyAttackDataTable is nullptr"));
+	}
 }

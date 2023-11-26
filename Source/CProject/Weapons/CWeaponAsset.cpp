@@ -39,7 +39,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 	if(!!DoActionClass)
 	{
 		DoAction = NewObject<UCDoAction>(this, DoActionClass);
-		DoAction->BeginPlay(this, Attachment, Equipment, InOwner, DoActionDatas);
+		DoAction->BeginPlay(this, InOwner);
 
 		if (!!Attachment)
 		{
@@ -68,4 +68,10 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 			Equipment->OnEquipmentUnequip.AddDynamic(EvadeAction, &UCEvadeAction::OnUnequip);
 		}
 	}// if(!!EvadeActionClass)
+}
+
+void UCWeaponAsset::UpdateActions()
+{
+	SetCurrentAction(ReservedAction);
+	ReservedAction = nullptr;
 }

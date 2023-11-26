@@ -24,25 +24,32 @@ public:
 	 * @brief 액션 관련 데이터 셋 배열을 받아서 초기화 (이때, 무기 외형과 장착 동작 관련 오브젝트도 받아서 초기화 한다.)
 	 *
 	 * @param InOwnerWeaponAsset 무기 에셋
-	 * @param InAttachment 외형 관련 액터 
-	 * @param InEquipment 장착 동작 관련 오브젝트
 	 * @param InOwner 소유자
-	 * @param InDoActionDatas 액션 관련 데이터 셋 배열 
 	 */
 	virtual void BeginPlay
 	(
 		class UCWeaponAsset* InOwnerWeaponAsset,
-		class ACAttachment* InAttachment,
-		class UCEquipment* InEquipment,
-		class ACharacter* InOwner,
-		const TArray<FDoActionData>& InDoActionDatas
+		class ACharacter* InOwner
 	);
-	
+
 public:
-	virtual void DoAction();
 	virtual void Begin_DoAction();
 	virtual void End_DoAction();
 
+/*
+ * 블루프린트에서 재정의 할 수 있는 용도의 함수
+ */
+public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Add Event", meta = (DisplayName = "BeginPlay"))
+	void BP_BeginPlay();
+
+	UFUNCTION(BlueprintCallable, Category = "Add Event", meta = (DisplayName = "Add DoAction", ToolTip = "이 DoAction에서 사용할 DoAction을 추가합니다."))
+	UCDoAction* BP_AddDoAction(TSubclassOf<UCDoAction> InDoActionClass);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Action", meta = (DisplayName = "DoAction"))
+	void DoAction();
+	virtual void DoAction_Implementation();
+	
 public:
 	virtual void Begin_Action() override {};
 	virtual void End_Action() override {};
@@ -52,14 +59,55 @@ public:
  */	
 public:
 	UFUNCTION()
-	virtual void OnAttachmentBeginCollision(){}
+	virtual void OnAttachmentBeginCollision()
+	{
+		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		if (CurrentAction != nullptr && CurrentAction != this)
+		{
+			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
+			
+			if (DoAction != nullptr)
+				DoAction->OnAttachmentBeginCollision();
+		}
+	}
 	UFUNCTION()
-	virtual void OnAttachmentEndCollision(){}
+	virtual void OnAttachmentEndCollision()
+	{
+		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		if (CurrentAction != nullptr && CurrentAction != this)
+		{
+			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
+			
+			if (DoAction != nullptr)
+				DoAction->OnAttachmentEndCollision();
+		}
+	}
 	UFUNCTION()
-	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther){}
+	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther)
+	{
+		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		if (CurrentAction != nullptr && CurrentAction != this)
+		{
+			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
+			
+			if (DoAction != nullptr)
+				DoAction->OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+		}
+	}
 	UFUNCTION()
-	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther){}
-	
+	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther)
+	{
+		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		if (CurrentAction != nullptr && CurrentAction != this)
+		{
+			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
+			
+			if (DoAction != nullptr)
+				DoAction->OnAttachmentEndOverlap(InAttacker, InOther);
+		}
+	}
+
+
 protected:
 	bool bBeginAction;
 
@@ -74,6 +122,25 @@ protected:
 	class UCStateComponent* StateComponent;
 	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
-
+	
+/*
+ * 데이터 관리
+ */
+protected:
+	void InitDoActionData();
+	
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UDataTable* ActionDataTable = nullptr;
+	
+	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FDoActionData> DoActionDatas;
+	
+	/*
+	 * Getter / Setter
+	 */
+public:
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ACharacter* GetOwnerCharacter() const { return OwnerCharacter; }
+
+	virtual FString GetActionName() override { return GetName(); }
 };

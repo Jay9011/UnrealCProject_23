@@ -4,13 +4,29 @@
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 
-void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACAttachment* InAttachment, UCEquipment* InEquipment, ACharacter* InOwner, const TArray<FDoActionData>& InDoActionDatas)
+void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner)
 {
-	Super::BeginPlay(InOwnerWeaponAsset, InAttachment, InEquipment, InOwner, InDoActionDatas);
-	ComboState = NewObject<UCComboState>(this);
+	// 최상위 UCDoAction_Combo의 ComboState를 공유하기 위해 Super::BeginPlay()보다 먼저 호출한다.
+	if (!ComboState)
+		ComboState = NewObject<UCComboState>(this);
+	
+	Super::BeginPlay(InOwnerWeaponAsset, InOwner);
 }
 
-void UCDoAction_Combo::DoAction()
+void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, UCComboState* InComboState)
+{
+	if (InComboState == nullptr)
+	{
+		BeginPlay(InOwnerWeaponAsset, InOwner);
+
+		return;
+	}
+	
+	Super::BeginPlay(InOwnerWeaponAsset, InOwner);
+	ComboState = InComboState;
+}
+
+void UCDoAction_Combo::DoAction_Implementation()
 {
 	CheckFalse(DoActionDatas.IsValidIndex(ComboState->GetIndex()))
 
@@ -20,14 +36,14 @@ void UCDoAction_Combo::DoAction()
 	{
 		ComboState->DisableCombo();
 		ComboState->ReserveCombo();
-		OwnerWeaponAsset->SetCurrentAction(this);
+		OwnerWeaponAsset->ReserveAction(this);
 
 		return;
 	}
 
 	CheckFalse(StateComponent->IsIdleMode())
 	//만약 제일 위쪽에 Super::DoAction();이 있었다면, 부모의 StateComponent->SetActionMode();가 호출되어 위쪽 검사를 통과하지 못하고 여기서 멈추게 된다.  
-	Super::DoAction();
+	Super::DoAction_Implementation();
 
 	DoActionDatas[ComboState->GetIndex()].DoAction(OwnerCharacter);
 }
@@ -58,9 +74,18 @@ void UCDoAction_Combo::End_Action()
 	End_DoAction();
 }
 
+UCDoAction_Combo* UCDoAction_Combo::BP_AddDoAction_Combo(TSubclassOf<UCDoAction_Combo> InDoActionClass, UCComboState* InComboState)
+{
+	UCDoAction_Combo* NewDoAction = NewObject<UCDoAction_Combo>(this, InDoActionClass);
+	NewDoAction->BeginPlay(OwnerWeaponAsset, OwnerCharacter, InComboState);
+
+	return NewDoAction;
+}
+
 void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
 	CheckNull(InOther);
 	CheckTrue(DoActionDatas.Num() <= ComboState->GetIndex());
 	

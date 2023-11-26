@@ -62,4 +62,10 @@ protected:
 	class UCStateComponent* StateComponent;
 	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
+
+/*
+ * Getter / Setter
+ */
+public:
+	virtual FString GetActionName() override { return GetName(); }
 };

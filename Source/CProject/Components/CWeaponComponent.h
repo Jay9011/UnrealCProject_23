@@ -56,6 +56,7 @@ public:
 	class UCDoAction* GetDoAction();
 	class UCDoSubAction* GetSubAction();
 	class IIExcuteAction* GetCurrentAction();
+	class IIExcuteAction* GetReservedAction();
 	
 public:
 	void SetUnarmedMode();
