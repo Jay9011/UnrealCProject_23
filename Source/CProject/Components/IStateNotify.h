@@ -19,4 +19,6 @@ class CPROJECT_API IIStateNotify
 
 public:
 	virtual void End_Evade(){}
+	virtual void End_Hitted(){}
+	virtual void End_Dead(){}
 };
