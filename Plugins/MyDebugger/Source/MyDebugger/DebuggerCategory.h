@@ -22,8 +22,12 @@ private:
 	virtual void DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext) override;
 
 private:
+	void GatherDebugInfo(const AActor* InActor, class UDebuggerComponent* InDebuggerComponent, TArray<FDebugInfo>& OutDebugInfoList);
+	
+private:
 	// 수집된 데이터 리스트
 	TArray<FDebugInfo> DebugInfoList;
+	TArray<FDebugInfo> TestDebugInfoList;
 
 private:
 	struct FCategoryData
@@ -33,6 +37,15 @@ private:
 		FVector Location;
 	} PlayerPawnData;
 
+	struct FDebuggerActorData
+	{
+		bool bDraw = false;
+		FString Name;
+	} DebuggerActorData;
+
 	float MaxTileWidth = 0.f;
 	float TotalTileHeight = 0.f;
+
+	float TargetMaxTileWidth = 0.f;
+	float TargetTotalTileHeight = 0.f;
 };
