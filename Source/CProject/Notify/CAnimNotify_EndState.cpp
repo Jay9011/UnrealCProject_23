@@ -19,8 +19,8 @@ void UCAnimNotify_EndState::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
 	
 	switch (StateType)
 	{
-	case EStateType::Evade:
-		StateNotify->End_Evade();
-		break;
+	case EStateType::Evade: StateNotify->End_Evade(); break;
+	case EStateType::Hitted: StateNotify->End_Hitted(); break;
+	case EStateType::Dead: StateNotify->End_Dead(); break;
 	}
 }
