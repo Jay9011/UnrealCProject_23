@@ -16,6 +16,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+public:
+	virtual void PlayHittedMontage() {};
+	
 /*
  * State 관련
  */
@@ -26,4 +29,14 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCStateComponent* State;
+
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCMontagesComponent* Montages;
+
+/*
+ * Getter
+ */
+public:
+	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Base")
+	FORCEINLINE class UCStateComponent* GetStateComponent() const { return State; };
 };
