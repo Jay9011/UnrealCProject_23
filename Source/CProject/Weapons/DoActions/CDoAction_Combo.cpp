@@ -87,9 +87,25 @@ void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
 	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
 	CheckNull(InOther);
+
+	// 중복 피격 방지
+	{
+		if (DamagedCharacters.Contains(InOther))
+			return;
+
+		DamagedCharacters.Add(InOther);
+	}
+
+	// 데미지 처리
 	CheckTrue(DoActionDatas.Num() <= ComboState->GetIndex());
-	
 	DoActionDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
+}
+
+void UCDoAction_Combo::OnAttachmentEndCollision()
+{
+	Super::OnAttachmentEndCollision();
+
+	DamagedCharacters.Empty();
 }
 
 #if WITH_EDITOR
@@ -102,9 +118,9 @@ FDebugInfo UCDoAction_Combo::GetDebugInfo()
 {
 	FDebugInfo DebugInfo;
 
-	DebugInfo.Data.Add({"Index : " + FString::FromInt(ComboState->GetIndex()), FColor::Red});
-	DebugInfo.Data.Add({"Combo Enable : " + FString(ComboState->IsEnable() ? "true" : "false"), FColor::Red});
-	DebugInfo.Data.Add({"Combo Exist : " + FString(ComboState->IsExist() ? "true" : "false"), FColor::Red});
+	DebugInfo.Data.Add({"Index : " + FString::FromInt(ComboState->GetIndex()), FColor::Yellow});
+	DebugInfo.Data.Add({"Combo Enable : " + FString(ComboState->IsEnable() ? "true" : "false"), FColor::Yellow});
+	DebugInfo.Data.Add({"Combo Exist : " + FString(ComboState->IsExist() ? "true" : "false"), FColor::Yellow});
 
 	return DebugInfo;
 }

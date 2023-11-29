@@ -181,7 +181,7 @@ FDebugInfo UCWeaponComponent::GetDebugInfo()
 	FDebugInfo DebugInfo;
 	DebugInfo.Priority = 1;
 
-	DebugInfo.Data.Add({"Weapon: " + StaticEnum<EWeaponType>()->GetNameStringByValue(static_cast<uint8>(Type)), FColor::Red});
+	DebugInfo.Data.Add({"Weapon: " + StaticEnum<EWeaponType>()->GetNameStringByValue(static_cast<uint8>(Type)), FColor::Black});
 
 	UCDoAction* DoAction = GetDoAction();
 	if (!!DoAction)
@@ -196,12 +196,12 @@ FDebugInfo UCWeaponComponent::GetDebugInfo()
 		}
 	}
 	
-	DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
 	
 	return DebugInfo;
 }

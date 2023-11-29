@@ -23,7 +23,6 @@ public:
 	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, UCComboState* InComboState);
 	
 public:
-	// virtual void DoAction() override;
 	virtual void DoAction_Implementation() override;
 	virtual void Begin_DoAction() override;
 	virtual void End_DoAction() override;
@@ -41,7 +40,14 @@ public:
  */
 public:
 	virtual void OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther) override;
+	virtual void OnAttachmentEndCollision() override;
+	
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	UCComboState* ComboState;
 
+private:
+	TArray<class ACharacter*> DamagedCharacters;
 
 /*
  * Getter / Setter
@@ -50,10 +56,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Combo")
 	virtual UCComboState* GetComboState() override { return ComboState; }
 	
-protected:
-	UPROPERTY(BlueprintReadOnly)
-	UCComboState* ComboState;
-
 // IIDebugCollector
 #if WITH_EDITOR
   public:

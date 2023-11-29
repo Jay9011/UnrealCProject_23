@@ -23,6 +23,8 @@ protected:
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Falling() override;
+
 public:
 	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
 	
@@ -51,9 +53,6 @@ private:
  */
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Base")
-	class UCMontagesComponent* Montages;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCMovementComponent* Movement;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Base")
@@ -65,6 +64,9 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Extension")
 	class UCEvadeComponent* Evade;
+
+	UPROPERTY(VisibleAnywhere, Category = "Extension")
+	class UCAirComponent* Air;
 
 #if WITH_EDITOR
 public:

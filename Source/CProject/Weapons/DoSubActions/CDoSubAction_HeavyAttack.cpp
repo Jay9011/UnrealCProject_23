@@ -2,6 +2,7 @@
 
 #include "Components/CStateComponent.h"
 #include "Utilities/CheckMacros.h"
+#include "Weapons/CAttachment.h"
 #include "Weapons/DoActions/CDoAction_Combo.h"
 
 void UCDoSubAction_HeavyAttack::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
@@ -14,6 +15,16 @@ void UCDoSubAction_HeavyAttack::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACh
 	CheckNull(DoAction_Combo);
 
 	ComboState = DoAction_Combo->GetComboState();
+
+	// WeaponAsset에 Attachment가 있다면 Collision이나 Overlap 이벤트를 바인딩한다.
+	if (!!Attachment)
+	{
+		Attachment->OnAttachmentBeginCollision.AddDynamic(this, &UCDoSubAction_HeavyAttack::OnAttachmentBeginCollision);
+		Attachment->OnAttachmentEndCollision.AddDynamic(this, &UCDoSubAction_HeavyAttack::OnAttachmentEndCollision);
+
+		Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap);
+		Attachment->OnAttachmentEndOverlap.AddDynamic(this, &UCDoSubAction_HeavyAttack::OnAttachmentEndOverlap);
+	}
 }
 
 void UCDoSubAction_HeavyAttack::Pressed()
@@ -76,6 +87,29 @@ void UCDoSubAction_HeavyAttack::End_Action()
 void UCDoSubAction_HeavyAttack::ChangingProcess()
 {
 	StateComponent->OffSubActionMode();
+}
+
+void UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap_Implementation(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+{
+	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
+	CheckNull(InOther);
+
+	// 중복 피격 방지
+	{
+		if (DamagedCharacters.Contains(InOther))
+			return;
+
+		DamagedCharacters.Add(InOther);
+	}
+
+	// 데미지 처리
+	CheckTrue(HeavyAttackDatas.Num() <= ComboState->GetIndex());
+	HeavyAttackDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
+}
+
+void UCDoSubAction_HeavyAttack::OnAttachmentEndCollision_Implementation()
+{
+	DamagedCharacters.Empty();
 }
 
 void UCDoSubAction_HeavyAttack::InitDoActionData()

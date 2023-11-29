@@ -27,18 +27,18 @@ public:
 	bool bCanMove = true;
 
 	UPROPERTY(EditAnywhere, Category = "Attaker")
+	bool bAttackerSuspensionAir = true;
+	
+	UPROPERTY(EditAnywhere, Category = "Attaker")
 	FVector AttackerLaunch = FVector::ZeroVector;
 	
 	// 피격시 피격자의 행동 정보
-	UPROPERTY(EditAnywhere, Category = "Animation")
-	class UAnimMontage* Montage;
-
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float PlayRate = 1;
 
 	// 피격시 특수 효과
 	UPROPERTY(EditAnywhere, Category = "Effect")
-	float StopTime = 0;
+	float HitStopTime = 0;
 	
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	class USoundWave* Sound;

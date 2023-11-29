@@ -30,7 +30,6 @@ public:
 
 public:
 	virtual void ChangingProcess() override;
-	virtual UCComboState* GetComboState() override { return ComboState;}
 
 	/*
 	 * 충돌체 관련 바운딩 함수
@@ -42,11 +41,11 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttachmentEndCollision();
-	virtual void OnAttachmentEndCollision_Implementation(){}
+	virtual void OnAttachmentEndCollision_Implementation();
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
-	virtual void OnAttachmentBeginOverlap_Implementation(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther){}
+	virtual void OnAttachmentBeginOverlap_Implementation(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
@@ -63,17 +62,26 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<FDoActionData> HeavyAttackDatas;
-	
-private:
-	// 현재 데미지를 입은 캐릭터들
-	TArray<class ACharacter*> DamagedCharacters;
-	int32 HitIndex;
 
+protected:
 	// CDoAction_Combo 인 경우 해당 index를 사용해야 하므로 다운캐스팅 해서 사용한다.
 	UPROPERTY()
 	class UCDoAction_Combo* DoAction_Combo;
 
 	// HeavyAttack의 Combo 시스템은 DoActionCombo에서 가져온다.
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class UCComboState* ComboState;
+
+	
+private:
+	// 현재 데미지를 입은 캐릭터들
+	TArray<class ACharacter*> DamagedCharacters;
+
+/*
+ * Getter / Setter
+ */
+public:
+	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Combo")
+	virtual UCComboState* GetComboState() override { return ComboState; }
+	
 };

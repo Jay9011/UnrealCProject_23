@@ -11,13 +11,28 @@ void UCAnimInstance::NativeBeginPlay()
 	OwnerCharacter = Cast<ACharacter>(TryGetPawnOwner());
 	CheckNull(OwnerCharacter);
 
-	//WeaponComponent를 찾아서 WeaponTypeChanged 델리게이트에 OnWeaponTypeChanged를 바인딩해 무기 변경을 감지한다.
+	// StateComponent를 찾아서 StateTypeChanged 델리게이트에 OnStateTypeChanged를 바인딩해 상태 변경을 감지한다.
+	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
+	if(!!State)
+	{
+		// 상태 변경을 감지하면 OnStateTypeChanged 함수를 호출한다.
+		State->OnStateTypeChanged.AddDynamic(this, &UCAnimInstance::OnStateTypeChanged);
+	}
+
+	// WeaponComponent
 	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if(!!Weapon)
-	{
-		//무기 변경을 감지하면 OnWeaponTypeChanged 함수를 호출한다.
 		Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance::OnWeaponTypeChanged);
-	}
+
+	// MovementComponent
+	Movement = Cast<UCMovementComponent>(OwnerCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
+	if(!!Movement)
+		Movement->OnStandingTypeChanged.AddDynamic(this, &UCAnimInstance::OnStandingTypeChanged);
+
+	// AirComponent
+	Air = Cast<UCAirComponent>(OwnerCharacter->GetComponentByClass(UCAirComponent::StaticClass()));
+	if(!!Air)
+		Air->OnAirStateChanged.AddDynamic(this, &UCAnimInstance::OnAirStateChanged);
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -37,10 +52,35 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Direction = PrevRotation.Yaw;
 	}
 
-	Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+	// AirState가 Normal이 아니라면, 즉 공중에 있다면, Pitch를 0으로 초기화한다.
+	if(AirState != EAirState::Normal)
+		Pitch = 0;
+	else
+		Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds, 25);		
+	
+}
+
+void UCAnimInstance::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	StateType = InNewType;
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
 {
 	WeaponType = InNewType;
+}
+
+void UCAnimInstance::OnAirStateChanged(EAirState InPrevState, EAirState InNewState)
+{
+	AirState = InNewState;
+	
+	if (Air->IsAir())
+		isAir = true;
+	else
+		isAir = false;
+}
+
+void UCAnimInstance::OnStandingTypeChanged(EStandingType InPrevType, EStandingType InNewType)
+{
+	StandingType = InNewType;
 }

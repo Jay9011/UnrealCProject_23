@@ -5,26 +5,20 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CMovementComponent.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
 	Walk = 0, Run, Sprint, CrouchWalk, CrouchRun, Max
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EStandingType : uint8
 {
 	Standing = 0, Crouch, KnockDown, Max
 };
 
-UENUM()
-enum class EAirState : uint8
-{
-	Normal = 0, Jump, Fall, Airborne, MAX
-};
 
 // Delegate List
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAirStateChanged, EAirState, InPrevState, EAirState, InNewState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStandingTypeChanged, EStandingType, InPrevType, EStandingType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -47,9 +41,13 @@ public:
 	void OnCrouchWalk();
 	void OnCrouchRun();
 
+public:
+	UFUNCTION(BlueprintCallable)
 	void EnableControlRotation();
+	UFUNCTION(BlueprintCallable)
 	void DisableControlRotation();
 
+public:
 	void OnMoveForward(float InAxis);
 	void OnMoveRight(float InAxis);
 	void OnHorizontalLook(float InAxis);
@@ -60,18 +58,7 @@ public:
 	void BackupControlRotation();
 	// 저장된 ControlRotation을 복구. (이미 저장된 값을 사용하기 때문에, BackupControlRotation을 먼저 호출해야함.) 
 	void RestoreControlRotation();
-
-	/*
-	 * 공중 상태 관련
-	 */
-public:
-	// 공중 상태가 아닌 일반 상태
-	void SetLandMode();
-	void SetJumpMode();
-	void SetFallMode();
-	// 적에게 맞아서 날아가는 상태
-	void SetAirborneMode();
-
+	
 	/*
 	 * 서있는 상태 관련
 	 */
@@ -84,14 +71,7 @@ public:
 	 * Delegate 실행 함수
 	 */
 private:
-	void ChangeAirState(EAirState InState);
 	void ChangeStandingType(EStandingType InType);
-
-	/*
-	 * Delegate 전달 함수
-	 */
-private:
-	void OnFLanded(const FHitResult& Hit);
 	
 /*
  * Getter / Setter
@@ -111,17 +91,7 @@ public:
 	FORCEINLINE float GetCrouchWalkSpeed() const { return Speed[(int32)ESpeedType::CrouchWalk]; }
 	FORCEINLINE float GetCrouchRunSpeed() const { return Speed[(int32)ESpeedType::CrouchRun]; }
 
-	/*
-	 * 공중 상태 관련
-	 */
-	FORCEINLINE EAirState GetAirState() const { return AirState; }
 	
-	FORCEINLINE bool IsAir() const { return AirState != EAirState::Normal; }
-	FORCEINLINE bool IsJump() const { return AirState == EAirState::Jump; }
-	FORCEINLINE bool IsFall() const { return AirState == EAirState::Fall; }
-	FORCEINLINE bool IsAirborne() const { return AirState == EAirState::Airborne; }
-	FORCEINLINE bool IsAerialStance() const { return AirState == EAirState::Jump || AirState == EAirState::Fall; }
-
 	/*
 	 * Standing Type 관련
 	 */
@@ -135,7 +105,6 @@ public:
  * Delegate
  */
 public:
-	FAirStateChanged OnAirStateChanged;
 	FStandingTypeChanged OnStandingTypeChanged;
 	
 private:
@@ -161,6 +130,5 @@ private:
 private:
 	class ACharacter* OwnerCharacter;
 
-	EAirState AirState;
 	EStandingType StandingType;
 };

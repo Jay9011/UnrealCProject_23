@@ -3,6 +3,7 @@
 
 #include "CAnimInstance.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CAirComponent.h"
 #include "Components/CEvadeComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/InputComponent.h"
@@ -24,11 +25,11 @@ ACPlayer::ACPlayer()
 	Camera = this->CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 
-	Montages = this->CreateDefaultSubobject<UCMontagesComponent>("Montages");
 	Movement = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
 	Weapon = this->CreateDefaultSubobject<UCWeaponComponent>("Weapon");
 	
 	Evade = this->CreateDefaultSubobject<UCEvadeComponent>("Evade");
+	Air = this->CreateDefaultSubobject<UCAirComponent>("Air");
 
 	//====================================================================================================
 	SpringArm->SetRelativeLocation(FVector(0, 0, 140));
@@ -80,6 +81,19 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetBladeMode);
 }
 
+void ACPlayer::Falling()
+{
+	Super::Falling();
+
+	CheckNull(Air);
+
+	// 공중 상태 변화 전인 경우
+	if (!Air->IsAir())
+	{
+		Air->SetFallMode();
+	}
+}
+
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
@@ -122,10 +136,12 @@ FDebugInfo ACPlayer::GetDebugInfo()
 	// Info.Data.Add({FString::Printf(TEXT("ForwardDot: %.3f RightDot: %.3f"), ForwardDot, RightDot), FColor::White});
 
 	// Standing 타입 출력
-	Info.Data.Add({"Standing Type : " + StaticEnum<EStandingType>()->GetNameStringByIndex(static_cast<int32>(Movement->GetStandingType())), FColor::Red});
+	if(!!Movement)
+		Info.Data.Add({"Standing Type : " + StaticEnum<EStandingType>()->GetNameStringByIndex(static_cast<int32>(Movement->GetStandingType())), FColor::White});
 	
 	// Air 상태 출력
-	Info.Data.Add({"Air Type : " + StaticEnum<EAirState>()->GetNameStringByIndex(static_cast<int32>(Movement->GetAirState())), FColor::Red});
+	if (!!Air)
+		Info.Data.Add({"Air Type : " + StaticEnum<EAirState>()->GetNameStringByIndex(static_cast<int32>(Air->GetAirState())), FColor::White});
 	
 	return Info;
 }

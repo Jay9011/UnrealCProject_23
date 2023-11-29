@@ -5,7 +5,7 @@
 #include "MyDebugger/IDebugCollector.h"
 #include "CStateComponent.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EStateType : uint8
 {
 	Idle = 0,
@@ -22,7 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, EStateType, InPr
 /*
  * State Component
  */
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCStateComponent : public UActorComponent
 	, public IIDebugCollector
 {
@@ -39,11 +39,17 @@ private:
 	void ChangeType(EStateType InType);
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetIdleMode();
+	UFUNCTION(BlueprintCallable)
 	void SetEquipMode();
+	UFUNCTION(BlueprintCallable)
 	void SetHittedMode();
+	UFUNCTION(BlueprintCallable)
 	void SetDeadMode();
+	UFUNCTION(BlueprintCallable)
 	void SetActionMode();
+	UFUNCTION(BlueprintCallable)
 	void SetEvadeMode();
 	
 	/*

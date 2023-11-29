@@ -32,11 +32,11 @@ public:
 	/*
 	 * 기본 동작은 상속 받은 클래스에서 재정의하여 사용.
 	 */
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void BeginSubAction();
 	virtual void BeginSubAction_Implementation() {};
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void EndSubAction();
 	virtual void EndSubAction_Implementation() {};
 
@@ -51,7 +51,7 @@ public:
 protected:
 	UPROPERTY()
 	class UCWeaponAsset* OwnerWeaponAsset;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class ACharacter* OwnerCharacter;
 	UPROPERTY()
 	class ACAttachment* Attachment;
@@ -67,5 +67,8 @@ protected:
  * Getter / Setter
  */
 public:
+	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Character")
+	FORCEINLINE class ACharacter* GetOwnerCharacter() const { return OwnerCharacter; };
+	
 	virtual FString GetActionName() override { return GetName(); }
 };

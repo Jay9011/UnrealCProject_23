@@ -25,16 +25,13 @@ void FHitData::PlayMontage(ACharacter* InOwner)
 
 	if (!!MovementComponent)
 		bCanMove ? MovementComponent->Move() : MovementComponent->Stop();
-
-	if (!!Montage)
-		InOwner->PlayAnimMontage(Montage, PlayRate);
 }
 
 void FHitData::PlayHitStop(UWorld* InWorld)
 {
-	CheckTrue(FMath::IsNearlyZero(StopTime));
+	CheckTrue(FMath::IsNearlyZero(HitStopTime));
 
-	UGTimeController::SetTimeDilationOnlyActors(InWorld, 1e-3f, StopTime);
+	UGTimeController::SetTimeDilationOnlyActors(InWorld, 1e-3f, HitStopTime);
 }
 
 void FHitData::PlaySoundWave(ACharacter* InOwner)
