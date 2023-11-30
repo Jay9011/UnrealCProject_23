@@ -21,11 +21,17 @@ public:
 	EHitType HitType = EHitType::Normal;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool isAirborne = false;
+
+	UPROPERTY(EditAnywhere, Category = "Damage")
 	FVector DamagedLaunch = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	bool bCanMove = true;
 
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool bSuspensionInAir = false;
+	
 	UPROPERTY(EditAnywhere, Category = "Attaker")
 	bool bAttackerSuspensionAir = true;
 	
@@ -121,9 +127,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	bool bGuardBreakable = false;
-	
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	bool bSuspensionInAir = false;
 	
 	// 데미지 관련 데이터 셋
 	UPROPERTY(EditAnywhere, Category = "Damage")

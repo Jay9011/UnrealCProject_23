@@ -108,12 +108,23 @@ void ACEnemy::Hitted()
 		// 밀려나는 효과 (사망일때에는 처리 안함)
 		if (!StatusComponent->IsDead())
 		{
-			FVector RotatedLaunch = LookAtRotation.RotateVector(HitData->DamagedLaunch);
+			FVector LaunchPower = HitData->DamagedLaunch;
+			bool bXYOverride = false;
+			bool bZOverride = false;
 			
-			LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, false, false);
+			// 만약 SuspensionInAir가 true면 z축에 대해서만 밀려나게 한다.
+			if (HitData->bSuspensionInAir)
+			{
+				LaunchPower.X = 0;
+				LaunchPower.Y = 0;
+				bXYOverride = true;
+			}
+			
+			FVector RotatedLaunch = LookAtRotation.RotateVector(LaunchPower);
+			LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, bXYOverride, bZOverride);
 
-			// 만약 Lauench 방향이 Z 방향이 존재한다면 피격으로 인해 캐릭터가 뒤로 넘어지는 효과를 준다.
-			if (RotatedLaunch.Z > 0.f && !!Air)
+			// 만약 isAirborne이 true면 피격으로 인해 캐릭터가 뒤로 넘어지는 효과를 준다.
+			if (!!Air && HitData->isAirborne)
 			{
 				Air->SetAirborneMode();
 			}

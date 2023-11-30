@@ -1,6 +1,7 @@
 #include "Components/CAirComponent.h"
 
 #include "CMovementComponent.h"
+#include "CStateComponent.h"
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 
@@ -82,7 +83,9 @@ void UCAirComponent::SetLandMode()
 	{
 		// 적에 의해 날아가는 상태라면, 넉다운 상태로 변경.
 		if (AirState == EAirState::Airborne)
+		{
 			MovementComponent->SetKnockDownMode();
+		}
 		else
 			MovementComponent->SetStandingMode();		
 	}
