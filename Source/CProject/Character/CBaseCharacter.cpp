@@ -1,6 +1,7 @@
 #include "Character/CBaseCharacter.h"
 
 #include "AITypes.h"
+#include "Components/CAirComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -33,8 +34,11 @@ void ACBaseCharacter::BeginPlay()
 	State->OnStateTypeChanged.AddDynamic(this, &ACBaseCharacter::OnStateTypeChanged);
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
-	MovementComponent->GravityScale = 2;
 	MovementComponent->bUseSeparateBrakingFriction = true;
-
-	
+	MovementComponent->GravityScale = 2;
+	UCAirComponent* AirComponent = Cast<UCAirComponent>(GetComponentByClass(UCAirComponent::StaticClass()));
+	if (!!AirComponent)
+	{
+		AirComponent->UpdateOriginalGravityScale();
+	}
 }

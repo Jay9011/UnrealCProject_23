@@ -5,6 +5,24 @@
 #include "UObject/NoExportTypes.h"
 #include "CWeaponStructures.generated.h"
 
+/*
+ * @brief Gravity 관련 데이터 셋
+ */
+USTRUCT()
+struct FGravityData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float GravityScale = 1;
+
+	UPROPERTY(EditAnywhere)
+	FVector SelfVelocity = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere)
+	float RecoveryTime = 0;
+};
+
 /**
  * @brief DamageEvent와 관련된 데이터 셋
  */
@@ -31,12 +49,18 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	bool bSuspensionInAir = false;
-	
-	UPROPERTY(EditAnywhere, Category = "Attaker")
-	bool bAttackerSuspensionAir = true;
+
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	FGravityData GravityData;
 	
 	UPROPERTY(EditAnywhere, Category = "Attaker")
 	FVector AttackerLaunch = FVector::ZeroVector;
+	
+	UPROPERTY(EditAnywhere, Category = "Attaker")
+	bool bAttackerSuspensionAir = true;
+
+	UPROPERTY(EditAnywhere, Category = "Attaker")
+	FGravityData AttackerGravityData;
 	
 	// 피격시 피격자의 행동 정보
 	UPROPERTY(EditAnywhere, Category = "Animation")

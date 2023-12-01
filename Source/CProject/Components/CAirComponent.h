@@ -38,6 +38,11 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Air")
 	void RecoveryGravityScale();
+
+public:
+	void UpdateOriginalGravityScale();
+
+	void GravityRecoveryTimerCancel(FTimerManager& InTimerManager);
 	
 /*
  * Delegate

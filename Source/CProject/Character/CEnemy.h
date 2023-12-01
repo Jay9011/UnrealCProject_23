@@ -26,6 +26,7 @@ public:
 	
 public:
 	virtual void PlayHittedMontage() override;
+	void AirSuspension(ACharacter& Character, ACharacter& Attacker);
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
@@ -52,6 +53,9 @@ private:
 	class UHitMontageComponent* HitMontage;
 	class UCMovementComponent* MovementComponent;
 	class UCStatusComponent* StatusComponent;
+
+private:
+	float MinimumLiftZ = 100.f;
 
 /*
  * IDebugCollector

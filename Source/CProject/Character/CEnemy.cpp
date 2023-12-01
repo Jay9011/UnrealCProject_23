@@ -41,7 +41,15 @@ void ACEnemy::Falling()
 	// 공중 상태 변경 전인 경우
 	if (!Air->IsAir())
 	{
-		Air->SetFallMode();
+		// 다운 상태에서 공중으로 띄워지는 경우
+		if (!!MovementComponent && MovementComponent->IsKnockDown())
+		{
+			Air->SetAirborneMode();
+		}
+		else
+		{
+			Air->SetFallMode();
+		}
 	}
 }
 
@@ -49,18 +57,64 @@ void ACEnemy::PlayHittedMontage()
 {
 	FHitData* HitData = Damaged.Event->HitData;
 	
-	if (!!MovementComponent)
+	if (MovementComponent != nullptr)
 		HitData->bCanMove ? MovementComponent->Move() : MovementComponent->Stop();
-	
+
+	// 공중 상태에서 피격되는 경우
 	if (!!Air && Air->IsAir())
 	{
-		if (!!HitMontage)
+		if (HitMontage != nullptr)
 			HitMontage->Play(EHitType::UpperNormal, 1.f, "HitPoint");
+
+		AirSuspension(*this, *Damaged.Character);
+
+		return;
 	}
-	else
+	
+	if (!!HitMontage)
 	{
-		if (!!HitMontage)
-			HitMontage->Play(HitData->HitType, HitData->PlayRate);
+		// 누워있는 상태
+		if(!!MovementComponent && MovementComponent->IsKnockDown())
+		{
+			// 누워있는 상태에서 공중으로 띄워지는 경우
+			if(HitData->DamagedLaunch.Z >= MinimumLiftZ)
+			{
+				if(Air != nullptr)
+					Air->SetAirborneMode();
+				MovementComponent->SetStandingMode();
+				HitMontage->Play(EHitType::UpperNormal);
+			}
+			else
+			{
+				HitMontage->Play(EHitType::FrontDownLight);				
+			}
+			
+			return;
+		}// if(MovementComponent->IsKnockDown())
+
+		
+		HitMontage->Play(HitData->HitType, HitData->PlayRate);
+		
+	}// if (!!HitMontage)
+	
+}// void ACEnemy::PlayHittedMontage()
+
+void ACEnemy::AirSuspension(ACharacter& Character, ACharacter& Attacker)
+{
+	FHitData* HitData = Damaged.Event->HitData;
+	
+	if (HitData->bSuspensionInAir && !!Air)
+	{
+		Air->SetGravityScale(HitData->GravityData.GravityScale, HitData->GravityData.SelfVelocity, HitData->GravityData.RecoveryTime);
+	}
+
+	if (HitData->bAttackerSuspensionAir)
+	{
+		UCAirComponent* AttackerAir = Cast<UCAirComponent>(Attacker.GetComponentByClass(UCAirComponent::StaticClass()));
+		if (!!AttackerAir)
+		{
+			AttackerAir->SetGravityScale(HitData->AttackerGravityData.GravityScale, HitData->AttackerGravityData.SelfVelocity, HitData->AttackerGravityData.RecoveryTime);
+		}
 	}
 }
 
@@ -104,39 +158,38 @@ void ACEnemy::Hitted()
 		HitData->PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
 
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Damaged.Character->GetActorLocation());
-
+		LookAtRotation.Pitch = GetActorRotation().Pitch;
+		LookAtRotation.Roll = GetActorRotation().Roll;
+		
 		// 밀려나는 효과 (사망일때에는 처리 안함)
 		if (!StatusComponent->IsDead())
 		{
 			FVector LaunchPower = HitData->DamagedLaunch;
-			bool bXYOverride = false;
-			bool bZOverride = false;
 			
-			// 만약 SuspensionInAir가 true면 z축에 대해서만 밀려나게 한다.
+			// 만약 SuspensionInAir가 true면 XY축에 대해서만 밀려나게 한다.
 			if (HitData->bSuspensionInAir)
 			{
-				LaunchPower.X = 0;
-				LaunchPower.Y = 0;
-				bXYOverride = true;
+				LaunchPower = FVector::ZeroVector;
 			}
 			
 			FVector RotatedLaunch = LookAtRotation.RotateVector(LaunchPower);
-			LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, bXYOverride, bZOverride);
+			LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, false, false);
 
 			// 만약 isAirborne이 true면 피격으로 인해 캐릭터가 뒤로 넘어지는 효과를 준다.
 			if (!!Air && HitData->isAirborne)
 			{
 				Air->SetAirborneMode();
 			}
-			
-			SetActorRotation(LookAtRotation);
-		}
 
-		// 히트시 공격자에게 가해지는 효과
-		if (HitData->AttackerLaunch != FVector::ZeroVector)
-		{
-			FVector RotatedAttackerLaunch = LookAtRotation.RotateVector(HitData->AttackerLaunch);
-			Damaged.Character->LaunchCharacter({RotatedAttackerLaunch.X, RotatedAttackerLaunch.Y, RotatedAttackerLaunch.Z}, true, true);
+			// 공격자 방향으로 회전
+			SetActorRotation(LookAtRotation);
+
+			// 히트시 공격자에게 가해지는 효과
+			if (HitData->AttackerLaunch != FVector::ZeroVector)
+			{
+				FVector RotatedAttackerLaunch = LookAtRotation.RotateVector(HitData->AttackerLaunch);
+				Damaged.Character->LaunchCharacter({RotatedAttackerLaunch.X, RotatedAttackerLaunch.Y, RotatedAttackerLaunch.Z}, true, true);
+			}
 		}
 	}
 

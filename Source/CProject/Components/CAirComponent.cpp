@@ -1,7 +1,6 @@
 #include "Components/CAirComponent.h"
 
 #include "CMovementComponent.h"
-#include "CStateComponent.h"
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 
@@ -29,11 +28,8 @@ void UCAirComponent::SetGravityScale(float InGravityScale, FVector InVelocity, f
 	FTimerManager& TimerManager = OwnerCharacter->GetWorldTimerManager();
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindUFunction(this, FName("RecoveryGravityScale"));
-	
-	// 만약 타이머가 실행되기 전이라면, 현재 중력은 복구되지 않았으므로, 복구되지 않은 중력을 저장하지 않는다.
-	if (TimerManager.IsTimerActive(GravityRecoveryTimerHandle))
-		OriginalGravityScale = MovementComponent->GravityScale;
-	
+
+	// 중력 적용
 	MovementComponent->GravityScale = InGravityScale;
 	MovementComponent->Velocity = InVelocity;
 	
@@ -46,13 +42,26 @@ void UCAirComponent::RecoveryGravityScale()
 	UCharacterMovementComponent* MovementComponent = OwnerCharacter->GetCharacterMovement();
 
 	CheckNull(MovementComponent);
-	// 만약 타이머가 실행되기 전이라면, 타이머를 중지하고 중력을 바로 복구 시켜준다.
+	MovementComponent->GravityScale = OriginalGravityScale;
+	
+	// 만약, 진행중인 타이머가 있다면 취소한다. (타이머 실행 전 함수가 호출되었을 경우)
 	FTimerManager& TimerManager = OwnerCharacter->GetWorldTimerManager();
-	if (!TimerManager.IsTimerActive(GravityRecoveryTimerHandle))
+	GravityRecoveryTimerCancel(TimerManager);
+}
+
+void UCAirComponent::UpdateOriginalGravityScale()
+{
+	if (!!OwnerCharacter)
 	{
-		TimerManager.ClearTimer(GravityRecoveryTimerHandle);
-		MovementComponent->GravityScale = OriginalGravityScale;
-		return;
+		OriginalGravityScale = OwnerCharacter->GetCharacterMovement()->GravityScale;
+	}
+}
+
+void UCAirComponent::GravityRecoveryTimerCancel(FTimerManager& InTimerManager)
+{
+	if (InTimerManager.IsTimerActive(GravityRecoveryTimerHandle))
+	{
+		InTimerManager.ClearTimer(GravityRecoveryTimerHandle);
 	}
 }
 

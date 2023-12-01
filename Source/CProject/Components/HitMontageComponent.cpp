@@ -33,13 +33,19 @@ void UHitMontageComponent::BeginPlay()
 void UHitMontageComponent::Play(EHitType InType, const float InPlayRate, const FName& InSectionName)
 {
 	FHitMontageData* data = MontagesData[static_cast<int32>(InType)];
+	float PlayRate = InPlayRate;
+	if (PlayRate == 0.f)
+	{
+		PlayRate = data->PlayRate;
+	}
+	
 	if (!!data)
 	{
-		PlayAnimMontage(InType, InPlayRate, InSectionName);
+		PlayAnimMontage(InType, PlayRate, InSectionName);
 	}
 	else
 	{
-		PlayAnimMontage(EHitType::Normal, InPlayRate, InSectionName);
+		PlayAnimMontage(EHitType::Normal, PlayRate, InSectionName);
 	}
 }
 
