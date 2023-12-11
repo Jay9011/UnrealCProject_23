@@ -11,4 +11,5 @@ class CPROJECT_API ACGameMode : public AGameModeBase
 
 public:
 	ACGameMode();
+	virtual void StartPlay() override;
 };
