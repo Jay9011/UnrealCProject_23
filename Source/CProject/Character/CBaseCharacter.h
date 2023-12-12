@@ -33,10 +33,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCMontagesComponent* Montages;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	uint8 TeamID = 0;
+	
 /*
  * Getter
  */
 public:
 	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Base")
 	FORCEINLINE class UCStateComponent* GetStateComponent() const { return State; };
+
+	FORCEINLINE uint8 GetTeamID() const { return TeamID; };
 };

@@ -64,7 +64,10 @@ void ACEnemy::PlayHittedMontage()
 	if (!!Air && Air->IsAir())
 	{
 		if (HitMontage != nullptr)
+		{
 			HitMontage->Play(EHitType::UpperNormal, 1.f, "HitPoint");
+			UE_LOG(LogTemp, Log, TEXT("PlayHittedMontage : UpperNormal"));
+		}
 
 		AirSuspension(*this, *Damaged.Character);
 

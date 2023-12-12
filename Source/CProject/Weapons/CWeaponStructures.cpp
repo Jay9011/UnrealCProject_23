@@ -108,3 +108,23 @@ void FDoActionData::DoAction(ACharacter* InOwner)
 		CHelpers::PlayEffect(InOwner->GetWorld(), Effect, Transform);
 	}// if(!!Effect)
 }
+
+/* ========================================================================================================================================
+ * FActionData
+ * ========================================================================================================================================
+ */
+void FActionData::InitActionData()
+{
+	if (ActionDataTable != nullptr)
+	{
+		TArray<FDoActionData*> ActionDataArray;
+		ActionDataTable->GetAllRows<FDoActionData>("", ActionDataArray);
+
+		for (FDoActionData* Data : ActionDataArray)
+			ActionData.Add(*Data);
+	}
+	else if (ActionData.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ActionDataTable is nullptr"));
+	}
+}

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "UDirectionalUtilities.generated.h"
 
 USTRUCT(BlueprintType)
@@ -76,5 +77,40 @@ public:
 		FQuat CurrentRot = FQuat(InCurrentRotation);
 
 		return FRotator(TargetRot * CurrentRot);
+	}
+};
+/*
+ * @breif 위치와 관련된 유틸리티
+ */
+UCLASS()
+class UCPositionUtil : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+public:
+	// 현재 캐릭터의 카메라 컴포넌트를 가지고 화면의 중심부터 InLength 만큼의 거리에 해당하는 Start와 End를 구한다.
+	UFUNCTION(BlueprintPure, Category = "Position")
+	static void GetScreenCenterLocationWithACharacter(const ACharacter* InOwnerCharacter, float InLength, float InRadius, FVector& OutStart, FVector& OutEnd)
+	{
+		UCameraComponent* CameraComponent = Cast<UCameraComponent>(InOwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+		if (CameraComponent == nullptr)
+			return;
+
+		USpringArmComponent* SpringArmComponent = Cast<USpringArmComponent>(CameraComponent->GetAttachParent());
+		// 스프링 암을 사용하는 경우
+		if (SpringArmComponent != nullptr)
+		{
+			// 카메라 위치를 기준으로 스프링암 길이만큼 떨어진 위치를 구한다. 
+			OutStart = CameraComponent->GetComponentLocation() + (CameraComponent->GetForwardVector() * SpringArmComponent->TargetArmLength);
+		}
+		// 스프링 암을 사용하지 않는 경우
+		else
+		{
+			// 스프링암이 없다면, 카메라 위치가 시작 위치가 된다.
+			OutStart = CameraComponent->GetComponentLocation();
+		}
+		
+		// 카메라 위치를 기준으로 InLength 만큼 떨어진 위치를 구한다.
+		OutEnd = CameraComponent->GetComponentLocation() + (CameraComponent->GetForwardVector() * InLength);
 	}
 };

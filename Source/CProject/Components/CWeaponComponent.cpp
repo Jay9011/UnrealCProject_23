@@ -10,6 +10,8 @@
 #include "Weapons/CDoSubAction.h"
 #include "Weapons/CEquipment.h"
 
+#define SELF_DEBUG true
+
 UCWeaponComponent::UCWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -168,12 +170,16 @@ bool UCWeaponComponent::IsIdleMode()
 #if WITH_EDITOR
 bool UCWeaponComponent::IsDebugEnable()
 {
+#if SELF_DEBUG
 	if (IsUnarmedMode())
 	{
 		return false;
 	}
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 FDebugInfo UCWeaponComponent::GetDebugInfo()
@@ -196,12 +202,12 @@ FDebugInfo UCWeaponComponent::GetDebugInfo()
 		}
 	}
 	
-	// DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
-	// DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
-	// DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
-	// DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
-	// DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
-	// DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
+	DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
 	
 	return DebugInfo;
 }

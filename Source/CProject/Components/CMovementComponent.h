@@ -67,6 +67,9 @@ public:
 	void SetCrouchMode();
 	void SetKnockDownMode();
 
+	void OnCrouch();
+	void OffCrouch();
+
 	/*
 	 * Delegate 실행 함수
 	 */
@@ -100,7 +103,8 @@ public:
 	FORCEINLINE bool IsStand() const { return StandingType == EStandingType::Standing; }
 	FORCEINLINE bool IsCrouch() const { return StandingType == EStandingType::Crouch; }
 	FORCEINLINE bool IsKnockDown() const { return StandingType == EStandingType::KnockDown; }
-	
+
+	FORCEINLINE bool IsDown() const { return StandingType == EStandingType::KnockDown; }
 /*
  * Delegate
  */

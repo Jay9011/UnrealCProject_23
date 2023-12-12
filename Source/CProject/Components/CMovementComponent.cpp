@@ -121,6 +121,14 @@ void UCMovementComponent::SetKnockDownMode()
 	ChangeStandingType(EStandingType::KnockDown);
 }
 
+void UCMovementComponent::OnCrouch()
+{
+}
+
+void UCMovementComponent::OffCrouch()
+{
+}
+
 void UCMovementComponent::ChangeStandingType(EStandingType InType)
 {
 	EStandingType PrevType = StandingType;

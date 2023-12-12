@@ -18,4 +18,3 @@ void UCDoSubAction::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InO
 	StateComponent = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	MovementComponent = Cast<UCMovementComponent>(OwnerCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
 }
-

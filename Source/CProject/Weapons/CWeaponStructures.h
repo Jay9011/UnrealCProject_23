@@ -171,6 +171,27 @@ public:
 	FHitData* HitData;
 };
 
+/*
+ * @brief Action 데이터 관리
+ */
+USTRUCT()
+struct FActionData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UDataTable* ActionDataTable = nullptr;
+	
+	UPROPERTY(EditAnywhere, Category = "Actions")
+	TArray<FDoActionData> ActionData;
+
+	// 현재 데미지를 입은 캐릭터들
+	TArray<class ACharacter*> DamagedCharacters;
+
+public:
+	void InitActionData();
+};
+
 UCLASS()
 class CPROJECT_API UCWeaponStructures : public UObject
 {
