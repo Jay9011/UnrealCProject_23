@@ -3,18 +3,18 @@
 #include "CoreMinimal.h"
 #include "Interface/FHitResultInterface.h"
 #include "Weapons/CDoSubAction.h"
-#include "CDoSubAction_Blade_GndToDown.generated.h"
+#include "CDoSubAction_Blade_AirToDown.generated.h"
 
 /**
- * @brief 땅에서 땅으로 내려찍는 SubAction
+ * @brief 공중에서 땅으로 내려찍는 SubAction
  */
 UCLASS(Blueprintable)
-class CPROJECT_API UCDoSubAction_Blade_GndToDown : public UCDoSubAction
+class CPROJECT_API UCDoSubAction_Blade_AirToDown : public UCDoSubAction
 	, public IFHitResultInterface
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
 
 public:
@@ -34,19 +34,18 @@ public:
 	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
 	UFUNCTION()
 	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
-	
-	
-public:
+
+/*
+ * Path 관련 데이터
+ */
+private:
+	FHitResult TargetHitResult;
 	virtual void SetFHitResult(const FHitResult& InHitResult) override
 	{
 		TargetHitResult = InHitResult;
 	}
 	virtual const FHitResult& GetFHitResult() const override { return TargetHitResult; }
-
-private:
-	FHitResult TargetHitResult;
-	float MidHeight = 400.f;
-
+	
 	TWeakObjectPtr<class UCPathComponent> OwnerPathComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Path")
@@ -58,10 +57,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Path")
 	float Speed = 10.f;
 
-/*
- * 공격형 액션 관리
- */
-protected:
+	UPROPERTY(EditAnywhere, Category = "Path")
+	float MidHeightRate = 0.7f;
+	
+	/*
+	 * Action 관련 데이터
+	 */
+private:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	FActionData ActionData;
 };

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "UDirectionalUtilities.generated.h"
@@ -112,5 +113,21 @@ public:
 		
 		// 카메라 위치를 기준으로 InLength 만큼 떨어진 위치를 구한다.
 		OutEnd = CameraComponent->GetComponentLocation() + (CameraComponent->GetForwardVector() * InLength);
+	}
+
+	UFUNCTION(BlueprintPure, Category = "Position")
+	static void GetEndPointExcludingRadius(const AActor* InOwner, const AActor* InTarget, FVector& OutEndPoint)
+	{
+		if (!InOwner || !InTarget)
+			return;
+		
+		FVector OwnerLocation = InOwner->GetActorLocation();
+		FVector TargetLocation = InTarget->GetActorLocation();
+
+		OutEndPoint = OwnerLocation - TargetLocation;
+		OutEndPoint.Z = 0;
+		OutEndPoint = OutEndPoint.GetSafeNormal();
+		OutEndPoint *= Cast<UCapsuleComponent>(InOwner->GetRootComponent())->GetScaledCapsuleRadius();
+		OutEndPoint = TargetLocation + OutEndPoint;
 	}
 };

@@ -117,13 +117,28 @@ void UCDoSubAction_Blade::PerformAerialStanceAction()
 	if (TargetMovementComponent->IsFalling())
 	{
 		if(AirToAirAction != nullptr)
+		{
+			// IFHitResult 인터페이스가 구현되어 있으면 FHitResult를 전달한다.
+			IFHitResultInterface* IFHitResult = Cast<IFHitResultInterface>(AirToAirAction);
+			if (IFHitResult != nullptr)
+			{
+				IFHitResult->SetFHitResult(HitResult);
+			}
 			AirToAirAction->Pressed();
-
+		}
 		return;
 	}
 	// 만약 타겟이 지상에 있다면
 	if(AirToGroundAction != nullptr)
+	{
+		// IFHitResult 인터페이스가 구현되어 있으면 FHitResult를 전달한다.
+		IFHitResultInterface* IFHitResult = Cast<IFHitResultInterface>(AirToGroundAction);
+		if (IFHitResult != nullptr)
+		{
+			IFHitResult->SetFHitResult(HitResult);
+		}
 		AirToGroundAction->Pressed();
+	}
 
 	return;
 }

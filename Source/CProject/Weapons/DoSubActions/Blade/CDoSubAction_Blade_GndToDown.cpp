@@ -1,12 +1,12 @@
 #include "Weapons/DoSubActions/Blade/CDoSubAction_Blade_GndToDown.h"
 
 #include "Components/CAirComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CPathComponent.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
+#include "Utilities/UDirectionalUtilities.h"
 #include "Weapons/CAttachment.h"
 
 void UCDoSubAction_Blade_GndToDown::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner,
@@ -35,31 +35,26 @@ void UCDoSubAction_Blade_GndToDown::Pressed()
 	CheckNull(TargetHitResult.Actor.Get());
 	CheckNull(OwnerPathComponent);
 
-	FVector TargetLocation = TargetHitResult.Actor->GetActorLocation();
-	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-
-	// 타겟의 캡슐 반지름만큼 빠진 위치를 구한다.
-	FVector EndPoint = OwnerLocation - TargetLocation;
-	EndPoint.Z = 0;
-	EndPoint = EndPoint.GetSafeNormal();
-	EndPoint *= Cast<UCapsuleComponent>(OwnerCharacter->GetRootComponent())->GetScaledCapsuleRadius();
-	EndPoint = TargetLocation + EndPoint;
+	FVector EndPoint;
+	UCPositionUtil::GetEndPointExcludingRadius(OwnerCharacter, TargetHitResult.Actor.Get(), EndPoint);
 
 	// 중간에 이동할 높이에 대한 벡터를 구한다. (점프)
+	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+	FVector TargetLocation = TargetHitResult.Actor->GetActorLocation();
 	FVector MidPoint = (TargetLocation + OwnerLocation) * 0.5f;
 	MidPoint.Z = MidHeight;
 
 	OwnerPathComponent->MakePath(OwnerLocation, EndPoint, ESplineCoordinateSpace::World, true, MidPoint);
+	OwnerCharacter->Jump();
+	OwnerPathComponent->MoveAlongPath(Speed, Rate, PathCurve);
 
+	
 	StateComponent->SetActionMode();
 	StateComponent->OnSubActionMode();
 	
 	OwnerWeaponAsset->SetCurrentAction(this);
 	if (ActionData.ActionData.Num() > 0)
 		ActionData.ActionData[0].DoAction(OwnerCharacter);
-	
-	OwnerCharacter->Jump();
-	OwnerPathComponent->MoveAlongPath(Speed, Rate, PathCurve);
 }
 
 void UCDoSubAction_Blade_GndToDown::End_Action()
