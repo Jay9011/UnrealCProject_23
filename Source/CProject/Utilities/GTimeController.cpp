@@ -22,6 +22,14 @@ void UGTimeController::SetTimeDilation(const UWorld* InWorld, float InTimeDilati
 		}
 	}
 
+	
+	if (FMath::IsNearlyZero(InDuration))
+		return;
+
+	
+	/*
+	 * InDuration 이 0이 아닐 경우, InDuration 이 지난 후에 TimeDilation을 원래대로 돌려준다.
+	 */
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([=]()
 	{
