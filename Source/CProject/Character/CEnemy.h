@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/CBaseCharacter.h"
+#include "DebugHeader.h"
 #include "Components/IStateNotify.h"
 #include "CEnemy.generated.h"
 
@@ -49,9 +50,12 @@ private:
 	} Damaged;
 
 private:
+	UPROPERTY()
 	class UCAirComponent* Air;
 	class UHitMontageComponent* HitMontage;
+	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
+	UPROPERTY()
 	class UCStatusComponent* StatusComponent;
 
 private:
@@ -61,11 +65,14 @@ private:
  * IDebugCollector
  */
 #if WITH_EDITOR
+private:
+	UPROPERTY()
+	class UDebuggerComponent* Debugger;
+#endif
+
+#if DEBUG_DEFAULT_INFO
 public:
 	virtual bool IsDebugEnable() override;
 	virtual FDebugInfo GetDebugInfo() override;
-
-private:
-	class UDebuggerComponent* Debugger;
 #endif
 };

@@ -3,7 +3,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "MyDebugger/IDebugCollector.h"
+#include "DebugHeader.h"
 #include "CWeaponComponent.generated.h"
+
+class UCWeaponAsset;
 
 /**
  * @brief 무기 타입
@@ -15,10 +18,22 @@ enum class EWeaponType : uint8
 	Max UMETA(DisplayName = "Unarmed") // UEnum으로 문자열로 표시될 때 Unarmed로 표시되도록 함
 };
 
+/**
+ * @brief 장비 타입
+ */
+UENUM(BlueprintType)
+enum class EEquipSlotType : uint8
+{
+	MainWeapon UMETA(DisplayName = "Main Weapon"),
+	SubWeapon UMETA(DisplayName = "Sub Weapon"),
+	Max UMETA(DisplayName = "UnEquipped")
+};
+
 /*
  * Delegate
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquipSlotTypeChanged, EEquipSlotType, InPrevType, EEquipSlotType, InNewType);
 
 /**
  * @brief 무기 컴포넌트
@@ -39,15 +54,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	void SetMode(EWeaponType InType);
-	void ChangeType(EWeaponType InType);
+	void SetMode(EEquipSlotType InSlotType);
+	void ChangeType(EEquipSlotType InType);
 
 public:
 	// 액션 동작
+	UFUNCTION(BlueprintCallable, Category = "Action")
 	void DoAction();
 	// 보조 액션 동작 중 누르고 있는 동작
+	UFUNCTION(BlueprintCallable, Category = "Action")
 	void SubAction_Pressed();
 	// 보조 액션 동작 중 버튼을 뗄 때의 동작
+	UFUNCTION(BlueprintCallable, Category = "Action")
 	void SubAction_Released();
 	
 public:
@@ -55,43 +73,59 @@ public:
 	class UCEquipment* GetEquipment();
 	class UCDoAction* GetDoAction();
 	class UCDoSubAction* GetSubAction();
+	
 	class IIExcuteAction* GetCurrentAction();
 	class IIExcuteAction* GetReservedAction();
 	
 public:
 	void SetUnarmedMode();
-	void SetBladeMode();
+	
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SetMainWeaponMode();
 	
 private:
 	bool IsIdleMode();
+
+public:
+	FWeaponTypeChanged OnWeaponTypeChanged;
+	FEquipSlotTypeChanged OnEquipSlotTypeChanged;
 
 /*
  * Member
  */
 private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
-	class UCWeaponAsset* WeaponAssets[static_cast<int32>(EWeaponType::Max)];
+	class UCWeaponAsset* WeaponAssets[static_cast<int32>(EEquipSlotType::Max)] = {nullptr,};
+
+	class UCWeaponObject* WeaponObject[static_cast<int32>(EEquipSlotType::Max)] = {nullptr,};
 	
 private:
-	class ACharacter* OwnerCharacter;
-	EWeaponType Type = EWeaponType::Max;
+	UPROPERTY()
+	class ACharacter* OwnerCharacter = nullptr;
 
-public:
-	FWeaponTypeChanged OnWeaponTypeChanged;
+	EEquipSlotType Type = EEquipSlotType::Max;
 
 /*
  * Getter
  */
+	// 장착 부위 타입
 public:
-	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::Max; }
-	FORCEINLINE bool IsBladeMode() { return Type == EWeaponType::Blade; }
-	
-	FORCEINLINE EWeaponType GetType() { return Type; }
+	FORCEINLINE bool IsUnarmedMode() const { return Type == EEquipSlotType::Max; }
+	FORCEINLINE bool IsMainWeaponMode() const { return Type == EEquipSlotType::MainWeapon; }
+	FORCEINLINE bool IsSubWeaponMode() const { return Type == EEquipSlotType::SubWeapon; }
 
-/*
+	FORCEINLINE EEquipSlotType GetType() const { return Type; }
+	
+	// 무기 타입
+public:
+	FORCEINLINE bool IsBladeMode() const;
+
+	FORCEINLINE EWeaponType GetWeaponType() const;
+
+	/*
  * Debugger
  */
-#if WITH_EDITOR
+#if DEBUG_WEAPON_COMPONENT
 public:
 	virtual bool IsDebugEnable() override;
 	virtual FDebugInfo GetDebugInfo() override;

@@ -15,7 +15,7 @@
 
 ACPlayer::ACPlayer()
 {
-#if WITH_EDITOR
+#if DEBUG_DEFAULT_INFO
 	PrimaryActorTick.bCanEverTick = true;
 #endif
 	
@@ -43,7 +43,7 @@ ACPlayer::ACPlayer()
 	GetMesh()->SetAnimClass(AnimInstance);
 
 #if WITH_EDITOR
-	Debugger = this->CreateDefaultSubobject<UDebuggerComponent>("Debugger");
+	Debugger = CreateDefaultSubobject<UDebuggerComponent>("Debugger");
 #endif
 }
 
@@ -54,7 +54,7 @@ void ACPlayer::BeginPlay()
 	Movement->SetSpeed(ESpeedType::Run);
 	Movement->DisableControlRotation();
 
-#if WITH_EDITOR
+#if DEBUG_DEFAULT_INFO
 	Debugger->AddCollector(this);
 #endif
 }
@@ -78,7 +78,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SubAction_Pressed);
 	PlayerInputComponent->BindAction("SubAction", EInputEvent::IE_Released, Weapon, &UCWeaponComponent::SubAction_Released);
 	
-	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetBladeMode);
+	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetMainWeaponMode);
 }
 
 void ACPlayer::Falling()
@@ -109,11 +109,11 @@ void ACPlayer::End_Evade()
 	Evade->OnEndEvadeDelegate.Broadcast();
 }
 
-#if WITH_EDITOR
+#if DEBUG_DEFAULT_INFO
 FDebugInfo ACPlayer::GetDebugInfo()
 {
 	FDebugInfo Info;
-	Info.Priority = -1;
+	Info.Priority = static_cast<int32>(DEBUG_NUMS::DEFAULT_INFO);
 
 	// // InputDir의 X와 Y만 출력
 	// FVector InputDir = {GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"), 0}; 

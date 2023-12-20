@@ -9,8 +9,8 @@
 #include "Weapons/CDoAction.h"
 #include "Weapons/CDoSubAction.h"
 #include "Weapons/CEquipment.h"
-
-#define SELF_DEBUG true
+#include "Weapons/CWeaponObject.h"
+#include "Weapons/CWeaponAsset.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -23,16 +23,16 @@ void UCWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
-	for(int32 i = 0; i < static_cast<int32>(EWeaponType::Max); i++)
+	for(int32 i = 0; i < static_cast<int32>(EEquipSlotType::Max); i++)
 	{
 		//WeaponAsset이 존재한다면 각 WeaponAsset의 BeginPlay를 호출한다.
 		if(!!WeaponAssets[i])
 		{
-			WeaponAssets[i]->BeginPlay(OwnerCharacter);
+			WeaponAssets[i]->BeginPlay(OwnerCharacter, &WeaponObject[i]);
 		}
 	}
 
-#if WITH_EDITOR
+#if DEBUG_WEAPON_COMPONENT
 	if(UDebuggerComponent* Debugger = GetOwner()->FindComponentByClass<UDebuggerComponent>())
 		Debugger->AddCollector(this);
 #endif
@@ -43,14 +43,14 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(!!GetSubAction())
-		GetSubAction()->Tick(DeltaTime);
+	if(UCDoSubAction* SubAction = GetSubAction())
+		SubAction->Tick(DeltaTime);
 }
 
-void UCWeaponComponent::SetMode(EWeaponType InType)
+void UCWeaponComponent::SetMode(EEquipSlotType InSlotType)
 {
-	//같은 타입이라면 무기를 해제한다.
-	if (Type == InType)
+	//같은 슬롯 타입이라면 무기를 해제한다.
+	if (Type == InSlotType)
 	{
 		SetUnarmedMode();
 		return;
@@ -61,22 +61,26 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		GetEquipment()->Unequip();
 	}
 
-	if(!!WeaponAssets[static_cast<int32>(InType)])
+	if(!!WeaponObject[static_cast<int32>(InSlotType)])
 	{
-		WeaponAssets[static_cast<int32>(InType)]->GetEquipment()->Equip();
+		WeaponObject[static_cast<int32>(InSlotType)]->GetEquipment()->Equip();
 
-		ChangeType(InType);
+		ChangeType(InSlotType);
 	}
 }
 
-void UCWeaponComponent::ChangeType(EWeaponType InType)
+void UCWeaponComponent::ChangeType(EEquipSlotType InType)
 {
-	EWeaponType PrevType = Type;
+	EEquipSlotType PrevType = Type;
 	Type = InType;
 
+	if(OnEquipSlotTypeChanged.IsBound())
+	{
+		OnEquipSlotTypeChanged.Broadcast(PrevType, Type);
+	}
 	if(OnWeaponTypeChanged.IsBound())
 	{
-		OnWeaponTypeChanged.Broadcast(PrevType, Type);
+		OnWeaponTypeChanged.Broadcast(WeaponAssets[static_cast<int32>(PrevType)]->GetWeaponType(), WeaponAssets[static_cast<int32>(Type)]->GetWeaponType());
 	}
 }
 
@@ -103,49 +107,49 @@ void UCWeaponComponent::SubAction_Released()
 ACAttachment* UCWeaponComponent::GetAttachment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
-	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr)
 
-	return WeaponAssets[static_cast<int32>(Type)]->GetAttachment();
+	return WeaponObject[static_cast<int32>(Type)]->GetAttachment();
 }
 
 UCEquipment* UCWeaponComponent::GetEquipment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
-	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr)
 
-	return WeaponAssets[static_cast<int32>(Type)]->GetEquipment();
+	return WeaponObject[static_cast<int32>(Type)]->GetEquipment();
 }
 
 UCDoAction* UCWeaponComponent::GetDoAction()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
-	CheckFalseResult(!!WeaponAssets[static_cast<int32>(Type)], nullptr)
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr)
 
-	return WeaponAssets[static_cast<int32>(Type)]->GetDoAction();
+	return WeaponObject[static_cast<int32>(Type)]->GetDoAction();
 }
 
 UCDoSubAction* UCWeaponComponent::GetSubAction()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr);
 
-	return WeaponAssets[static_cast<int32>(Type)]->GetDoSubAction();
+	return WeaponObject[static_cast<int32>(Type)]->GetDoSubAction();
 }
 
 IIExcuteAction* UCWeaponComponent::GetCurrentAction()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr);
 
-	return WeaponAssets[(int32)Type]->GetCurrentAction();
+	return WeaponObject[static_cast<int32>(Type)]->GetCurrentAction();
 }
 
 IIExcuteAction* UCWeaponComponent::GetReservedAction()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr);
-	CheckFalseResult(!!WeaponAssets[(int32)Type], nullptr);
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr);
 
-	return WeaponAssets[(int32)Type]->GetReservedAction();
+	return WeaponObject[static_cast<int32>(Type)]->GetReservedAction();
 }
 
 void UCWeaponComponent::SetUnarmedMode()
@@ -153,13 +157,13 @@ void UCWeaponComponent::SetUnarmedMode()
 	CheckFalse(IsIdleMode())
 	
 	GetEquipment()->Unequip();
-	ChangeType(EWeaponType::Max);
+	ChangeType(EEquipSlotType::Max);
 }
 
-void UCWeaponComponent::SetBladeMode()
+void UCWeaponComponent::SetMainWeaponMode()
 {
 	CheckFalse(IsIdleMode())
-	SetMode(EWeaponType::Blade);
+	SetMode(EEquipSlotType::MainWeapon);
 }
 
 bool UCWeaponComponent::IsIdleMode()
@@ -167,27 +171,30 @@ bool UCWeaponComponent::IsIdleMode()
 	return Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()))->IsIdleMode();
 }
 
-#if WITH_EDITOR
+bool UCWeaponComponent::IsBladeMode() const
+{ return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType() == EWeaponType::Blade; }
+
+EWeaponType UCWeaponComponent::GetWeaponType() const
+{ return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType(); }
+
+
+#if DEBUG_WEAPON_COMPONENT
 bool UCWeaponComponent::IsDebugEnable()
 {
-#if SELF_DEBUG
 	if (IsUnarmedMode())
 	{
 		return false;
 	}
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 FDebugInfo UCWeaponComponent::GetDebugInfo()
 {
 	FDebugInfo DebugInfo;
-	DebugInfo.Priority = 1;
+	DebugInfo.Priority = static_cast<int32>(DEBUG_NUMS::WEAPON_COMPONENT);
 
-	DebugInfo.Data.Add({"Weapon: " + StaticEnum<EWeaponType>()->GetNameStringByValue(static_cast<uint8>(Type)), FColor::Black});
+	DebugInfo.Data.Add({"Weapon: " + StaticEnum<EWeaponType>()->GetNameStringByValue(static_cast<uint8>(GetWeaponType())), FColor::Black});
 
 	UCDoAction* DoAction = GetDoAction();
 	if (!!DoAction)

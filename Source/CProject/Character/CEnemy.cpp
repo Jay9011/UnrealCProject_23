@@ -27,7 +27,7 @@ void ACEnemy::BeginPlay()
 	MovementComponent = Cast<UCMovementComponent>(GetComponentByClass(UCMovementComponent::StaticClass()));
 	StatusComponent = Cast<UCStatusComponent>(GetComponentByClass(UCStatusComponent::StaticClass()));
 
-#if WITH_EDITOR
+#if DEBUG_DEFAULT_INFO
 	Debugger->AddCollector(this);
 #endif
 }
@@ -235,7 +235,7 @@ void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	case EStateType::Dead: Dead(); break;
 	}
 }
-#if WITH_EDITOR
+#if DEBUG_DEFAULT_INFO
   
 bool ACEnemy::IsDebugEnable()
 {
@@ -245,7 +245,7 @@ bool ACEnemy::IsDebugEnable()
 FDebugInfo ACEnemy::GetDebugInfo()
 {
 	FDebugInfo Info;
-	Info.Priority = -1;
+	Info.Priority = static_cast<int32>(DEBUG_NUMS::DEFAULT_INFO);
 
 	// Standing 타입 출력
 	if(!!MovementComponent)

@@ -21,10 +21,10 @@ protected:
 /*
  *	기본 컴포넌트 
  */
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UCMovementComponent* Movement;
 	
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Weapon")
 	class UCWeaponComponent* Weapon;
 };

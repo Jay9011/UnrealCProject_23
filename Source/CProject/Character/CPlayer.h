@@ -4,6 +4,7 @@
 #include "Character/CBaseCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/IStateNotify.h"
+#include "DebugHeader.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
@@ -32,12 +33,6 @@ public:
 public:
 	virtual void End_Evade() override;
 	
-#if WITH_EDITOR
-public:
-	virtual bool IsDebugEnable() override { return true; } // 플레이어의 디버거 정보는 항상 출력
-	virtual FDebugInfo GetDebugInfo() override;
-#endif
-
 /*
  * 카메라 관련
  */
@@ -68,9 +63,22 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Extension")
 	class UCAirComponent* Air;
 
+/*
+ * Getter
+ */
+public:
+	USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	
 #if WITH_EDITOR
 public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Debug")
 	class UDebuggerComponent* Debugger;
 #endif
+	
+#if DEBUG_DEFAULT_INFO
+public:
+	virtual bool IsDebugEnable() override { return true; } // 플레이어의 디버거 정보는 항상 출력
+	virtual FDebugInfo GetDebugInfo() override;
+#endif
+
 };
