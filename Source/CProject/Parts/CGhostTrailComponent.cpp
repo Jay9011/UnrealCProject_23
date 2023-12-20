@@ -36,13 +36,20 @@ void UCGhostTrailComponent::Show(const FTransform& InTransform)
 
 void UCGhostTrailComponent::Show(const AActor* InActor, const float Interval)
 {
+	// Interval이 0보다 작거나 같으면 단일 소환
+	if (Interval <= 0.f)
+	{
+		Show(InActor->GetTransform());
+		return;
+	}
+	
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([this, InActor]()
 	{
 		Show(InActor->GetTransform());
 	});
 
-	GetWorld()->GetTimerManager().SetTimer(RepeatedTimerHandle, TimerDelegate, Interval, true);
+	OwnerCharacter->GetWorld()->GetTimerManager().SetTimer(RepeatedTimerHandle, TimerDelegate, Interval, true, 0.f);
 }
 
 void UCGhostTrailComponent::Stop()
@@ -80,13 +87,11 @@ void UCGhostTrailComponent::AddTrailToPool(const FTransform& InTransform)
 	TrailData.GhostTrail = GetWorld()->SpawnActorDeferred<ACGhostTrail>(GhostTrailActorClass, InTransform, GetOwner(), OwnerCharacter, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	if (TrailData.GhostTrail != nullptr)
 	{
-		if (GhostTrailsPool.AddTail(TrailData))
-		{
-			SetupTrailData(TrailData, InTransform);
-			TrailData.GhostTrail->FinishSpawning(InTransform);
-		
-			StartTrailTimer(TrailData);
-		}
+		SetupTrailData(TrailData, InTransform);
+		StartTrailTimer(TrailData);
+		TrailData.GhostTrail->FinishSpawning(InTransform);
+		TrailData.GhostTrail->Start(InTransform);
+		GhostTrailsPool.AddTail(TrailData);
 	}
 }
 

@@ -50,8 +50,8 @@ void ACGhostTrail::BeginPlay()
 	OpacityTimelineDelegate.BindUFunction(this, "OpacityTimelineProgress");
 	UCurveFloat* CurveFloat = NewObject<UCurveFloat>(this, FName("CurveFloat"));
 	OpacityTimeline.AddInterpFloat(CurveFloat, OpacityTimelineDelegate, FName("Default"), FName("Default"));
-	
-	Show();
+
+	Hide();
 }
 
 void ACGhostTrail::Tick(float DeltaSeconds)
@@ -71,8 +71,8 @@ void ACGhostTrail::InitData(const FColor& InGhostTrailColor, const ACharacter* I
 
 bool ACGhostTrail::Start(const FTransform& InTransform)
 {
-	SetActorTransform(InTransform);
 	Show();
+	SetActorTransform(InTransform, false, nullptr, ETeleportType::TeleportPhysics);
 
 	return true;
 }
@@ -100,7 +100,7 @@ void ACGhostTrail::SetOpacity(UCurveFloat* InOpacityCurve, const float InDelayTi
 			OpacityTimeline.SetFloatCurve(InOpacityCurve, "Default");
 			OpacityTimeline.PlayFromStart();
 		});
-		GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, OpacityTimerDelegate, InDelayTime, false);		
+		GetWorld()->GetTimerManager().SetTimer(OpacityTimerHandle, OpacityTimerDelegate, InDelayTime, false, 0.f);		
 	}
 }
 

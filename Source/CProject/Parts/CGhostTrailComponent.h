@@ -39,7 +39,7 @@ public:
 	/** 단일 소환 */
 	void Show(const FTransform& InTransform);
 	/** Actor의 위치에 반복 소환 */
-	void Show(const AActor* InActor, const float Interval);
+	void Show(const AActor* InActor, const float Interval = 0.f);
 	/*
 	 * Timer 실행중에 고스트 트레일을 중단한다.
 	 */
@@ -55,6 +55,9 @@ private:
 private:
 	TDoubleLinkedList<FGhostTrailData> GhostTrailsPool;
 
+	UPROPERTY(EditDefaultsOnly, Category = "GhostTrail")
+	uint8 InitPoolCount = 10;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "GhostTrail")
 	TSubclassOf<ACGhostTrail> GhostTrailActorClass;
 
