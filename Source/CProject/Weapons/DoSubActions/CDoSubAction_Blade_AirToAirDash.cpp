@@ -7,11 +7,12 @@
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/CWeaponObject.h"
 
-void UCDoSubAction_Blade_AirToAirDash::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner,
+void UCDoSubAction_Blade_AirToAirDash::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon,
                                                  ACAttachment* InAttachment, UCDoAction* InDoAction)
 {
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+	Super::BeginPlay(InOwner, InWeapon, InAttachment, InDoAction);
 
 	CheckNull(InOwner);
 	OwnerPathComponent = Cast<UCPathComponent>(InOwner->GetComponentByClass(UCPathComponent::StaticClass()));
@@ -49,7 +50,7 @@ void UCDoSubAction_Blade_AirToAirDash::Pressed()
 	StateComponent->SetActionMode();
 	StateComponent->OnSubActionMode();
 
-	OwnerWeaponAsset->SetCurrentAction(this);
+	Weapon->SetCurrentAction(this);
 	if (ActionData.ActionData.Num() > 0)
 		ActionData.ActionData[0].DoAction(OwnerCharacter);
 }
@@ -64,7 +65,7 @@ void UCDoSubAction_Blade_AirToAirDash::End_Action()
 	MovementComponent->Move();
 	MovementComponent->DisableFixedCamera();
 
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 }
 
 void UCDoSubAction_Blade_AirToAirDash::OnAttachmentBeginCollision()
@@ -78,7 +79,7 @@ void UCDoSubAction_Blade_AirToAirDash::OnAttachmentEndCollision()
 
 void UCDoSubAction_Blade_AirToAirDash::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
+	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
 
 	// 중복 피격 방지

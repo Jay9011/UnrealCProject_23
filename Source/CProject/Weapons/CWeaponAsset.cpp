@@ -5,6 +5,7 @@
 #include "CDoSubAction.h"
 #include "CEquipment.h"
 #include "CEvadeAction.h"
+#include "CWeaponObject.h"
 #include "GameFramework/Character.h"
 
 UCWeaponAsset::UCWeaponAsset()
@@ -13,8 +14,11 @@ UCWeaponAsset::UCWeaponAsset()
 	EquipmentClass = UCEquipment::StaticClass();
 }
 
-void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
+void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWeaponObject)
 {
+	*OutWeaponObject = NewObject<UCWeaponObject>();
+	
+	ACAttachment* Attachment = nullptr;
 	if(!!AttachmentClass)
 	{
 		FActorSpawnParameters Parameters;
@@ -23,6 +27,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 		Attachment = InOwner->GetWorld()->SpawnActor<ACAttachment>(AttachmentClass, Parameters);
 	}// if(!!AttachmentClass)
 
+	UCEquipment* Equipment = nullptr;
 	if(!!EquipmentClass)
 	{
 		Equipment = NewObject<UCEquipment>(this, EquipmentClass);
@@ -36,10 +41,11 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 		}
 	}// if(!!EquipmentClass)
 
+	UCDoAction* DoAction = nullptr;
 	if(!!DoActionClass)
 	{
 		DoAction = NewObject<UCDoAction>(this, DoActionClass);
-		DoAction->BeginPlay(this, InOwner);
+		DoAction->BeginPlay(InOwner, *OutWeaponObject);
 
 		if (!!Attachment)
 		{
@@ -51,12 +57,14 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 		}
 	}// if(!!DoActionClass)
 
+	UCDoSubAction* DoSubAction = nullptr;
 	if(!!DoSubActionClass)
 	{
 		DoSubAction = NewObject<UCDoSubAction>(this, DoSubActionClass);
-		DoSubAction->BeginPlay(this, InOwner, Attachment, DoAction);
+		DoSubAction->BeginPlay(InOwner, *OutWeaponObject, Attachment, DoAction);
 	}// if(!!DoSubAction)
 
+	UCEvadeAction* EvadeAction = nullptr;
 	if(!!EvadeActionClass)
 	{
 		EvadeAction = NewObject<UCEvadeAction>(this, EvadeActionClass);
@@ -68,10 +76,10 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner)
 			Equipment->OnEquipmentUnequip.AddDynamic(EvadeAction, &UCEvadeAction::OnUnequip);
 		}
 	}// if(!!EvadeActionClass)
-}
 
-void UCWeaponAsset::UpdateActions()
-{
-	SetCurrentAction(ReservedAction);
-	ReservedAction = nullptr;
+	(*OutWeaponObject)->Attachment = Attachment;
+	(*OutWeaponObject)->Equipment = Equipment;
+	(*OutWeaponObject)->DoAction = DoAction;
+	(*OutWeaponObject)->DoSubAction = DoSubAction;
+	(*OutWeaponObject)->EvadeAction = EvadeAction;
 }

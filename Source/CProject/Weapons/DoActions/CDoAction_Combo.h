@@ -19,8 +19,8 @@ private:
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner) override;
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, UCComboState* InComboState);
+	virtual void BeginPlay(ACharacter* InOwner, class UCWeaponObject* InWeapon) override;
+	virtual void BeginPlay(ACharacter* InOwner, class UCWeaponObject* InWeapon, UCComboState* InComboState);
 	
 public:
 	virtual void DoAction_Implementation() override;

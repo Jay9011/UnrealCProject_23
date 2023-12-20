@@ -3,11 +3,13 @@
 #include "Components/CStateComponent.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/CWeaponObject.h"
 #include "Weapons/DoActions/CDoAction_Combo.h"
 
-void UCDoSubAction_HeavyAttack::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
+void UCDoSubAction_HeavyAttack::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment,
+	UCDoAction* InDoAction)
 {
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+	Super::BeginPlay(InOwner, InWeapon, InAttachment, InDoAction);
 
 	InitDoActionData();
 
@@ -38,7 +40,7 @@ void UCDoSubAction_HeavyAttack::Pressed()
 	{
 		ComboState->DisableCombo();
 		ComboState->ReserveCombo();
-		OwnerWeaponAsset->ReserveAction(this);
+		Weapon->ReserveAction(this);
 
 		return;
 	}
@@ -49,7 +51,7 @@ void UCDoSubAction_HeavyAttack::Pressed()
 
 	StateComponent->SetActionMode();
 	StateComponent->OnSubActionMode();
-	OwnerWeaponAsset->SetCurrentAction(this);
+	Weapon->SetCurrentAction(this);
 
 	HeavyAttackDatas[ComboState->GetIndex()].DoAction(OwnerCharacter);
 }
@@ -60,7 +62,7 @@ void UCDoSubAction_HeavyAttack::BeginSubAction_Implementation()
 
 	ComboState->ExpireCombo();
 	StateComponent->OnSubActionMode();
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 	HeavyAttackDatas[ComboState->IncreaseCombo()].DoAction(OwnerCharacter);
 }
 
@@ -70,7 +72,7 @@ void UCDoSubAction_HeavyAttack::EndSubAction_Implementation()
 
 	DoAction_Combo->End_Action();
 	StateComponent->OffSubActionMode();
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 }
 
 void UCDoSubAction_HeavyAttack::Begin_Action()
@@ -91,7 +93,7 @@ void UCDoSubAction_HeavyAttack::ChangingProcess()
 
 void UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap_Implementation(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
+	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
 
 	// 중복 피격 방지

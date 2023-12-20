@@ -3,26 +3,27 @@
 #include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
+#include "Weapons/CWeaponObject.h"
 
-void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner)
+void UCDoAction_Combo::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon)
 {
 	// 최상위 UCDoAction_Combo의 ComboState를 공유하기 위해 Super::BeginPlay()보다 먼저 호출한다.
 	if (!ComboState)
 		ComboState = NewObject<UCComboState>(this);
 	
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner);
+	Super::BeginPlay(InOwner, InWeapon);
 }
 
-void UCDoAction_Combo::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, UCComboState* InComboState)
+void UCDoAction_Combo::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, UCComboState* InComboState)
 {
 	if (InComboState == nullptr)
 	{
-		BeginPlay(InOwnerWeaponAsset, InOwner);
+		BeginPlay(InOwner, InWeapon);
 
 		return;
 	}
 	
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner);
+	Super::BeginPlay(InOwner, InWeapon);
 	ComboState = InComboState;
 }
 
@@ -36,7 +37,7 @@ void UCDoAction_Combo::DoAction_Implementation()
 	{
 		ComboState->DisableCombo();
 		ComboState->ReserveCombo();
-		OwnerWeaponAsset->ReserveAction(this);
+		Weapon->ReserveAction(this);
 
 		return;
 	}
@@ -77,7 +78,7 @@ void UCDoAction_Combo::End_Action()
 UCDoAction_Combo* UCDoAction_Combo::BP_AddDoAction_Combo(TSubclassOf<UCDoAction_Combo> InDoActionClass, UCComboState* InComboState)
 {
 	UCDoAction_Combo* NewDoAction = NewObject<UCDoAction_Combo>(this, InDoActionClass);
-	NewDoAction->BeginPlay(OwnerWeaponAsset, OwnerCharacter, InComboState);
+	NewDoAction->BeginPlay(OwnerCharacter, Weapon, InComboState);
 
 	return NewDoAction;
 }
@@ -85,7 +86,7 @@ UCDoAction_Combo* UCDoAction_Combo::BP_AddDoAction_Combo(TSubclassOf<UCDoAction_
 void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
-	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
+	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
 
 	// 중복 피격 방지

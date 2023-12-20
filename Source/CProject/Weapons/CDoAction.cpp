@@ -1,17 +1,15 @@
 #include "Weapons/CDoAction.h"
 
-#include "CWeaponAsset.h"
+#include "CWeaponObject.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
-
-#define DebugFlag 1
 
 UCDoAction::UCDoAction()
 {
 }
 
-void UCDoAction::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner)
+void UCDoAction::BeginPlay(ACharacter* InOwner, class UCWeaponObject* InWeapon)
 {
 	OwnerCharacter = InOwner;
 	World = OwnerCharacter->GetWorld(); //UObject는 World가 없으므로, OwnerCharacter의 World를 가져온다.
@@ -19,7 +17,7 @@ void UCDoAction::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwne
 	StateComponent = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	MovementComponent = Cast<UCMovementComponent>(OwnerCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
 
-	OwnerWeaponAsset = InOwnerWeaponAsset;
+	Weapon = InWeapon;
 
 	InitDoActionData();
 
@@ -29,7 +27,7 @@ void UCDoAction::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwne
 void UCDoAction::Begin_DoAction()
 {
 	bBeginAction = true;
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 }
 
 void UCDoAction::End_DoAction()
@@ -41,13 +39,13 @@ void UCDoAction::End_DoAction()
 	MovementComponent->Move();
 	MovementComponent->DisableFixedCamera();
 
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 }
 
 UCDoAction* UCDoAction::BP_AddDoAction(TSubclassOf<UCDoAction> InDoActionClass)
 {
 	UCDoAction* NewDoAction = NewObject<UCDoAction>(this, InDoActionClass);
-	NewDoAction->BeginPlay(OwnerWeaponAsset, OwnerCharacter);
+	NewDoAction->BeginPlay(OwnerCharacter, Weapon);
 
 	return NewDoAction;
 }
@@ -55,7 +53,7 @@ UCDoAction* UCDoAction::BP_AddDoAction(TSubclassOf<UCDoAction> InDoActionClass)
 void UCDoAction::DoAction_Implementation()
 {
 	StateComponent->SetActionMode();
-	OwnerWeaponAsset->ReserveAction(this);
+	Weapon->ReserveAction(this);
 }
 
 void UCDoAction::InitDoActionData()

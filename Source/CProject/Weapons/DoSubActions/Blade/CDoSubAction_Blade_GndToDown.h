@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Interface/FHitResultInterface.h"
 #include "Weapons/CDoSubAction.h"
+#include "Weapons/CWeaponStructures.h"
 #include "CDoSubAction_Blade_GndToDown.generated.h"
 
 /**
@@ -15,7 +16,7 @@ class CPROJECT_API UCDoSubAction_Blade_GndToDown : public UCDoSubAction
 	GENERATED_BODY()
 
 protected:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
+	virtual void BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
 
 public:
 	virtual void Pressed() override;
@@ -27,14 +28,9 @@ public:
  */
 public:
 	UFUNCTION()
-	virtual void OnAttachmentBeginCollision();
-	UFUNCTION()
 	virtual void OnAttachmentEndCollision();
 	UFUNCTION()
 	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
-	UFUNCTION()
-	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
-	
 	
 public:
 	virtual void SetFHitResult(const FHitResult& InHitResult) override

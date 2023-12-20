@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapons/CWeaponAsset.h"
+#include "CWeaponObject.h"
 #include "CWeaponStructures.h"
 #include "IDoActionDebugData.h"
 #include "IExcuteAction.h"
@@ -23,13 +23,13 @@ public:
 	/**
 	 * @brief 액션 관련 데이터 셋 배열을 받아서 초기화 (이때, 무기 외형과 장착 동작 관련 오브젝트도 받아서 초기화 한다.)
 	 *
-	 * @param InOwnerWeaponAsset 무기 에셋
 	 * @param InOwner 소유자
+	 * @param InWeapon 실제 무기 데이터
 	 */
 	virtual void BeginPlay
 	(
-		class UCWeaponAsset* InOwnerWeaponAsset,
-		class ACharacter* InOwner
+		class ACharacter* InOwner,
+		class UCWeaponObject* InWeapon
 	);
 
 public:
@@ -61,7 +61,7 @@ public:
 	UFUNCTION()
 	virtual void OnAttachmentBeginCollision()
 	{
-		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
 		{
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
@@ -73,7 +73,7 @@ public:
 	UFUNCTION()
 	virtual void OnAttachmentEndCollision()
 	{
-		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
 		{
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
@@ -85,7 +85,7 @@ public:
 	UFUNCTION()
 	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther)
 	{
-		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
 		{
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
@@ -97,7 +97,7 @@ public:
 	UFUNCTION()
 	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther)
 	{
-		IIExcuteAction* CurrentAction = OwnerWeaponAsset->GetCurrentAction();
+		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
 		{
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
@@ -110,14 +110,13 @@ public:
 
 protected:
 	bool bBeginAction;
-
 	UPROPERTY()
-	class UCWeaponAsset* OwnerWeaponAsset;
+	class UWorld* World;
 	UPROPERTY()
 	class ACharacter* OwnerCharacter;
 	UPROPERTY()
-	class UWorld* World;
-
+	class UCWeaponObject* Weapon;
+	
 	UPROPERTY()
 	class UCStateComponent* StateComponent;
 	UPROPERTY()

@@ -16,7 +16,7 @@ class CPROJECT_API UCDoSubAction_HeavyAttack : public UCDoSubAction
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
+	virtual void BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
 	
 public:
 	virtual void Pressed() override;

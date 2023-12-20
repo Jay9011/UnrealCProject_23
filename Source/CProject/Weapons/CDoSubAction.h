@@ -1,8 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CWeaponAsset.h"
-#include "IDoActionDebugData.h"
 #include "IExcuteAction.h"
 #include "UObject/NoExportTypes.h"
 #include "CDoSubAction.generated.h"
@@ -20,7 +18,7 @@ public:
 	UCDoSubAction();
 
 public:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, class ACharacter* InOwner, class ACAttachment* InAttachment, class UCDoAction* InDoAction);
+	virtual void BeginPlay(class ACharacter* InOwner, class UCWeaponObject* InWeapon, class ACAttachment* InAttachment, class UCDoAction* InDoAction);
 
 public:
 	// 누르고 있는 동작을 재정의
@@ -45,14 +43,14 @@ public:
 	virtual void Tick_Implementation(float InDeltaTime) {};
 
 public:
-	virtual void Begin_Action() override {};
-	virtual void End_Action() override {};
+	virtual void Begin_Action() override;
+	virtual void End_Action() override;
 	
 protected:
-	UPROPERTY()
-	class UCWeaponAsset* OwnerWeaponAsset;
 	UPROPERTY(BlueprintReadOnly)
 	class ACharacter* OwnerCharacter;
+	UPROPERTY()
+	class UCWeaponObject* Weapon;
 	UPROPERTY()
 	class ACAttachment* Attachment;
 	UPROPERTY()

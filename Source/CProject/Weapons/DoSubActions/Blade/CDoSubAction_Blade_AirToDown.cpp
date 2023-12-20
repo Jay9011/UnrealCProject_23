@@ -7,11 +7,13 @@
 #include "Utilities/CheckMacros.h"
 #include "Utilities/UDirectionalUtilities.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/CWeaponObject.h"
 
-void UCDoSubAction_Blade_AirToDown::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
+void UCDoSubAction_Blade_AirToDown::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment,
+                                              UCDoAction* InDoAction)
 {
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
-
+	Super::BeginPlay(InOwner, InWeapon, InAttachment, InDoAction);
+	
 	CheckNull(InOwner);
 	OwnerPathComponent = Cast<UCPathComponent>(InOwner->GetComponentByClass(UCPathComponent::StaticClass()));
 	
@@ -47,7 +49,7 @@ void UCDoSubAction_Blade_AirToDown::Pressed()
 	StateComponent->SetActionMode();
 	StateComponent->OnSubActionMode();
 
-	OwnerWeaponAsset->SetCurrentAction(this);
+	Weapon->SetCurrentAction(this);
 	if (ActionData.ActionData.Num() > 0)
 		ActionData.ActionData[0].DoAction(OwnerCharacter);
 }
@@ -62,7 +64,7 @@ void UCDoSubAction_Blade_AirToDown::End_Action()
 	MovementComponent->Move();
 	MovementComponent->DisableFixedCamera();
 
-	OwnerWeaponAsset->UpdateActions();
+	Weapon->UpdateActions();
 }
 
 void UCDoSubAction_Blade_AirToDown::OnAttachmentBeginCollision()
@@ -76,7 +78,7 @@ void UCDoSubAction_Blade_AirToDown::OnAttachmentEndCollision()
 
 void UCDoSubAction_Blade_AirToDown::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
-	CheckFalse(OwnerWeaponAsset->GetCurrentAction() == this);
+	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
 
 	// 중복 피격 방지

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Interface/FHitResultInterface.h"
 #include "Weapons/CDoSubAction.h"
+#include "Weapons/CWeaponStructures.h"
 #include "CDoSubAction_Blade_AirToDown.generated.h"
 
 /**
@@ -15,7 +16,7 @@ class CPROJECT_API UCDoSubAction_Blade_AirToDown : public UCDoSubAction
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
+	virtual void BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
 
 public:
 	virtual void Pressed() override;
