@@ -14,7 +14,7 @@ class CPROJECT_API UCEvadeAction : public UObject
 	GENERATED_BODY()
 
 public:
-	void BeginPlay(class ACharacter* InOwner, TArray<FEvadeData>& InData);
+	virtual void BeginPlay(class ACharacter* InOwner, TArray<FEvadeData>& InData);
 
 public:
 	UFUNCTION()
@@ -27,6 +27,11 @@ public:
 	virtual void BeginEvade();
 	UFUNCTION()
 	virtual void EndEvade();
+
+private:
+	// 상태 변경시 호출되는 함수
+	UFUNCTION()
+	virtual void OnBeforeStateChange(EStateType InPrevState, EStateType InNewState);
 	
 protected:
 	TArray<FEvadeData*> EvadeDataPtr;

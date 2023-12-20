@@ -13,7 +13,7 @@ void UCStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-#if WITH_EDITOR
+#if DEBUG_STATE
 	if(UDebuggerComponent* Debugger = GetOwner()->FindComponentByClass<UDebuggerComponent>())
 		Debugger->AddCollector(this);
 #endif
@@ -21,9 +21,16 @@ void UCStateComponent::BeginPlay()
 
 void UCStateComponent::ChangeType(EStateType InType)
 {
+	if (OnBeforeStateChange.IsBound())
+		OnBeforeStateChange.Broadcast(Type, InType);
+	
 	EStateType PrevType = Type;
 	Type = InType;
-
+	
+#if DEBUG_STATE
+	UE_LOG(LogTemp, Warning, TEXT("%s Change State : %s -> %s"), *GetOwner()->GetName(), *StaticEnum<EStateType>()->GetNameStringByValue(static_cast<uint8>(PrevType)), *StaticEnum<EStateType>()->GetNameStringByValue(static_cast<uint8>(Type)));
+#endif
+	
 	if (OnStateTypeChanged.IsBound())
 		OnStateTypeChanged.Broadcast(PrevType, Type);
 }
@@ -58,11 +65,11 @@ void UCStateComponent::SetEvadeMode()
 	ChangeType(EStateType::Evade);
 }
 
-#if WITH_EDITOR
+#if DEBUG_STATE
 FDebugInfo UCStateComponent::GetDebugInfo()
 {
 	FDebugInfo DebugInfo;
-	DebugInfo.Priority = 0;
+	DebugInfo.Priority = static_cast<int32>(DEBUG_NUMS::STATE);
 	
 	UEnum* StateEnum = StaticEnum<EStateType>();
 	FString StateString = "State : " + StateEnum->GetNameStringByValue(static_cast<uint8>(Type));

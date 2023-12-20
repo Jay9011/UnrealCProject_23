@@ -14,7 +14,7 @@ class CPROJECT_API UCDoSubAction_Blade : public UCDoSubAction
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
+	virtual void BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment, UCDoAction* InDoAction) override;
 
 public:
 	virtual void Pressed() override;
@@ -23,6 +23,8 @@ public:
 private:
 	void PerformAerialStanceAction();
 	void PerformGroundStanceAction();
+
+	bool TryJustEvade();
 
 private:
 	bool TraceForwardNearDownEnemyByProfile(float InLength, float InRadius, const FName& InProfile, const TArray<AActor*>& InIgnoreActors, FHitResult& OutHitResult) const;

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DebugHeader.h"
 #include "CAttachment.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttachmentBeginCollision);
@@ -58,6 +59,7 @@ private:
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, 
 	                           AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	bool CollisionChannelCheck(const UShapeComponent* InShapeComponent = nullptr);
 /*
  * Delegate
  */
@@ -78,4 +80,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Game")
 	TArray<class UShapeComponent*> Collisions;
+
+	UPROPERTY()
+	class ACGameMode* GameMode;
 };

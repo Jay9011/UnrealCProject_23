@@ -1,6 +1,11 @@
 #include "Weapons/CAttachment.h"
 
+#include "CGameMode.h"
+#include "DrawDebugHelpers.h"
+#include "GameModeInfoCustomizer.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/ShapeComponent.h"
+#include "Engine/CollisionProfile.h"
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 
@@ -8,7 +13,6 @@ ACAttachment::ACAttachment()
 {
 	Root = this->CreateDefaultSubobject<USceneComponent>("Root");
 	this->SetRootComponent(Root);
-
 }
 
 void ACAttachment::BeginPlay()
@@ -34,6 +38,9 @@ void ACAttachment::BeginPlay()
 
 	// 첫 시작시 부착물의 모든 충돌체를 비활성화한다.
 	OffCollisions();
+
+	// 각종 설정이 포함된 게임 모드를 가져온다.
+	GameMode = Cast<ACGameMode>(OwnerCharacter->GetWorld()->GetAuthGameMode());
 	
 	Super::BeginPlay();
 }
@@ -51,6 +58,14 @@ void ACAttachment::OnCollisions()
 	for (UShapeComponent* Collision : Collisions)
 	{
 		Collision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+#if DEBUG_ATTACHMENT
+		// 부착물의 충돌체 체널이 GameMode의 EvadableObjectType과 같다면
+		if(GameMode != nullptr && CollisionChannelCheck(Collision))
+		{
+			Collision->SetHiddenInGame(false);
+		}
+#endif
 	}
 }
 
@@ -62,6 +77,9 @@ void ACAttachment::OffCollisions()
 	for (UShapeComponent* Collision : Collisions)
 	{
 		Collision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+#if DEBUG_ATTACHMENT
+		Collision->SetHiddenInGame(true);
+#endif
 	}
 }
 
@@ -85,4 +103,14 @@ void ACAttachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponen
 
 	if (OnAttachmentEndOverlap.IsBound())
 		OnAttachmentEndOverlap.Broadcast(OwnerCharacter, Cast<ACharacter>(OtherActor));
+}
+
+bool ACAttachment::CollisionChannelCheck(const UShapeComponent* InShapeComponent)
+{
+	if (GameMode == nullptr || InShapeComponent == nullptr)
+		return false;
+
+	ECollisionResponse Response = InShapeComponent->GetCollisionResponseToChannel(UEngineTypes::ConvertToCollisionChannel(GameMode->GetEvadableType()));
+
+	return Response != ECollisionResponse::ECR_Ignore;
 }

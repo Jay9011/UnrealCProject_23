@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "MyDebugger/IDebugCollector.h"
+#include "DebugHeader.h"
 #include "CStateComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -17,6 +18,7 @@ enum class EStateType : uint8
 };
 
 // Delegate List
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBeforeStateChange, EStateType, InPrevType, EStateType, InNewType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, EStateType, InPrevType, EStateType, InNewType);
 
 /*
@@ -75,13 +77,15 @@ public:
 	FORCEINLINE EStateType GetType() const { return Type; }
 	
 public:
+	FBeforeStateChange OnBeforeStateChange;
 	FStateTypeChanged OnStateTypeChanged;
+	
 
 private:
 	EStateType Type;
 	bool bInSubActionMode = false; // subAction을 처리하기 위한 별도의 상태(Enum과 별개로 처리)
 
-#if WITH_EDITOR
+#if DEBUG_STATE
 public:
 	virtual bool IsDebugEnable() override { return true; } // 상태 여부는 항상 디버깅
 	virtual FDebugInfo GetDebugInfo() override;

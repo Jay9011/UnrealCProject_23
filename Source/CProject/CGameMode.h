@@ -12,4 +12,15 @@ class CPROJECT_API ACGameMode : public AGameModeBase
 public:
 	ACGameMode();
 	virtual void StartPlay() override;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Battle")
+	TEnumAsByte<ETraceTypeQuery> EvadableTraceChannel;
+
+/*
+ * Getter
+ */
+public:
+	FORCEINLINE TEnumAsByte<ETraceTypeQuery> GetEvadableType() const { return EvadableTraceChannel; }
+	
 };

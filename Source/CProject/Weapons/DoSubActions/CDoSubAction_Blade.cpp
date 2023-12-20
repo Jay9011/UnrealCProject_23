@@ -1,6 +1,7 @@
 #include "Weapons/DoSubActions/CDoSubAction_Blade.h"
 
 #include "Character/CBaseCharacter.h"
+#include "Components/CJustEvadeComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
@@ -8,41 +9,43 @@
 #include "Utilities/CTraceUtil.h"
 #include "Utilities/UDirectionalUtilities.h"
 #include "Weapons/CDoAction.h"
+#include "Weapons/CWeaponObject.h"
 
-void UCDoSubAction_Blade::BeginPlay(UCWeaponAsset* InOwnerWeaponAsset, ACharacter* InOwner, ACAttachment* InAttachment, UCDoAction* InDoAction)
+void UCDoSubAction_Blade::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment,
+                                    UCDoAction* InDoAction)
 {
-	Super::BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+	Super::BeginPlay(InOwner, InWeapon, InAttachment, InDoAction);
 
 	AirComponent = Cast<UCAirComponent>(OwnerCharacter->GetComponentByClass(UCAirComponent::StaticClass()));
 
 	if(NormalGroundActionClass != nullptr)
 	{
 		NormalGroundAction = NewObject<UCDoSubAction>(this, NormalGroundActionClass);
-		NormalGroundAction->BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+		NormalGroundAction->BeginPlay(InOwner, Weapon, InAttachment, InDoAction);
 	}
 
 	if (AirToAirActionClass != nullptr)
 	{
 		AirToAirAction = NewObject<UCDoSubAction>(this, AirToAirActionClass);
-		AirToAirAction->BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+		AirToAirAction->BeginPlay(InOwner, Weapon, InAttachment, InDoAction);
 	}
 
 	if (AirToGroundActionClass != nullptr)
 	{
 		AirToGroundAction = NewObject<UCDoSubAction>(this, AirToGroundActionClass);
-		AirToGroundAction->BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+		AirToGroundAction->BeginPlay(InOwner, Weapon, InAttachment, InDoAction);
 	}
 
 	if (GroundToDownActionClass != nullptr)
 	{
 		GroundToDownAction = NewObject<UCDoSubAction>(this, GroundToDownActionClass);
-		GroundToDownAction->BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+		GroundToDownAction->BeginPlay(InOwner, Weapon, InAttachment, InDoAction);
 	}
 
 	if (EvadeActionClass != nullptr)
 	{
 		EvadeAction = NewObject<UCDoSubAction>(this, EvadeActionClass);
-		EvadeAction->BeginPlay(InOwnerWeaponAsset, InOwner, InAttachment, InDoAction);
+		EvadeAction->BeginPlay(InOwner, Weapon, InAttachment, InDoAction);
 	}
 }
 
@@ -75,10 +78,15 @@ void UCDoSubAction_Blade::Pressed()
 		// Idle 상태가 아니라면
 		else
 		{
+			// JustMode 액션
+			if (TryJustEvade())
+			{
+				return;
+			}
+			
 			switch (StateComponent->GetType())
 			{
 			case EStateType::Evade :
-				//TODO: 저스트타임 특수 액션 구현
 				break;
 			case EStateType::Action :
 				if (NormalGroundAction != nullptr)
@@ -95,7 +103,7 @@ void UCDoSubAction_Blade::Released()
 {
 	Super::Released();
 
-	UCDoSubAction* CurrentAction = Cast<UCDoSubAction>(OwnerWeaponAsset->GetCurrentAction());
+	UCDoSubAction* CurrentAction = Cast<UCDoSubAction>(Weapon->GetCurrentAction());
 	if (CurrentAction == nullptr)
 		return;
 
@@ -110,9 +118,9 @@ void UCDoSubAction_Blade::PerformAerialStanceAction()
 	FHitResult HitResult;
 	if(!UCTraceUtil::TraceForwardNearEnemyByProfile(OwnerCharacter, AirTraceLength, AirTraceRadius, AirTraceProfile, IgnoreActors, HitResult))
 		return;
-	
-	ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
-	UCharacterMovementComponent* TargetMovementComponent = Cast<UCharacterMovementComponent>(TargetCharacter->GetComponentByClass(UCharacterMovementComponent::StaticClass()));
+
+	const ACharacter* TargetCharacter = Cast<ACharacter>(HitResult.GetActor());
+	const UCharacterMovementComponent* TargetMovementComponent = Cast<UCharacterMovementComponent>(TargetCharacter->GetComponentByClass(UCharacterMovementComponent::StaticClass()));
 	// 만약 타겟이 공중에 있다면
 	if (TargetMovementComponent->IsFalling())
 	{
@@ -173,6 +181,21 @@ void UCDoSubAction_Blade::PerformGroundStanceAction()
 	return;
 }
 
+bool UCDoSubAction_Blade::TryJustEvade()
+{
+	UCJustEvadeComponent* JustEvadeComponent = Cast<UCJustEvadeComponent>(OwnerCharacter->GetComponentByClass(UCJustEvadeComponent::StaticClass()));
+
+	if(JustEvadeComponent != nullptr
+		&& JustEvadeComponent->IsJustTime()
+		&& EvadeAction != nullptr)
+	{
+		JustEvadeComponent->EndJustEvade();
+		EvadeAction->Pressed();
+	}
+	
+	return false;
+}
+
 bool UCDoSubAction_Blade::TraceForwardNearDownEnemyByProfile(const float InLength, const float InRadius, const FName& InProfile, const TArray<AActor*>& InIgnoreActors, FHitResult& OutHitResult) const
 {
 	FVector Start, End;
@@ -186,16 +209,19 @@ bool UCDoSubAction_Blade::TraceForwardNearDownEnemyByProfile(const float InLengt
 	for (const FHitResult& Hit : HitResult)
 	{
 		// 타겟이 다운상태인지 확인
-		ACBaseCharacter* HitCharacter = Cast<ACBaseCharacter>(Hit.GetActor());
+		const ACBaseCharacter* HitCharacter = Cast<ACBaseCharacter>(Hit.GetActor());
 		if (HitCharacter == nullptr)
 			continue;
 
-		UCMovementComponent* HitMovementComponent = Cast<UCMovementComponent>(HitCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
+		const UCMovementComponent* HitMovementComponent = Cast<UCMovementComponent>(HitCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
 		if (HitMovementComponent == nullptr || !HitMovementComponent->IsDown())
 			continue;
 
 		DownHitResult.Add(Hit);
 	}
+
+	if (DownHitResult.Num() <= 0)
+		return false;
 
 	// 다운 상태의 적들 중 가장 가까운 적을 찾는다.
 	float MinDistance = TNumericLimits<float>::Max();
@@ -203,7 +229,7 @@ bool UCDoSubAction_Blade::TraceForwardNearDownEnemyByProfile(const float InLengt
 	{
 		FVector HitLocation = Hit.Location;
 		FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-		float Distance = FVector::DistSquared(HitLocation, OwnerLocation);
+		const float Distance = FVector::DistSquared(HitLocation, OwnerLocation);
 
 		if (Distance < MinDistance)
 		{
