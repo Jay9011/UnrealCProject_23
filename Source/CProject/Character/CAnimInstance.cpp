@@ -1,8 +1,8 @@
 #include "Character/CAnimInstance.h"
 #include "Global.h"
 
+#include "Components/CNeckComponent.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 void UCAnimInstance::NativeBeginPlay()
 {
@@ -22,17 +22,37 @@ void UCAnimInstance::NativeBeginPlay()
 	// WeaponComponent
 	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if(!!Weapon)
+	{
 		Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance::OnWeaponTypeChanged);
+	}
 
 	// MovementComponent
 	Movement = Cast<UCMovementComponent>(OwnerCharacter->GetComponentByClass(UCMovementComponent::StaticClass()));
 	if(!!Movement)
+	{
 		Movement->OnStandingTypeChanged.AddDynamic(this, &UCAnimInstance::OnStandingTypeChanged);
+	}
 
 	// AirComponent
 	Air = Cast<UCAirComponent>(OwnerCharacter->GetComponentByClass(UCAirComponent::StaticClass()));
 	if(!!Air)
+	{
 		Air->OnAirStateChanged.AddDynamic(this, &UCAnimInstance::OnAirStateChanged);
+	}
+
+	// FeetComponent
+	Feet = Cast<UCFeetComponent>(OwnerCharacter->GetComponentByClass(UCFeetComponent::StaticClass()));
+	if (!!Feet)
+	{
+		UseFeetIK = true;
+	}
+
+	// NeckComponent
+	Neck = Cast<UCNeckComponent>(OwnerCharacter->GetComponentByClass(UCNeckComponent::StaticClass()));
+	if (!!Neck)
+	{
+		UseNeckRotation = true;
+	}
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -53,11 +73,24 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 	// AirState가 Normal이 아니라면, 즉 공중에 있다면, Pitch를 0으로 초기화한다.
-	if(AirState != EAirState::Normal)
-		Pitch = 0;
-	else
-		Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds, 25);		
-	
+	{
+		if(AirState != EAirState::Normal)
+			Pitch = 0;
+		else
+			Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds, 25);
+	}
+
+	// Feet IK
+	if (UseFeetIK)
+	{
+		FeetData = Feet->GetFeetData();
+	}
+
+	// Head Rotation
+	if (UseNeckRotation)
+	{
+		NeckRotation = Neck->GetEffectorRotation();
+	}
 }
 
 void UCAnimInstance::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)

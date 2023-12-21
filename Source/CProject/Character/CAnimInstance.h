@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Components/CAirComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CWeaponComponent.h"
@@ -29,38 +30,61 @@ private:
 
 	UFUNCTION()
 	void OnStandingTypeChanged(EStandingType InPrevType, EStandingType InNewType);
-	
+
+/* 기본 애니메이션 정보 */
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	float Speed = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	float Pitch = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	float Direction = 0.0f;
 
+/* 상태 관리 정보 */
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	EStateType StateType = EStateType::Max;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
-	EWeaponType WeaponType = EWeaponType::Max;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
-	EAirState AirState = EAirState::Normal;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
-	bool isAir = false;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	EStandingType StandingType = EStandingType::Standing;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	EWeaponType WeaponType = EWeaponType::Max;
+
+/* Air 관련 정보 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Air")
+	EAirState AirState = EAirState::Normal;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Air")
+	bool isAir = false;
+
+/* IK 관련 정보 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inverse Kinematics")
+	bool UseFeetIK = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inverse Kinematics")
+	FFeetData FeetData;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Head Rotation")
+	bool UseNeckRotation = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Head Rotation")
+	FRotator NeckRotation;
+	
+	
 private:
-	class ACharacter* OwnerCharacter;
-	class UCStateComponent* State;
-	class UCWeaponComponent* Weapon;
-	class UCAirComponent* Air;
-	class UCMovementComponent* Movement;
+	ACharacter* OwnerCharacter;
+	UCStateComponent* State;
+	UCWeaponComponent* Weapon;
+	UCAirComponent* Air;
+	UCMovementComponent* Movement;
+	UCFeetComponent* Feet;
+	class UCNeckComponent* Neck;
 
 private:
 	FRotator PrevRotation;
