@@ -2,15 +2,14 @@
 
 #include "CStateComponent.h"
 #include "GameFramework/Character.h"
-#include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CAttachment.h"
+#include "Weapons/CCtrlAction.h"
 #include "Weapons/CDoAction.h"
 #include "Weapons/CDoSubAction.h"
 #include "Weapons/CEquipment.h"
 #include "Weapons/CWeaponObject.h"
-#include "Weapons/CWeaponAsset.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -104,6 +103,18 @@ void UCWeaponComponent::SubAction_Released()
 		GetSubAction()->Released();
 }
 
+void UCWeaponComponent::Ctrl_Pressed()
+{
+	if(!!GetCtrlAction())
+		GetCtrlAction()->Pressed();
+}
+
+void UCWeaponComponent::Ctrl_Released()
+{
+	if(!!GetCtrlAction())
+		GetCtrlAction()->Released();
+}
+
 ACAttachment* UCWeaponComponent::GetAttachment()
 {
 	CheckTrueResult(IsUnarmedMode(), nullptr)
@@ -134,6 +145,14 @@ UCDoSubAction* UCWeaponComponent::GetSubAction()
 	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr);
 
 	return WeaponObject[static_cast<int32>(Type)]->GetDoSubAction();
+}
+
+UCCtrlAction* UCWeaponComponent::GetCtrlAction()
+{
+	CheckTrueResult(IsUnarmedMode(), nullptr);
+	CheckFalseResult(!!WeaponObject[static_cast<int32>(Type)], nullptr);
+
+	return WeaponObject[static_cast<int32>(Type)]->GetCtrlAction();
 }
 
 IIExcuteAction* UCWeaponComponent::GetCurrentAction()

@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MyDebugger/IDebugCollector.h"
+#include "DebugHeader.h"
 #include "CMovementComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -23,6 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStandingTypeChanged, EStandingType
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCMovementComponent : public UActorComponent
+	, public IIDebugCollector
 {
 	GENERATED_BODY()
 
@@ -135,4 +138,10 @@ private:
 	class ACharacter* OwnerCharacter;
 
 	EStandingType StandingType;
+
+#if DEBUG_MOVEMENT
+	virtual bool IsDebugEnable() override;
+	virtual FDebugInfo GetDebugInfo() override;
+#endif
+	
 };

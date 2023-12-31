@@ -30,33 +30,28 @@ public:
 	void AirSuspension(ACharacter& Character, ACharacter& Attacker);
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-private:
-	void Hitted();
+protected:
+	virtual void ApplyDamage() override;
+	virtual void LaunchEffect(const FRotator& InLookAtRotation) override;
+	virtual void LaunchAttacker(const FRotator& InLookAtRotation) override;
+	virtual void ResetDamagedData(FDamagedData& DamagedData) override;
+	virtual void Hitted() override;
 	virtual void End_Hitted() override;
-	void Dead();
+	virtual void Dead() override;
 	virtual void End_Dead() override;
 
 private:
 	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
 
-private:
-	struct FDamagedData
-	{
-		float Damage;
-		class ACharacter* Character;
-		class AActor* Causer;
-
-		struct FActionDamageEvent* Event;
-	} Damaged;
-
-private:
+protected:
 	UPROPERTY()
 	class UCAirComponent* Air;
+	
+	UPROPERTY()
 	class UHitMontageComponent* HitMontage;
+	
 	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
-	UPROPERTY()
-	class UCStatusComponent* StatusComponent;
 
 private:
 	float MinimumLiftZ = 100.f;

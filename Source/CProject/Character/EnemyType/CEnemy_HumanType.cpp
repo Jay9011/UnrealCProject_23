@@ -6,7 +6,6 @@
 
 ACEnemy_HumanType::ACEnemy_HumanType()
 {
-	Movement = CreateDefaultSubobject<UCMovementComponent>("Movement");
 	Weapon = CreateDefaultSubobject<UCWeaponComponent>("Weapon");
 
 	TSubclassOf<UCAnimInstance> AnimInstance = ConstructorHelpers::FClassFinder<UCAnimInstance>(TEXT("AnimBlueprint'/Game/Character/ABP_BaseCharacter.ABP_BaseCharacter_C'")).Class;

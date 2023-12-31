@@ -83,9 +83,10 @@ UCDoAction_Combo* UCDoAction_Combo::BP_AddDoAction_Combo(TSubclassOf<UCDoAction_
 	return NewDoAction;
 }
 
-void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther, UPrimitiveComponent* OverlappedComponent,
+												UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult)
 {
-	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+	Super::OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther, OverlappedComponent, OtherComp, OtherBodyIndex, bFromSweep, HitResult);
 	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
 
@@ -99,7 +100,7 @@ void UCDoAction_Combo::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 
 	// 데미지 처리
 	CheckTrue(DoActionDatas.Num() <= ComboState->GetIndex());
-	DoActionDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
+	DoActionDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther, OverlappedComponent);
 }
 
 void UCDoAction_Combo::OnAttachmentEndCollision()

@@ -50,6 +50,16 @@ void UCStateComponent::SetHittedMode()
 	ChangeType(EStateType::Hitted);
 }
 
+void UCStateComponent::SetBlockingMode()
+{
+	ChangeType(EStateType::Blocking);
+}
+
+void UCStateComponent::SetUnprotectedMode()
+{
+	ChangeType(EStateType::Unprotected);
+}
+
 void UCStateComponent::SetDeadMode()
 {
 	ChangeType(EStateType::Dead);

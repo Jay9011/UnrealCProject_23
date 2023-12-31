@@ -3,10 +3,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
+#include "Interface/CDamagedInterface.h"
 #include "CBaseCharacter.generated.h"
 
 UCLASS()
 class CPROJECT_API ACBaseCharacter : public ACharacter
+	, public ICDamagedInterface
 {
 	GENERATED_BODY()
 
@@ -16,27 +18,34 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+protected:
+	virtual void ApplyDamage() override;
+	virtual void LaunchAttacker(const FRotator& InLookAtRotation) override;
+	virtual void ResetDamagedData(FDamagedData& DamagedData) override;
+
 public:
-	virtual void PlayHittedMontage() {};
+	FRotator LookAt(const ACharacter* InTarget);
 	
-/*
- * State 관련
- */
 private:
 	UFUNCTION()
 	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) {};
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	uint8 TeamID = 0;
+
+	FDamagedData Damaged;
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCStatusComponent* Status;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCStateComponent* State;
 
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCMontagesComponent* Montages;
 
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Team")
-	uint8 TeamID = 0;
-	
 /*
  * Getter
  */

@@ -24,7 +24,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	void DilationEffect(ACharacter* InOwnerCharacter, const float InTargetDilation, TArray<AActor*>& InIgnoreActors);
+	void DilationEffect(ACharacter* InOwnerCharacter, const float InTargetDilation, TArray<AActor*>& InIgnoreActors, UCurveFloat* InCurve = nullptr, const float InPlayRate = 1.0f);
 	void ArmLengthEffect(USpringArmComponent* InSpringArm, const float InTargetArmLength);
 	
 private:

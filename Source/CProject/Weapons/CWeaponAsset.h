@@ -44,6 +44,9 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCEvadeAction> EvadeActionClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCCtrlAction> CtrlActionClass;
 	
 private:
 	//Datas

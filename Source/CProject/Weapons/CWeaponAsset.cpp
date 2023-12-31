@@ -1,6 +1,7 @@
 #include "Weapons/CWeaponAsset.h"
 
 #include "CAttachment.h"
+#include "CCtrlAction.h"
 #include "CDoAction.h"
 #include "CDoSubAction.h"
 #include "CEquipment.h"
@@ -77,9 +78,23 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 		}
 	}// if(!!EvadeActionClass)
 
+	UCCtrlAction* CtrlAction = nullptr;
+	if (!!CtrlActionClass)
+	{
+		CtrlAction = NewObject<UCCtrlAction>(this, CtrlActionClass);
+		CtrlAction->BeginPlay(InOwner, *OutWeaponObject, Attachment);
+
+		if (!!Equipment)
+		{
+			Equipment->OnEquipmentBeginEquip.AddDynamic(CtrlAction, &UCCtrlAction::OnBeginEquip);
+			Equipment->OnEquipmentUnequip.AddDynamic(CtrlAction, &UCCtrlAction::OnUnequip);
+		}
+	}// if(!!CtrlActionClass)
+
 	(*OutWeaponObject)->Attachment = Attachment;
 	(*OutWeaponObject)->Equipment = Equipment;
 	(*OutWeaponObject)->DoAction = DoAction;
 	(*OutWeaponObject)->DoSubAction = DoSubAction;
 	(*OutWeaponObject)->EvadeAction = EvadeAction;
+	(*OutWeaponObject)->CtrlAction = CtrlAction;
 }

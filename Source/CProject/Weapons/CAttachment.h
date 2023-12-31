@@ -8,8 +8,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttachmentBeginCollision);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttachmentEndCollision);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FAttachmentBeginOverlap, class ACharacter*, InAttacker, AActor*, InAttackCauser, class ACharacter*, InOther);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAttachmentEndOverlap, class ACharacter*, InAttacker, class ACharacter*, InOther);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_EightParams(FAttachmentBeginOverlap, class ACharacter*, InAttacker, AActor*, InAttackCauser, class ACharacter*, InOther, class UPrimitiveComponent*, OverlappedComponent, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult&, SweepResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FAttachmentEndOverlap, class ACharacter*, InAttacker, class ACharacter*, InOther, class UPrimitiveComponent*, OverlappedComponent, UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex);
 
 /**
  * @brief 무기 외형 정보와 캡슐 정보를 가지고 있는 액터

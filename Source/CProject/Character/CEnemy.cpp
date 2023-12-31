@@ -14,7 +14,7 @@
 ACEnemy::ACEnemy()
 {
 #if WITH_EDITOR
-	Debugger = this->CreateDefaultSubobject<UDebuggerComponent>("Debugger");
+	Debugger = CreateDefaultSubobject<UDebuggerComponent>("Debugger");
 #endif
 }
 
@@ -25,7 +25,6 @@ void ACEnemy::BeginPlay()
 	Air = Cast<UCAirComponent>(GetComponentByClass(UCAirComponent::StaticClass()));
 	HitMontage = Cast<UHitMontageComponent>(GetComponentByClass(UHitMontageComponent::StaticClass()));
 	MovementComponent = Cast<UCMovementComponent>(GetComponentByClass(UCMovementComponent::StaticClass()));
-	StatusComponent = Cast<UCStatusComponent>(GetComponentByClass(UCStatusComponent::StaticClass()));
 
 #if DEBUG_DEFAULT_INFO
 	Debugger->AddCollector(this);
@@ -138,17 +137,49 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	return Damage;
 }
 
+void ACEnemy::ApplyDamage()
+{
+	Super::ApplyDamage();
+}
+
+void ACEnemy::LaunchEffect(const FRotator& InLookAtRotation)
+{
+	FHitData* HitData = Damaged.Event->HitData;
+	
+	FVector LaunchPower = HitData->DamagedLaunch;
+			
+	// 만약 SuspensionInAir가 true면 XY축에 대해서만 밀려나게 한다.
+	if (HitData->bSuspensionInAir)
+	{
+		LaunchPower = FVector::ZeroVector;
+	}
+			
+	FVector RotatedLaunch = InLookAtRotation.RotateVector(LaunchPower);
+	LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, false, false);
+
+	// 만약 isAirborne이 true면 피격으로 인해 캐릭터가 뒤로 넘어지는 효과를 준다.
+	if (!!Air && HitData->isAirborne)
+	{
+		Air->SetAirborneMode();
+	}
+}
+
+void ACEnemy::LaunchAttacker(const FRotator& InLookAtRotation)
+{
+	Super::LaunchAttacker(InLookAtRotation);
+}
+
+void ACEnemy::ResetDamagedData(FDamagedData& DamagedData)
+{
+	Super::ResetDamagedData(DamagedData);
+}
+
 /*
  * 피격 상태 변화 후 처리
  */
 void ACEnemy::Hitted()
 {
-	// 데미지 처리
-	if (!!StatusComponent)
-	{
-		StatusComponent->Damage(Damaged.Damage);
-	}
-	Damaged.Damage = 0;
+	ApplyDamage();
 
 	// 피격 효과 처리
 	if (!!Damaged.Event && !!Damaged.Event->HitData)
@@ -156,52 +187,29 @@ void ACEnemy::Hitted()
 		FHitData* HitData = Damaged.Event->HitData;
 
 		PlayHittedMontage();
+		
 		HitData->PlayHitStop(GetWorld());
 		HitData->PlaySoundWave(this);
 		HitData->PlayEffect(GetWorld(), GetActorLocation(), GetActorRotation());
 
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Damaged.Character->GetActorLocation());
-		LookAtRotation.Pitch = GetActorRotation().Pitch;
-		LookAtRotation.Roll = GetActorRotation().Roll;
-		
 		// 밀려나는 효과 (사망일때에는 처리 안함)
-		if (!StatusComponent->IsDead())
+		if (!Status->IsDead())
 		{
-			FVector LaunchPower = HitData->DamagedLaunch;
-			
-			// 만약 SuspensionInAir가 true면 XY축에 대해서만 밀려나게 한다.
-			if (HitData->bSuspensionInAir)
-			{
-				LaunchPower = FVector::ZeroVector;
-			}
-			
-			FVector RotatedLaunch = LookAtRotation.RotateVector(LaunchPower);
-			LaunchCharacter({-RotatedLaunch.X, -RotatedLaunch.Y, RotatedLaunch.Z}, false, false);
+			FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Damaged.Character->GetActorLocation());
+			LookAtRotation.Pitch = GetActorRotation().Pitch;
+			LookAtRotation.Roll = GetActorRotation().Roll;
 
-			// 만약 isAirborne이 true면 피격으로 인해 캐릭터가 뒤로 넘어지는 효과를 준다.
-			if (!!Air && HitData->isAirborne)
-			{
-				Air->SetAirborneMode();
-			}
-
+			LaunchEffect(LookAtRotation);
 			// 공격자 방향으로 회전
 			SetActorRotation(LookAtRotation);
-
-			// 히트시 공격자에게 가해지는 효과
-			if (HitData->AttackerLaunch != FVector::ZeroVector)
-			{
-				FVector RotatedAttackerLaunch = LookAtRotation.RotateVector(HitData->AttackerLaunch);
-				Damaged.Character->LaunchCharacter({RotatedAttackerLaunch.X, RotatedAttackerLaunch.Y, RotatedAttackerLaunch.Z}, true, true);
-			}
+			LaunchAttacker(LookAtRotation);
 		}
 	}
 
 	// 중복 피격 방지
-	Damaged.Character = nullptr;
-	Damaged.Causer = nullptr;
-	Damaged.Event = nullptr;
+	ResetDamagedData(Damaged);
 	
-	if (StatusComponent->IsDead())
+	if (Status->IsDead())
 	{
 		State->SetDeadMode();
 	}
@@ -235,8 +243,8 @@ void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	case EStateType::Dead: Dead(); break;
 	}
 }
+
 #if DEBUG_DEFAULT_INFO
-  
 bool ACEnemy::IsDebugEnable()
 {
 	return true;

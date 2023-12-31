@@ -64,7 +64,7 @@ void ACBladeSkill_EvadeAttack_Projectile::OnSphereComponentBeginOverlap(UPrimiti
 		ActionData.DamagedCharacters.AddUnique(OtherCharacter);
 		
 		// 데미지 처리
-		ActionData.ActionData[0].DamagedData.SendDamage(OwnerCharacter, this, OtherCharacter);
+		ActionData.ActionData[0].DamagedData.SendDamage(OwnerCharacter, this, OtherCharacter, OverlappedComp);
 	}
 }
 

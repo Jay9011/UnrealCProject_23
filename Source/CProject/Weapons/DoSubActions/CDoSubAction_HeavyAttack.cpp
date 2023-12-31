@@ -91,7 +91,7 @@ void UCDoSubAction_HeavyAttack::ChangingProcess()
 	StateComponent->OffSubActionMode();
 }
 
-void UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap_Implementation(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap_Implementation(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther, UPrimitiveComponent* OverlappedComponent, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult)
 {
 	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
@@ -106,7 +106,7 @@ void UCDoSubAction_HeavyAttack::OnAttachmentBeginOverlap_Implementation(ACharact
 
 	// 데미지 처리
 	CheckTrue(HeavyAttackDatas.Num() <= ComboState->GetIndex());
-	HeavyAttackDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
+	HeavyAttackDatas[ComboState->GetIndex()].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther, OverlappedComponent);
 }
 
 void UCDoSubAction_HeavyAttack::OnAttachmentEndCollision_Implementation()

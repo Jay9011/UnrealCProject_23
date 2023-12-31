@@ -7,9 +7,11 @@
 #include "DebugHeader.h"
 #include "CPlayer.generated.h"
 
+/**
+ * @brief 플레이어
+ */
 UCLASS()
-class CPROJECT_API ACPlayer
-	: public ACBaseCharacter
+class CPROJECT_API ACPlayer : public ACBaseCharacter
 	, public IIStateNotify
 	, public IIDebugCollector
 {
@@ -27,11 +29,28 @@ public:
 	virtual void Falling() override;
 
 public:
+	virtual void PlayHittedMontage() override;
+	void AirSuspension(ACharacter& Character, ACharacter& Attacker);
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+protected:
+	virtual void ApplyDamage() override;
+	virtual void LaunchEffect(const FRotator& InLookAtRotation) override;
+	virtual void LaunchAttacker(const FRotator& InLookAtRotation) override;
+	virtual void ResetDamagedData(FDamagedData& DamagedData) override;
+	virtual void Hitted() override;
+	virtual void Dead() override;
+	
+public:
 	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
 	
 // IIStateNotify
 public:
 	virtual void End_Evade() override;
+	virtual void End_Hitted() override;
+	virtual void End_Blocking() override;
+	virtual void End_Unprotected() override;
+	virtual void End_Dead() override;
 	
 /*
  * 카메라 관련
@@ -48,7 +67,7 @@ private:
  */
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Base")
-	class UCMovementComponent* Movement;
+	class UCMovementComponent* MovementComponent;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCWeaponComponent* Weapon;
@@ -62,6 +81,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Extension")
 	class UCAirComponent* Air;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Extension")
+	class UHitMontageComponent* HitMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = "Extension")
+	class UCGuardComponent* GuardComponent;
+	
+private:
+	float MinimumLiftZ = 100.f;
 
 /*
  * Getter

@@ -83,7 +83,7 @@ public:
 		}
 	}
 	UFUNCTION()
-	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther)
+	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 	{
 		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
@@ -91,11 +91,11 @@ public:
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
 			
 			if (DoAction != nullptr)
-				DoAction->OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+				DoAction->OnAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther, OverlappedComponent, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 		}
 	}
 	UFUNCTION()
-	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther)
+	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 	{
 		IIExcuteAction* CurrentAction = Weapon->GetCurrentAction();
 		if (CurrentAction != nullptr && CurrentAction != this)
@@ -103,7 +103,7 @@ public:
 			UCDoAction* DoAction = Cast<UCDoAction>(CurrentAction);
 			
 			if (DoAction != nullptr)
-				DoAction->OnAttachmentEndOverlap(InAttacker, InOther);
+				DoAction->OnAttachmentEndOverlap(InAttacker, InOther, OverlappedComponent, OtherComp, OtherBodyIndex);
 		}
 	}
 

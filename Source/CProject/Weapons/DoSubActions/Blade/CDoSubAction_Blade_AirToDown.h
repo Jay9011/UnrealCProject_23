@@ -32,9 +32,7 @@ public:
 	UFUNCTION()
 	virtual void OnAttachmentEndCollision();
 	UFUNCTION()
-	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
-	UFUNCTION()
-	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
+	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult);
 
 /*
  * Path 관련 데이터

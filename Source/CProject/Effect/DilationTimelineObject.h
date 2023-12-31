@@ -16,7 +16,7 @@ class CPROJECT_API UDilationTimelineObject : public UObject
 public:
 	void BeginPlay();
 	void TickTimeline(float DeltaTime);
-	void StartEffect(ACharacter* InOwnerCharacter, float InTargetDilation, UCurveFloat* InCurve, TArray<AActor*>& InIgnoreActors);
+	void StartEffect(ACharacter* InOwnerCharacter, float InTargetDilation, UCurveFloat* InCurve, TArray<AActor*>& InIgnoreActors, float InRate = 1.0f);
 	void StopEffect();
 
 private:

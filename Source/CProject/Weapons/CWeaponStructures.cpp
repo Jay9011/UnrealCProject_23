@@ -11,10 +11,11 @@
  * FHitData
  * ========================================================================================================================================
  */
-void FHitData::SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void FHitData::SendDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther, UPrimitiveComponent* OverlappedComponent)
 {
 	FActionDamageEvent DamageEvent;
 	DamageEvent.HitData = this;
+	DamageEvent.OverlappedComponent = OverlappedComponent;
 	
 	InOther->TakeDamage(Damage, DamageEvent, InAttacker->GetController(), InAttackCauser);
 }

@@ -86,7 +86,7 @@ public:
 	FVector EffectScale = FVector::OneVector;
 
 public:
-	void SendDamage(class ACharacter* InAttacker, class AActor* InAttackCauser, class ACharacter* InOther);
+	void SendDamage(class ACharacter* InAttacker, class AActor* InAttackCauser, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent);
 	void PlayMontage(class ACharacter* InOwner);
 	void PlayHitStop(UWorld* InWorld);
 	void PlaySoundWave(class ACharacter* InOwner);
@@ -169,6 +169,7 @@ struct FActionDamageEvent : public FDamageEvent
 	GENERATED_BODY()
 public:
 	FHitData* HitData;
+	UPrimitiveComponent* OverlappedComponent;
 };
 
 /*

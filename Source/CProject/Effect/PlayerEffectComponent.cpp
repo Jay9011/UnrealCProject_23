@@ -30,9 +30,16 @@ void UPlayerEffectComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 void UPlayerEffectComponent::DilationEffect(ACharacter* InOwnerCharacter, const float InTargetDilation,
-	TArray<AActor*>& InIgnoreActors)
+	TArray<AActor*>& InIgnoreActors, UCurveFloat* InCurve, const float InPlayRate)
 {
-	DilationTimelineObject->StartEffect(InOwnerCharacter, InTargetDilation, DilationCurve, InIgnoreActors);
+	if (InCurve != nullptr)
+	{
+		DilationTimelineObject->StartEffect(InOwnerCharacter, InTargetDilation, InCurve, InIgnoreActors, InPlayRate);
+	}
+	else
+	{
+		DilationTimelineObject->StartEffect(InOwnerCharacter, InTargetDilation, DilationCurve, InIgnoreActors, InPlayRate);		
+	}
 }
 
 void UPlayerEffectComponent::ArmLengthEffect(USpringArmComponent* InSpringArm, const float InTargetArmLength)

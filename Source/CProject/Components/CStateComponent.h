@@ -10,7 +10,7 @@ UENUM(BlueprintType)
 enum class EStateType : uint8
 {
 	Idle = 0,
-	Equip, Action, Hitted, Blocking, Parrying, Parryed,
+	Equip, Action, Hitted, Blocking, Unprotected,
 	Evade,
 	Parkour,
 	Dead, Wait,
@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHittedMode();
 	UFUNCTION(BlueprintCallable)
+	void SetBlockingMode();
+	UFUNCTION(BlueprintCallable)
+	void SetUnprotectedMode();
+	UFUNCTION(BlueprintCallable)
 	void SetDeadMode();
 	UFUNCTION(BlueprintCallable)
 	void SetActionMode();
@@ -64,6 +68,8 @@ public:
 	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
 	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsHittedMode() const { return Type == EStateType::Hitted; }
+	FORCEINLINE bool IsBlockingMode() const { return Type == EStateType::Blocking; }
+	FORCEINLINE bool IsUnprotectedMode() const { return Type == EStateType::Unprotected; }
 	FORCEINLINE bool IsDeadMode() const { return Type == EStateType::Dead; }
 	FORCEINLINE bool IsActionMode() const { return Type == EStateType::Action; }
 	FORCEINLINE bool IsEvadeMode() const { return Type == EStateType::Evade; }

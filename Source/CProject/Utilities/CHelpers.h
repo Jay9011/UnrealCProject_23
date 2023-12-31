@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"

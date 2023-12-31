@@ -22,7 +22,6 @@ void UCDoSubAction_Blade_AirToDown::BeginPlay(ACharacter* InOwner, UCWeaponObjec
 		Attachment->OnAttachmentBeginCollision.AddDynamic(this, &UCDoSubAction_Blade_AirToDown::OnAttachmentBeginCollision);
 		Attachment->OnAttachmentEndCollision.AddDynamic(this, &UCDoSubAction_Blade_AirToDown::OnAttachmentEndCollision);
 		Attachment->OnAttachmentBeginOverlap.AddDynamic(this, &UCDoSubAction_Blade_AirToDown::OnAttachmentBeginOverlap);
-		Attachment->OnAttachmentEndOverlap.AddDynamic(this, &UCDoSubAction_Blade_AirToDown::OnAttachmentEndOverlap);
 	}
 
 	ActionData.InitActionData();
@@ -76,7 +75,8 @@ void UCDoSubAction_Blade_AirToDown::OnAttachmentEndCollision()
 	ActionData.DamagedCharacters.Empty();
 }
 
-void UCDoSubAction_Blade_AirToDown::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void UCDoSubAction_Blade_AirToDown::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther, UPrimitiveComponent* OverlappedComponent,
+															 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult)
 {
 	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
@@ -90,9 +90,5 @@ void UCDoSubAction_Blade_AirToDown::OnAttachmentBeginOverlap(ACharacter* InAttac
 	}
 
 	// 데미지 처리
-	ActionData.ActionData[0].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
-}
-
-void UCDoSubAction_Blade_AirToDown::OnAttachmentEndOverlap(ACharacter* InAttacker, ACharacter* InOther)
-{
+	ActionData.ActionData[0].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther, OverlappedComponent);
 }

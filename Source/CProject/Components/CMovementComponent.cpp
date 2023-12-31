@@ -1,8 +1,11 @@
 #include "Components/CMovementComponent.h"
+
+#include "Character/CPlayer.h"
 #include "Utilities/CheckMacros.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MyDebugger/DebuggerComponent.h"
 
 UCMovementComponent::UCMovementComponent()
 {
@@ -15,6 +18,12 @@ void UCMovementComponent::BeginPlay()
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 
+#if DEBUG_MOVEMENT
+	if (UDebuggerComponent* DebugerComponent = Cast<UDebuggerComponent>(OwnerCharacter->GetComponentByClass(UDebuggerComponent::StaticClass())))
+	{
+		DebugerComponent->AddCollector(this);
+	}
+#endif
 }
 
 void UCMovementComponent::SetSpeed(ESpeedType InType)
@@ -139,3 +148,22 @@ void UCMovementComponent::ChangeStandingType(EStandingType InType)
 		OnStandingTypeChanged.Broadcast(PrevType, StandingType);
 	}
 }
+
+#if DEBUG_MOVEMENT
+bool UCMovementComponent::IsDebugEnable()
+{
+	return true;
+}
+
+FDebugInfo UCMovementComponent::GetDebugInfo()
+{
+	FDebugInfo Info;
+	Info.Priority = static_cast<int>(DEBUG_NUMS::MOVEMENT);
+	Info.Data.Add({"Standing Type: " + StaticEnum<EStandingType>()->GetNameStringByValue(static_cast<int64>(StandingType)), FColor::Yellow});
+	Info.Data.Add({"Speed: " + FString::SanitizeFloat(OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed), FColor::Cyan});
+	Info.Data.Add({"Can Move: " + (bCanMove ? FString("True") : FString("False")), FColor::Cyan});
+	Info.Data.Add({"Fixed Camera: " + (bFixedCamera ? FString("True") : FString("False")), FColor::Cyan});
+
+	return Info;
+}
+#endif

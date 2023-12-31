@@ -73,7 +73,8 @@ void UCDoSubAction_Blade_GndToDown::OnAttachmentEndCollision()
 	ActionData.DamagedCharacters.Empty();
 }
 
-void UCDoSubAction_Blade_GndToDown::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void UCDoSubAction_Blade_GndToDown::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther, UPrimitiveComponent* OverlappedComponent,
+															 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult)
 {
 	CheckFalse(Weapon->GetCurrentAction() == this);
 	CheckNull(InOther);
@@ -87,5 +88,5 @@ void UCDoSubAction_Blade_GndToDown::OnAttachmentBeginOverlap(ACharacter* InAttac
 	}
 
 	// 데미지 처리
-	ActionData.ActionData[0].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther);
+	ActionData.ActionData[0].DamagedData.SendDamage(InAttacker, InAttackCauser, InOther, OverlappedComponent);
 }

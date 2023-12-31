@@ -35,20 +35,10 @@ private:
 	class UCDoSubAction* DoSubAction;
 	UPROPERTY()
 	class UCEvadeAction* EvadeAction;
+	UPROPERTY()
+	class UCCtrlAction* CtrlAction;
 	
-private:
-	IIExcuteAction* PrevAction = nullptr;		// 이전 Action
-	IIExcuteAction* CurrentAction = nullptr;	// 현재 Action
-	IIExcuteAction* ReservedAction = nullptr;	// 예약된 Action
-	
-// Getter, Setter
 public:
-	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
-	FORCEINLINE class UCEquipment* GetEquipment() const { return Equipment; }
-	FORCEINLINE class UCDoAction* GetDoAction() const { return DoAction; }
-	FORCEINLINE class UCEvadeAction* GetEvadeAction() const { return EvadeAction; }
-	FORCEINLINE class UCDoSubAction* GetDoSubAction() const { return DoSubAction; }
-
 	FORCEINLINE IIExcuteAction* GetCurrentAction() const { return CurrentAction; }
 	FORCEINLINE IIExcuteAction* GetReservedAction() const { return ReservedAction; }
 
@@ -67,4 +57,21 @@ public:
 		else
 			SetCurrentAction(InReserveAction);
 	}
+	
+private:
+	IIExcuteAction* PrevAction = nullptr;		// 이전 Action
+	IIExcuteAction* CurrentAction = nullptr;	// 현재 Action
+	IIExcuteAction* ReservedAction = nullptr;	// 예약된 Action
+
+/*
+ *	Getter, Setter
+ */
+public:
+	FORCEINLINE class ACAttachment* GetAttachment() const { return Attachment; }
+	FORCEINLINE class UCEquipment* GetEquipment() const { return Equipment; }
+	FORCEINLINE class UCDoAction* GetDoAction() const { return DoAction; }
+	FORCEINLINE class UCEvadeAction* GetEvadeAction() const { return EvadeAction; }
+	FORCEINLINE class UCDoSubAction* GetDoSubAction() const { return DoSubAction; }
+	FORCEINLINE class UCCtrlAction* GetCtrlAction() const { return CtrlAction; }
+
 };

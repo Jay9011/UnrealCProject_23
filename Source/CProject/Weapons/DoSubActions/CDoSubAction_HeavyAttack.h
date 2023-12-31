@@ -44,12 +44,12 @@ public:
 	virtual void OnAttachmentEndCollision_Implementation();
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
-	virtual void OnAttachmentBeginOverlap_Implementation(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther);
+	void OnAttachmentBeginOverlap(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult);
+	virtual void OnAttachmentBeginOverlap_Implementation(class ACharacter* InAttacker, AActor* InAttackCauser, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther);
-	virtual void OnAttachmentEndOverlap_Implementation(class ACharacter* InAttacker, class ACharacter* InOther){}
+	void OnAttachmentEndOverlap(class ACharacter* InAttacker, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void OnAttachmentEndOverlap_Implementation(class ACharacter* InAttacker, class ACharacter* InOther, class UPrimitiveComponent* OverlappedComponent, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex){}
 	
 /*
  * 데이터 관리

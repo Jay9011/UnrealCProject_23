@@ -67,12 +67,19 @@ public:
 	// 보조 액션 동작 중 버튼을 뗄 때의 동작
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	void SubAction_Released();
+	// Ctrl 키를 누르고 있는 동안의 동작
+	UFUNCTION(BlueprintCallable, Category = "Control")
+	void Ctrl_Pressed();
+	// Ctrl 키를 뗄 때의 동작
+	UFUNCTION(BlueprintCallable, Category = "Control")
+	void Ctrl_Released();
 	
 public:
 	class ACAttachment* GetAttachment();
 	class UCEquipment* GetEquipment();
 	class UCDoAction* GetDoAction();
 	class UCDoSubAction* GetSubAction();
+	class UCCtrlAction* GetCtrlAction();
 	
 	class IIExcuteAction* GetCurrentAction();
 	class IIExcuteAction* GetReservedAction();
@@ -97,6 +104,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
 	class UCWeaponAsset* WeaponAssets[static_cast<int32>(EEquipSlotType::Max)] = {nullptr,};
 
+	UPROPERTY()
 	class UCWeaponObject* WeaponObject[static_cast<int32>(EEquipSlotType::Max)] = {nullptr,};
 	
 private:

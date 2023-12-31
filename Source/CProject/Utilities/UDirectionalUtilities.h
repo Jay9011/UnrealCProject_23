@@ -79,6 +79,15 @@ public:
 
 		return FRotator(TargetRot * CurrentRot);
 	}
+	// 두 액터의 위치를 기준으로 회전 값을 구한다.
+	static float GetRotationFromTwoActors(const AActor* InCurrentActor, const AActor* InTargetActor)
+	{
+		FVector CurrentLocation = InCurrentActor->GetActorLocation();
+		FVector TargetLocation = InTargetActor->GetActorLocation();
+
+		FVector Direction = (TargetLocation - CurrentLocation).GetSafeNormal2D();
+		return (InCurrentActor->GetActorForwardVector() | Direction);
+	}
 };
 /*
  * @breif 위치와 관련된 유틸리티

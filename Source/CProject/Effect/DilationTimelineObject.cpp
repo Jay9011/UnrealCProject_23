@@ -16,7 +16,7 @@ void UDilationTimelineObject::TickTimeline(float DeltaTime)
 }
 
 void UDilationTimelineObject::StartEffect(ACharacter* InOwnerCharacter, float InTargetDilation, UCurveFloat* InCurve,
-                                          TArray<AActor*>& InIgnoreActors)
+                                          TArray<AActor*>& InIgnoreActors, float InRate)
 {
 	if (Timeline.IsPlaying())
 	{
@@ -28,6 +28,7 @@ void UDilationTimelineObject::StartEffect(ACharacter* InOwnerCharacter, float In
 	IgnoreActors = InIgnoreActors;
 
 	Timeline.SetFloatCurve(InCurve, FName("Default"));
+	Timeline.SetPlayRate(InRate);
 	Timeline.PlayFromStart();
 }
 
