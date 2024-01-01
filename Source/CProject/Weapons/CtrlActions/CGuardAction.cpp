@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CGuardMontageAsset.h"
+#include "Weapons/CWeaponStructures.h"
 
 UCGuardAction::UCGuardAction()
 {
@@ -54,7 +55,7 @@ void UCGuardAction::Released()
 	CheckNull(GuardMontageAsset);
 
 	// 다른 상태 변화로 인해 가드가 풀린게 아니라면, 정상적인 가드 해제 동작을 수행한다.
-	if (!GuardComponent->IsUnBlocking())
+	if (!GuardComponent->IsUnGuard())
 	{
 		// 만약, BlockCancel이 가능한 타이밍이라면 바로 EndBlockingMode를 호출한다.
 		if (BlockCancel)
@@ -77,8 +78,13 @@ void UCGuardAction::OnBeginEquip()
 	Super::OnBeginEquip();
 	if (GuardComponent != nullptr)
 	{
-		GuardComponent->OnGuardSuccess.AddDynamic(this, &UCGuardAction::OnGuardSuccess);
-		GuardComponent->OnParryingSuccess.AddDynamic(this, &UCGuardAction::OnParryingSuccess);
+		GuardComponent->OnEvaluateBlocking.AddDynamic(this, &UCGuardAction::OnEvaluateBlocking);
+		GuardComponent->OnEvaluateParrying.AddDynamic(this, &UCGuardAction::OnEvaluateParrying);
+	}
+
+	if (StateComponent != nullptr)
+	{
+		StateComponent->OnStateTypeChanged.AddDynamic(this, &UCGuardAction::OnStateTypeChanged);
 	}
 }
 
@@ -87,14 +93,19 @@ void UCGuardAction::OnUnequip()
 	Super::OnUnequip();
 	if (GuardComponent != nullptr)
 	{
-		GuardComponent->OnGuardSuccess.RemoveDynamic(this, &UCGuardAction::OnGuardSuccess);
-		GuardComponent->OnParryingSuccess.RemoveDynamic(this, &UCGuardAction::OnParryingSuccess);
+		GuardComponent->OnEvaluateBlocking.RemoveDynamic(this, &UCGuardAction::OnEvaluateBlocking);
+		GuardComponent->OnEvaluateParrying.RemoveDynamic(this, &UCGuardAction::OnEvaluateParrying);
+	}
+
+	if (StateComponent != nullptr)
+	{
+		StateComponent->OnStateTypeChanged.RemoveDynamic(this, &UCGuardAction::OnStateTypeChanged);
 	}
 }
 
 void UCGuardAction::SetBlockingMode()
 {
-	if (GuardComponent->IsUnBlocking())
+	if (GuardComponent->IsUnGuard())
 	{
 		MovementComponent->OffCrouch();
 	
@@ -113,7 +124,7 @@ void UCGuardAction::EndBlockingMode()
 
 	if (GuardComponent->IsBlocking())
 	{
-		GuardComponent->SetUnBlocking();
+		GuardComponent->SetUnGuard();
 	}
 
 	BlockCancel = false;
@@ -122,7 +133,20 @@ void UCGuardAction::EndBlockingMode()
 	MovementProcess();
 }
 
-void UCGuardAction::OnGuardSuccess(bool bSuccess, FDamagedData& DamagedData)
+void UCGuardAction::OnEvaluateBlocking(FDamagedData& DamagedData)
+{
+	bool GuardBreakable = DamagedData.Event->HitData->bGuardBreakable;
+	if (GuardBreakable)
+	{
+		GuardBreak(DamagedData);
+	}
+	else
+	{
+		BlockingSuccess(DamagedData);
+	}
+}
+
+void UCGuardAction::BlockingSuccess(FDamagedData& DamagedData)
 {
 	// 만약, 몽타주가 BlendIn 되기 전이라면, 몽타주 재생을 처리하지 않는다.
 	UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
@@ -142,6 +166,22 @@ void UCGuardAction::OnGuardSuccess(bool bSuccess, FDamagedData& DamagedData)
 	
 	// 가드 성공 이후 돌아오는 Notify를 수신할 때 까지 BlockCancel을 할 수 없다.
 	BlockCancel = false;
+}
+
+void UCGuardAction::GuardBreak(FDamagedData& DamagedData)
+{
+	// 가드 브레이크는 기본적으로 가드를 해제한다.
+	EndBlockingMode();
+	
+	FGuardMontageData MontageData;
+	GuardMontageAsset->PlayBreakBlockMontage(AnimInstance, MontageData);
+	MovementProcess(MontageData.CanMove, MontageData.FixedCamera);
+
+	// 가드 브레이크 이후 돌아오는 Notify를 수신할 때 까지 무방비 상태가 된다.
+	if (StateComponent != nullptr)
+	{
+		StateComponent->SetUnprotectedMode();
+	}
 }
 
 void UCGuardAction::SetParryingMode()
@@ -177,7 +217,12 @@ void UCGuardAction::EndParryingMode()
 	GuardComponent->SetBlockingMode();
 }
 
-void UCGuardAction::OnParryingSuccess(bool bSuccess, FDamagedData& DamagedData)
+void UCGuardAction::OnEvaluateParrying(FDamagedData& DamagedData)
+{
+	ParryingSuccess(DamagedData);
+}
+
+void UCGuardAction::ParryingSuccess(FDamagedData& DamagedData)
 {
 	
 }
@@ -193,21 +238,21 @@ bool UCGuardAction::CanBlocking() const
 {
 	CheckFalseResult(StateComponent->IsIdleMode(), false);
 
-	return GuardComponent->IsUnBlocking();
+	return GuardComponent->IsUnGuard();
 }
 
 void UCGuardAction::OnPlayMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	if (GuardMontageAsset->GetBeginBlockSocketName() == NotifyName)
+	if (GuardMontageAsset->GetBeginBlockNotifyName() == NotifyName)
 	{
 		SetBlockingMode();
 	}
-	else if (GuardMontageAsset->GetEndBlockSocketName() == NotifyName)
+	else if (GuardMontageAsset->GetEndBlockNotifyName() == NotifyName)
 	{
 		EndBlockingMode();
 	}
 	// GuardSuccess 이후 Loop 로 돌아오는 동작
-	else if (GuardMontageAsset->GetReturnToLoopSocketName() == NotifyName)
+	else if (GuardMontageAsset->GetReturnToLoopNotifyName() == NotifyName)
 	{
 		BlockCancel = true;
 		// 만약, 버튼을 뗀 상태라면 바로 EndBlockingMode를 호출한다.
@@ -225,7 +270,7 @@ void UCGuardAction::OnPlayMontageNotifyBegin(FName NotifyName, const FBranchingP
 			MovementProcess(MontageData.CanMove, MontageData.FixedCamera);
 		}
 	}
-	else if (GuardMontageAsset->GetCheckBlockCancelSocketName() == NotifyName)
+	else if (GuardMontageAsset->GetCheckBlockCancelNotifyName() == NotifyName)
 	{
 		BlockCancel = true;
 		// 만약, 버튼을 뗀 상태라면 바로 EndBlockingMode를 호출한다.
@@ -236,6 +281,24 @@ void UCGuardAction::OnPlayMontageNotifyBegin(FName NotifyName, const FBranchingP
 			GuardMontageAsset->PlayEndBlockMontage(AnimInstance, MontageData);
 			MovementProcess(MontageData.CanMove, MontageData.FixedCamera);
 		}
+	}
+}
+
+void UCGuardAction::OnStateTypeChanged(EStateType InPrevStateType, EStateType InNewStateType)
+{
+	switch (InPrevStateType)
+	{
+	case EStateType::Unprotected:
+		{
+			if (InNewStateType == EStateType::Idle)
+			{
+				// 움직임 되돌리기
+				MovementProcess();
+			}
+		}
+		break;
+		
+	default: ;
 	}
 }
 

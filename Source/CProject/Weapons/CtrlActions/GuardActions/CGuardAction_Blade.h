@@ -20,8 +20,9 @@ public:
 	virtual void BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapon, ACAttachment* InAttachment) override;
 	
 public:
-	virtual void OnGuardSuccess(bool bSuccess, FDamagedData& DamagedData) override;
-	virtual void OnParryingSuccess(bool bSuccess, FDamagedData& DamagedData) override;
+	virtual void BlockingSuccess(FDamagedData& DamagedData) override;
+	virtual void GuardBreak(FDamagedData& DamagedData) override;
+	virtual void ParryingSuccess(FDamagedData& DamagedData) override;
 
 public:
 	void AttackerProcess(ACharacter* InAttacker);

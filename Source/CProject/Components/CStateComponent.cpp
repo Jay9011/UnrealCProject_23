@@ -52,7 +52,7 @@ void UCStateComponent::SetHittedMode()
 
 void UCStateComponent::SetBlockingMode()
 {
-	ChangeType(EStateType::Blocking);
+	ChangeType(EStateType::Guard);
 }
 
 void UCStateComponent::SetUnprotectedMode()

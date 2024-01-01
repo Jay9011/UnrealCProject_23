@@ -33,6 +33,9 @@ struct FHitData : public FTableRowBase
 	// 기본 데이터
 public:
 	UPROPERTY(EditAnywhere, Category = "Damage")
+	bool bGuardBreakable = false;
+	
+	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage = 0;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
@@ -149,9 +152,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectScale = FVector::OneVector;
 
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	bool bGuardBreakable = false;
-	
 	// 데미지 관련 데이터 셋
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	FHitData DamagedData;

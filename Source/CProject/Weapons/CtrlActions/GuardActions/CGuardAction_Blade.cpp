@@ -28,9 +28,9 @@ void UCGuardAction_Blade::BeginPlay(ACharacter* InOwner, UCWeaponObject* InWeapo
 
 }
 
-void UCGuardAction_Blade::OnGuardSuccess(bool bSuccess, FDamagedData& DamagedData)
+void UCGuardAction_Blade::BlockingSuccess(FDamagedData& DamagedData)
 {
-	Super::OnGuardSuccess(bSuccess, DamagedData);
+	Super::BlockingSuccess(DamagedData);
 
 	FVector HitLocation = DamagedData.Event->OverlappedComponent->GetComponentLocation();
 	FVector HitDirection = HitLocation - Attachment->GetActorLocation();
@@ -43,9 +43,14 @@ void UCGuardAction_Blade::OnGuardSuccess(bool bSuccess, FDamagedData& DamagedDat
 	// TODO:카메라 효과
 }
 
-void UCGuardAction_Blade::OnParryingSuccess(bool bSuccess, FDamagedData& DamagedData)
+void UCGuardAction_Blade::GuardBreak(FDamagedData& DamagedData)
 {
-	Super::OnParryingSuccess(bSuccess, DamagedData);
+	Super::GuardBreak(DamagedData);
+}
+
+void UCGuardAction_Blade::ParryingSuccess(FDamagedData& DamagedData)
+{
+	Super::ParryingSuccess(DamagedData);
 	
 	// 패링이 성공하면, 우선 예약된 패링 타이머들을 모두 종료한다.
 	ClearParryingTimer();

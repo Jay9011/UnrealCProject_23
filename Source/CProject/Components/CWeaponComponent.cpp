@@ -2,6 +2,7 @@
 
 #include "CStateComponent.h"
 #include "GameFramework/Character.h"
+#include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CWeaponAsset.h"
 #include "Weapons/CAttachment.h"
@@ -230,8 +231,8 @@ FDebugInfo UCWeaponComponent::GetDebugInfo()
 	
 	DebugInfo.Data.Add({"Attachment: " + (GetAttachment() ? GetAttachment()->GetName() : "None"), FColor::Black});
 	DebugInfo.Data.Add({"Equipment: " + (GetEquipment() ? GetEquipment()->GetName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
-	DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"DoAction: " + (!!DoAction ? DoAction->GetActionName() : "None"), FColor::Black});
+	// DebugInfo.Data.Add({"SubAction: " + (GetSubAction() ? GetSubAction()->GetActionName() : "None"), FColor::Black});
 	DebugInfo.Data.Add({"CurrentAction: " + (GetCurrentAction() ? GetCurrentAction()->GetActionName() : "None"), FColor::Black});
 	DebugInfo.Data.Add({"ReservedAction: " + (GetReservedAction() ? GetReservedAction()->GetActionName() : "None"), FColor::Black});
 	

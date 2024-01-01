@@ -33,18 +33,18 @@ class CPROJECT_API UCGuardMontageAsset : public UDataAsset
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Guard")
-	FName BeginBlockSocketName = "BeginBlock";
+	FName BeginBlockNotifyName = "BeginBlock";
 	UPROPERTY(EditDefaultsOnly, Category = "Guard")
-	FName CheckBlockCancelSocketName = "BlockCancel";
+	FName CheckBlockCancelNotifyName = "BlockCancel";
 	UPROPERTY(EditDefaultsOnly, Category = "Guard")
 	FName LoopSectionName = "Loop";
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Guard Success")
-	FName ReturnToLoopSocketName = "EndSuccess";
+	FName ReturnToLoopNotifyName = "EndSuccess";
 
 	UPROPERTY(EditDefaultsOnly, Category = "Guard End")
-	FName EndBlockSocketName = "EndBlock";
-
+	FName EndBlockNotifyName = "EndBlock";
+	
 protected:
 	void MovementProcess(UAnimInstance* InAnimInstance, const FGuardMontageData& MontageData);
 	
@@ -52,11 +52,11 @@ protected:
  * Getter
  */
 public:
-	FName GetBeginBlockSocketName() const { return BeginBlockSocketName; }
-	FName GetLoopSocketName() const { return LoopSectionName; }
-	FName GetReturnToLoopSocketName() const { return ReturnToLoopSocketName; }
-	FName GetEndBlockSocketName() const { return EndBlockSocketName; }
-	FName GetCheckBlockCancelSocketName() const { return CheckBlockCancelSocketName; }
+	FName GetBeginBlockNotifyName() const { return BeginBlockNotifyName; }
+	FName GetLoopSectionName() const { return LoopSectionName; }
+	FName GetReturnToLoopNotifyName() const { return ReturnToLoopNotifyName; }
+	FName GetEndBlockNotifyName() const { return EndBlockNotifyName; }
+	FName GetCheckBlockCancelNotifyName() const { return CheckBlockCancelNotifyName; }
 	
 /*
  * 상속해서 사용할 것

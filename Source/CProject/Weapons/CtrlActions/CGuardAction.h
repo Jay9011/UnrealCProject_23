@@ -35,15 +35,20 @@ public:
 	void SetBlockingMode();
 	void EndBlockingMode();
 	UFUNCTION()
-	virtual void OnGuardSuccess(bool bSuccess, FDamagedData& DamagedData);
-
+	virtual void OnEvaluateBlocking(FDamagedData& DamagedData);
+	
+	virtual void BlockingSuccess(FDamagedData& DamagedData);
+	virtual void GuardBreak(FDamagedData& DamagedData);
+		
 /* Parrying */
 public:
 	void SetParryingMode();
 	// parrying의 정상 종료
 	void EndParryingMode();
 	UFUNCTION()
-	virtual void OnParryingSuccess(bool bSuccess, FDamagedData& DamagedData);
+	virtual void OnEvaluateParrying(FDamagedData& DamagedData);
+	
+	virtual void ParryingSuccess(FDamagedData& DamagedData);
 
 protected:
 	// parrying 타이머 제거
@@ -57,6 +62,8 @@ public:
 public:
 	UFUNCTION()
 	void OnPlayMontageNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+	UFUNCTION()
+	void OnStateTypeChanged(EStateType InPrevStateType, EStateType InNewStateType);
 
 protected:
 	void MovementProcess(bool CanMove = true, bool FixedCamera = false);

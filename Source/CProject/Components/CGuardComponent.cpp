@@ -24,30 +24,30 @@ void UCGuardComponent::BeginPlay()
 
 void UCGuardComponent::InitGuardDelegate()
 {
-	OnGuardSuccess.Clear();
-	OnParryingSuccess.Clear();
+	OnEvaluateBlocking.Clear();
+	OnEvaluateParrying.Clear();
 }
 
-void UCGuardComponent::GuardSuccess(bool bSuccess, FDamagedData DamagedData)
+void UCGuardComponent::EvaluateGuard(bool bSuccess, FDamagedData DamagedData)
 {
 	if (!bSuccess)
 		return;
 
-	switch (BlockingType)
+	switch (GuardType)
 	{
-	case EBlockingType::Blocking:
+	case EGuardType::Blocking:
 		{
-			if (OnGuardSuccess.IsBound())
+			if (OnEvaluateBlocking.IsBound())
 			{
-				OnGuardSuccess.Broadcast(bSuccess, DamagedData);
+				OnEvaluateBlocking.Broadcast(DamagedData);
 			}
 		}
 		break;
-	case EBlockingType::Parrying:
+	case EGuardType::Parrying:
 		{
-			if (OnParryingSuccess.IsBound())
+			if (OnEvaluateParrying.IsBound())
 			{
-				OnParryingSuccess.Broadcast(bSuccess, DamagedData);
+				OnEvaluateParrying.Broadcast(DamagedData);
 			}
 		}
 		break;
@@ -55,9 +55,9 @@ void UCGuardComponent::GuardSuccess(bool bSuccess, FDamagedData DamagedData)
 	}
 }
 
-void UCGuardComponent::SetUnBlocking()
+void UCGuardComponent::SetUnGuard()
 {
-	SetBlockingType(EBlockingType::None);
+	SetBlockingType(EGuardType::None);
 }
 
 void UCGuardComponent::SetBlockingMode()
@@ -65,7 +65,7 @@ void UCGuardComponent::SetBlockingMode()
 	UCStateComponent* StateComponent = Cast<UCStateComponent>(GetOwner()->GetComponentByClass(UCStateComponent::StaticClass()));
 	CheckNull(StateComponent);
 	
-	SetBlockingType(EBlockingType::Blocking);
+	SetBlockingType(EGuardType::Blocking);
 	
 	if (!StateComponent->IsBlockingMode())
 		StateComponent->SetBlockingMode();
@@ -73,16 +73,16 @@ void UCGuardComponent::SetBlockingMode()
 
 void UCGuardComponent::SetParryingMode()
 {
-	SetBlockingType(EBlockingType::Parrying);
+	SetBlockingType(EGuardType::Parrying);
 }
 
-void UCGuardComponent::SetBlockingType(EBlockingType InBlockingType)
+void UCGuardComponent::SetBlockingType(EGuardType InBlockingType)
 {
-	BlockingType = InBlockingType;
+	GuardType = InBlockingType;
 
-	if (OnBlockingTypeChanged.IsBound())
+	if (OnGuardTypeChanged.IsBound())
 	{
-		OnBlockingTypeChanged.Broadcast(BlockingType);
+		OnGuardTypeChanged.Broadcast(GuardType);
 	}
 }
 
@@ -98,7 +98,7 @@ FDebugInfo UCGuardComponent::GetDebugInfo()
 
 	DebugInfo.Priority = static_cast<int32>(DEBUG_NUMS::GUARD);
 
-	FString BlockingTypeString = "BlockingType: " + StaticEnum<EBlockingType>()->GetNameStringByValue(static_cast<uint8>(BlockingType));
+	FString BlockingTypeString = "GuardType: " + StaticEnum<EGuardType>()->GetNameStringByValue(static_cast<uint8>(GuardType));
 	DebugInfo.Data.Add({BlockingTypeString, FColor::Yellow});
 	
 	return DebugInfo;

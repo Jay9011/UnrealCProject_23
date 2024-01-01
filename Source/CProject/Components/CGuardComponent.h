@@ -8,7 +8,7 @@
 #include "CGuardComponent.generated.h"
 
 UENUM(BlueprintType)
-enum class EBlockingType : uint8
+enum class EGuardType : uint8
 {
 	None,
 	Blocking,
@@ -16,9 +16,9 @@ enum class EBlockingType : uint8
 	Max
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBlockingTypeChanged, EBlockingType, InBlockingType);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FBlockingSuccess, bool, bSuccess, FDamagedData&, DamagedData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FParryingSuccess, bool, bSuccess, FDamagedData&, DamagedData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardTypeChanged, EGuardType, InBlockingType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEvaluateBlocking, FDamagedData&, DamagedData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEvaluateParrying, FDamagedData&, DamagedData);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CPROJECT_API UCGuardComponent : public UActorComponent
@@ -36,32 +36,32 @@ public:
 	void InitGuardDelegate();
 	
 public:
-	void GuardSuccess(bool bSuccess, FDamagedData DamagedData);
+	void EvaluateGuard(bool bSuccess, FDamagedData DamagedData);
 	
 public:
-	void SetUnBlocking();
+	void SetUnGuard();
 	void SetBlockingMode();
 	void SetParryingMode();
 
 private:
-	void SetBlockingType(EBlockingType InBlockingType);
+	void SetBlockingType(EGuardType InBlockingType);
 	
 public:
-	FBlockingTypeChanged OnBlockingTypeChanged;
-	FBlockingSuccess OnGuardSuccess;
-	FParryingSuccess OnParryingSuccess;
+	FGuardTypeChanged OnGuardTypeChanged;
+	FEvaluateBlocking OnEvaluateBlocking;
+	FEvaluateParrying OnEvaluateParrying;
 	
 private:
-	EBlockingType BlockingType = EBlockingType::None;
+	EGuardType GuardType = EGuardType::None;
 
 /*
  * Getter
  */
 public:
-	FORCEINLINE EBlockingType GetBlockingType() const { return BlockingType; }
-	FORCEINLINE bool IsUnBlocking() const { return BlockingType == EBlockingType::None; }
-	FORCEINLINE bool IsBlocking() const { return BlockingType == EBlockingType::Blocking; }
-	FORCEINLINE bool IsParrying() const { return BlockingType == EBlockingType::Parrying; }
+	FORCEINLINE EGuardType GetGuardType() const { return GuardType; }
+	FORCEINLINE bool IsUnGuard() const { return GuardType == EGuardType::None; }
+	FORCEINLINE bool IsBlocking() const { return GuardType == EGuardType::Blocking; }
+	FORCEINLINE bool IsParrying() const { return GuardType == EGuardType::Parrying; }
 
 #if DEBUG_GUARD
 public:

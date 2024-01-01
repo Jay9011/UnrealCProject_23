@@ -190,16 +190,14 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 	Damaged.Event = (FActionDamageEvent*)&DamageEvent;
 	
 	// 가드 상태인 경우
-	if (GuardComponent != nullptr && !GuardComponent->IsUnBlocking())
+	if (GuardComponent != nullptr && !GuardComponent->IsUnGuard())
 	{
 		// 가드가 가능한 상태인지 확인
 		if (UDirectionalUtil::GetRotationFromTwoActors(this, Damaged.Character) >= 0.f)
 		{
-			GuardComponent->GuardSuccess(true, Damaged);
+			GuardComponent->EvaluateGuard(true, Damaged);
 			return 0;
 		}
-
-		// TODO: 가드가 불가능하니 가드를 해제하고 피격 상태로 전환
 	}
 	
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);

@@ -22,5 +22,14 @@ private:
  */
 public:
 	FORCEINLINE TEnumAsByte<ETraceTypeQuery> GetEvadableType() const { return EvadableTraceChannel; }
+
+public:
+	UFUNCTION(BlueprintCallable, BlueprintGetter)
+	FORCEINLINE bool IsDebugBtn() const { return bDebugBtn; }
+	UFUNCTION(BlueprintCallable, BlueprintSetter)
+	void SetDebugBtn(bool bInDebugBtn) { bDebugBtn = bInDebugBtn; }
 	
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	bool bDebugBtn = false;
 };
