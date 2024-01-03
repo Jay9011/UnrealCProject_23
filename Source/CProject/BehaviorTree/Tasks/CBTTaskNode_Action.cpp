@@ -53,3 +53,22 @@ void UCBTTaskNode_Action::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 }
+
+EBTNodeResult::Type UCBTTaskNode_Action::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetAIOwner());
+	ACEnemy_AI* Enemy = Cast<ACEnemy_AI>(Controller->GetPawn());
+
+	UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(Enemy->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	CheckNullResult(Weapon, EBTNodeResult::Aborted);
+
+	bool bBeginAction = Weapon->GetDoAction()->IsBeginAction();
+	if (bBeginAction == false)
+	{
+		Weapon->GetDoAction()->Begin_DoAction();
+	}
+
+	Weapon->GetDoAction()->End_DoAction();
+	
+	return EBTNodeResult::Succeeded;
+}

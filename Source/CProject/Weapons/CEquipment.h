@@ -57,4 +57,5 @@ private:
 	 */
 public:
 	FORCEINLINE bool IsEquipped() const { return bEquipped; }
+	FORCEINLINE bool IsBeginEquip() const { return bBeginEquip; }
 };

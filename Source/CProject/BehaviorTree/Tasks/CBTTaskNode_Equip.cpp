@@ -2,6 +2,7 @@
 
 #include "Character/AI/CAIController.h"
 #include "Character/AI/CEnemy_AI.h"
+#include "Components/CMovementComponent.h"
 #include "Utilities/CheckMacros.h"
 #include "Weapons/CEquipment.h"
 
@@ -47,6 +48,12 @@ EBTNodeResult::Type UCBTTaskNode_Equip::ExecuteTask(UBehaviorTreeComponent& Owne
 		break;
 	}
 
+	UCMovementComponent* MovementComponent = Cast<UCMovementComponent>(AI->GetComponentByClass(UCMovementComponent::StaticClass()));
+	if (MovementComponent != nullptr)
+	{
+		Controller->StopMovement();
+	}
+
 	// 장착이 완료되었는지 Tick에서 확인
 	return EBTNodeResult::InProgress;
 }
@@ -72,4 +79,23 @@ void UCBTTaskNode_Equip::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 		return;
 	}
+}
+
+EBTNodeResult::Type UCBTTaskNode_Equip::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetAIOwner());
+	ACEnemy_AI* AI = Cast<ACEnemy_AI>(Controller->GetPawn());
+
+	UCWeaponComponent* WeaponComponent = Cast<UCWeaponComponent>(AI->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	CheckNullResult(WeaponComponent, EBTNodeResult::Aborted);
+
+	bool bBeginEquip = WeaponComponent->GetEquipment()->IsBeginEquip();
+	if (bBeginEquip == false)
+	{
+		WeaponComponent->GetEquipment()->Begin_Equip();
+	}
+
+	WeaponComponent->GetEquipment()->End_Equip();
+	
+	return EBTNodeResult::Aborted;
 }
