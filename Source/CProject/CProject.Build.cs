@@ -14,6 +14,10 @@ public class CProject : ModuleRules
 		
 		PrivateDependencyModuleNames.Add("InputCore");
 		PrivateDependencyModuleNames.Add("Niagara");
+		PrivateDependencyModuleNames.Add("AIModule");
+		PrivateDependencyModuleNames.Add("GameplayTasks");
+		PrivateDependencyModuleNames.Add("NavigationSystem");
+		
 		PrivateDependencyModuleNames.Add("MyDebugger");
 	}
 }

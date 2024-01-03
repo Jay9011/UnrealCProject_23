@@ -9,6 +9,7 @@ enum class DEBUG_NUMS
 	GUARD,
 	WEAPON_COMPONENT,
 	FEET,
+	AI_Label,
 };
 
 #define DEBUG_DEFAULT_INFO		(WITH_EDITOR && true)
@@ -21,3 +22,4 @@ enum class DEBUG_NUMS
 #define DEBUG_FEET				(WITH_EDITOR && false)
 #define DEBUG_HEAD				(WITH_EDITOR && false)
 #define DEBUG_GUARD				(WITH_EDITOR && true)
+#define DEBUG_AI_Label			(WITH_EDITOR && false)

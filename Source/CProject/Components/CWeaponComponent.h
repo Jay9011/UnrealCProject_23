@@ -89,6 +89,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void SetMainWeaponMode();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SetSubWeaponMode();
 	
 private:
 	bool IsIdleMode();
@@ -97,9 +100,6 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 	FEquipSlotTypeChanged OnEquipSlotTypeChanged;
 
-/*
- * Member
- */
 private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
 	class UCWeaponAsset* WeaponAssets[static_cast<int32>(EEquipSlotType::Max)] = {nullptr,};
@@ -130,7 +130,10 @@ public:
 
 	FORCEINLINE EWeaponType GetWeaponType() const;
 
-	/*
+public:
+	FORCEINLINE bool CheckOwnEquipSlot(EEquipSlotType InSlotType) const;
+
+/*
  * Debugger
  */
 #if DEBUG_WEAPON_COMPONENT

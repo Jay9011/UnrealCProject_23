@@ -5,6 +5,7 @@
 #include "Components/CStateComponent.h"
 #include "Components/IStateNotify.h"
 #include "DebugHeader.h"
+#include "GenericTeamAgentInterface.h"
 #include "CPlayer.generated.h"
 
 /**
@@ -13,6 +14,7 @@
 UCLASS()
 class CPROJECT_API ACPlayer : public ACBaseCharacter
 	, public IIStateNotify
+	, public IGenericTeamAgentInterface
 	, public IIDebugCollector
 {
 	GENERATED_BODY()
@@ -51,6 +53,11 @@ public:
 	virtual void End_Blocking() override;
 	virtual void End_Unprotected() override;
 	virtual void End_Dead() override;
+
+// IGenericTeamAgentInterface
+public:
+	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
 	
 /*
  * 카메라 관련

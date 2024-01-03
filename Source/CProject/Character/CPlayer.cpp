@@ -326,6 +326,12 @@ void ACPlayer::End_Dead()
 {
 }
 
+void ACPlayer::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+{
+	if (TeamID != NewTeamID)
+		TeamID = NewTeamID;
+}
+
 #if DEBUG_DEFAULT_INFO
 FDebugInfo ACPlayer::GetDebugInfo()
 {

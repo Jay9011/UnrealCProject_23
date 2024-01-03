@@ -51,5 +51,10 @@ private:
 private:
 	bool bBeginEquip;
 	bool bEquipped;
-	
+
+	/*
+	 * Getter
+	 */
+public:
+	FORCEINLINE bool IsEquipped() const { return bEquipped; }
 };

@@ -54,9 +54,36 @@ public:
 	virtual void Begin_Action() override {};
 	virtual void End_Action() override {};
 
-/*
- * 충돌체 관련 바운딩 함수
- */	
+protected:
+	bool bInAction;
+	bool bBeginAction;
+	UPROPERTY()
+	class UWorld* World;
+	UPROPERTY()
+	class ACharacter* OwnerCharacter;
+	UPROPERTY()
+	class UCWeaponObject* Weapon;
+	
+	UPROPERTY()
+	class UCStateComponent* StateComponent;
+	UPROPERTY()
+	class UCMovementComponent* MovementComponent;
+	
+	/*
+	 * 데이터 관리
+	 */
+protected:
+	void InitDoActionData();
+	
+	UPROPERTY(EditAnywhere, Category = "DataTable")
+	UDataTable* ActionDataTable = nullptr;
+	
+	UPROPERTY(EditAnywhere, Category = "Action")
+	TArray<FDoActionData> DoActionDatas;
+	
+	/*
+	 * 충돌체 관련 바운딩 함수
+	 */	
 public:
 	UFUNCTION()
 	virtual void OnAttachmentBeginCollision()
@@ -107,33 +134,6 @@ public:
 		}
 	}
 
-
-protected:
-	bool bBeginAction;
-	UPROPERTY()
-	class UWorld* World;
-	UPROPERTY()
-	class ACharacter* OwnerCharacter;
-	UPROPERTY()
-	class UCWeaponObject* Weapon;
-	
-	UPROPERTY()
-	class UCStateComponent* StateComponent;
-	UPROPERTY()
-	class UCMovementComponent* MovementComponent;
-	
-/*
- * 데이터 관리
- */
-protected:
-	void InitDoActionData();
-	
-	UPROPERTY(EditAnywhere, Category = "DataTable")
-	UDataTable* ActionDataTable = nullptr;
-	
-	UPROPERTY(EditAnywhere, Category = "Action")
-	TArray<FDoActionData> DoActionDatas;
-	
 	/*
 	 * Getter / Setter
 	 */
@@ -142,4 +142,7 @@ public:
 	FORCEINLINE ACharacter* GetOwnerCharacter() const { return OwnerCharacter; }
 
 	virtual FString GetActionName() override { return GetName(); }
+
+	FORCEINLINE bool IsInAction() const { return bInAction; }
+	FORCEINLINE bool IsBeginAction() const { return bBeginAction; }
 };

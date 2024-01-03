@@ -43,7 +43,7 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(UCDoSubAction* SubAction = GetSubAction())
+	if (UCDoSubAction* SubAction = GetSubAction())
 		SubAction->Tick(DeltaTime);
 }
 
@@ -186,16 +186,31 @@ void UCWeaponComponent::SetMainWeaponMode()
 	SetMode(EEquipSlotType::MainWeapon);
 }
 
+void UCWeaponComponent::SetSubWeaponMode()
+{
+	CheckFalse(IsIdleMode())
+	SetMode(EEquipSlotType::SubWeapon);
+}
+
 bool UCWeaponComponent::IsIdleMode()
 {
 	return Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()))->IsIdleMode();
 }
 
 bool UCWeaponComponent::IsBladeMode() const
-{ return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType() == EWeaponType::Blade; }
+{
+	return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType() == EWeaponType::Blade;
+}
 
 EWeaponType UCWeaponComponent::GetWeaponType() const
-{ return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType(); }
+{
+	return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType();
+}
+
+bool UCWeaponComponent::CheckOwnEquipSlot(EEquipSlotType InSlotType) const
+{
+	return WeaponAssets[static_cast<int8>(InSlotType)] != nullptr && WeaponAssets[static_cast<int8>(InSlotType)]->GetWeaponType() != EWeaponType::Max;
+}
 
 
 #if DEBUG_WEAPON_COMPONENT

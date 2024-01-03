@@ -32,6 +32,7 @@ void UCDoAction::Begin_DoAction()
 
 void UCDoAction::End_DoAction()
 {
+	bInAction = false;
 	bBeginAction = false;
 
 	StateComponent->SetIdleMode();
@@ -52,6 +53,8 @@ UCDoAction* UCDoAction::BP_AddDoAction(TSubclassOf<UCDoAction> InDoActionClass)
 
 void UCDoAction::DoAction_Implementation()
 {
+	bInAction = true;
+	
 	StateComponent->SetActionMode();
 	Weapon->ReserveAction(this);
 }
@@ -65,9 +68,5 @@ void UCDoAction::InitDoActionData()
 		
 		for (FDoActionData* Data : DoActionData)
 			DoActionDatas.Add(*Data);		
-	}
-	else if (DoActionDatas.Num() == 0)
-	{
-		GLog->Log(ELogVerbosity::Error, TEXT("DoActionDatas is empty"));
 	}
 }
