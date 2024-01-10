@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "MyDebugger/IDebugCollector.h"
+#include "DebugHeader.h"
 #include "CAIBehaviorComponent.generated.h"
 
 UENUM()
@@ -20,6 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAIStateChanged, EAIStateType, InPr
 
 UCLASS()
 class CPROJECT_API UCAIBehaviorComponent : public UActorComponent
+	, public IIDebugCollector
 {
 	GENERATED_BODY()
 
@@ -83,4 +86,10 @@ public:
 	void SetHittedMode();
 	void SetEvadeMode();
 	void SetDeadMode();
+
+#if DEBUG_AI_STATE
+public:
+	virtual bool IsDebugEnable() { return true; };
+	virtual FDebugInfo GetDebugInfo();
+#endif
 };

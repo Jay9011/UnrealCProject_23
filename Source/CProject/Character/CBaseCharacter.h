@@ -46,6 +46,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCMontagesComponent* Montages;
 
+private:
+	UPROPERTY(EditAnywhere, Category = "Mesh|Socket")
+	FName HeadSocket = "head";
+	UPROPERTY(EditAnywhere, Category = "Mesh|Socket")
+	FName HeadForwardSocket = "Head_Forward";
+
 /*
  * Getter
  */
@@ -54,4 +60,8 @@ public:
 	FORCEINLINE class UCStateComponent* GetStateComponent() const { return State; };
 
 	FORCEINLINE uint8 GetTeamID() const { return TeamID; };
+
+	FORCEINLINE FTransform GetHeadTransform(ERelativeTransformSpace TransformSpace = ERelativeTransformSpace::RTS_World) const;
+	FORCEINLINE FVector GetHeadOffset(ERelativeTransformSpace TransformSpace = ERelativeTransformSpace::RTS_World) const;
+	FORCEINLINE FTransform GetHeadForwardTransform(ERelativeTransformSpace TransformSpace = ERelativeTransformSpace::RTS_World) const;
 };

@@ -2,6 +2,7 @@
 
 #include "Character/AI/CAIController.h"
 #include "Character/AI/CEnemy_AI.h"
+#include "Components/CMovementComponent.h"
 #include "Components/AI/CAIBehaviorComponent.h"
 
 UCBTServiceMelee::UCBTServiceMelee()
@@ -21,6 +22,13 @@ void UCBTServiceMelee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	
 	UCStateComponent* State = Cast<UCStateComponent>(Enemy_AI->GetComponentByClass(UCStateComponent::StaticClass()));
 	UCAIBehaviorComponent* Behavior = Cast<UCAIBehaviorComponent>(Enemy_AI->GetComponentByClass(UCAIBehaviorComponent::StaticClass()));
+
+	if (State->IsDeadMode())
+	{
+		Behavior->SetDeadMode();
+
+		return;
+	}
 
 	if (State->IsHittedMode())
 	{

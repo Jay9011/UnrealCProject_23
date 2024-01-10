@@ -117,3 +117,16 @@ void UCAnimInstance::OnStandingTypeChanged(EStandingType InPrevType, EStandingTy
 {
 	StandingType = InNewType;
 }
+
+void UCAnimInstance::EnableNeckRotation()
+{
+	if (Neck != nullptr)
+	{
+		UseNeckRotation = true;		
+	}
+}
+
+void UCAnimInstance::DisableNeckRotation()
+{
+	UseNeckRotation = false;
+}

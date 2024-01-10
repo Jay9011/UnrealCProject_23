@@ -80,7 +80,10 @@ void UCWeaponComponent::ChangeType(EEquipSlotType InType)
 	}
 	if(OnWeaponTypeChanged.IsBound())
 	{
-		OnWeaponTypeChanged.Broadcast(WeaponAssets[static_cast<int32>(PrevType)]->GetWeaponType(), WeaponAssets[static_cast<int32>(Type)]->GetWeaponType());
+		EWeaponType PrevWeaponType = WeaponAssets[static_cast<int32>(PrevType)] ? WeaponAssets[static_cast<int32>(PrevType)]->GetWeaponType() : EWeaponType::Max;
+		EWeaponType NewWeaponType = WeaponAssets[static_cast<int32>(Type)] ? WeaponAssets[static_cast<int32>(Type)]->GetWeaponType() : EWeaponType::Max;
+		
+		OnWeaponTypeChanged.Broadcast(PrevWeaponType, NewWeaponType);
 	}
 }
 

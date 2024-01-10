@@ -27,25 +27,31 @@ void FDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 	const ACharacter* PlayerPawn = OwnerPC->GetPawn<ACharacter>();
 	if (!!PlayerPawn)
 	{
-		PlayerPawnData.bDraw = true;
-		PlayerPawnData.Name = PlayerPawn->GetName();
-		PlayerPawnData.Location = PlayerPawn->GetActorLocation();
-
 		DebugInfoList.Empty();
 		// ACharacter의 DebuggerComponent를 가져온다.
 		UDebuggerComponent* DebuggerComponent = PlayerPawn->FindComponentByClass<UDebuggerComponent>();
-		GatherDebugInfo(PlayerPawn, DebuggerComponent, DebugInfoList);
+		if (!!DebuggerComponent)
+		{
+			PlayerPawnData.bDraw = true;
+			PlayerPawnData.Name = PlayerPawn->GetName();
+			PlayerPawnData.Location = PlayerPawn->GetActorLocation();
+
+			GatherDebugInfo(PlayerPawn, DebuggerComponent, DebugInfoList);
+		}
 	}
 
 	if (!!DebugActor)
 	{
-		DebuggerActorData.bDraw = true;
-		DebuggerActorData.Name = DebugActor->GetName();
-
 		TestDebugInfoList.Empty();
 		
 		UDebuggerComponent* DebuggerComponent = DebugActor->FindComponentByClass<UDebuggerComponent>();
-		GatherDebugInfo(DebugActor, DebuggerComponent, TestDebugInfoList);
+		if (!!DebuggerComponent)
+		{
+			DebuggerActorData.bDraw = true;
+			DebuggerActorData.Name = DebugActor->GetName();
+
+			GatherDebugInfo(DebugActor, DebuggerComponent, TestDebugInfoList);
+		}
 	}
 }
 

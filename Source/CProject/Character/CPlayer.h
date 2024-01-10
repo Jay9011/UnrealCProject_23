@@ -106,7 +106,7 @@ public:
 	
 #if WITH_EDITOR
 public:
-	UPROPERTY(VisibleDefaultsOnly, Category = "Debug")
+	UPROPERTY()
 	class UDebuggerComponent* Debugger;
 #endif
 	

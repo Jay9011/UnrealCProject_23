@@ -116,13 +116,19 @@ public:
 	
 private:
 	// Camera
-	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	bool ControlRotation = false;
+	
+	UPROPERTY(EditAnywhere, Category = "Camera|CameraSpeed")
 	float HorizontalLook = 45;
 
-	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
+	UPROPERTY(EditAnywhere, Category = "Camera|CameraSpeed")
 	float VerticalLook = 45;
 
 	// Speed
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	ESpeedType InitSpeedType = ESpeedType::Run;
+	
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed[(int32)ESpeedType::Max] = { 240, 600, 800, 140, 240 };
 

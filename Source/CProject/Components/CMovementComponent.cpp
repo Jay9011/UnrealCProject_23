@@ -18,6 +18,13 @@ void UCMovementComponent::BeginPlay()
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 
+	if (ControlRotation)
+		EnableControlRotation();
+	else
+		DisableControlRotation();
+
+	SetSpeed(InitSpeedType);
+
 #if DEBUG_MOVEMENT
 	if (UDebuggerComponent* DebugerComponent = Cast<UDebuggerComponent>(OwnerCharacter->GetComponentByClass(UDebuggerComponent::StaticClass())))
 	{
@@ -58,12 +65,22 @@ void UCMovementComponent::OnCrouchRun()
 
 void UCMovementComponent::EnableControlRotation()
 {
+	if (OwnerCharacter == nullptr)
+	{
+		ControlRotation = true;
+		return;
+	}
 	OwnerCharacter->bUseControllerRotationYaw = true;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void UCMovementComponent::DisableControlRotation()
 {
+	if (OwnerCharacter == nullptr)
+	{
+		ControlRotation = false;
+		return;
+	}
 	OwnerCharacter->bUseControllerRotationYaw = false;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -159,7 +176,7 @@ FDebugInfo UCMovementComponent::GetDebugInfo()
 {
 	FDebugInfo Info;
 	Info.Priority = static_cast<int>(DEBUG_NUMS::MOVEMENT);
-	Info.Data.Add({"Standing Type: " + StaticEnum<EStandingType>()->GetNameStringByValue(static_cast<int64>(StandingType)), FColor::Yellow});
+	Info.Data.Add({"Standing Type: " + StaticEnum<EStandingType>()->GetNameStringByValue(static_cast<int64>(StandingType)), FColor::Red});
 	Info.Data.Add({"Speed: " + FString::SanitizeFloat(OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed), FColor::Cyan});
 	Info.Data.Add({"Can Move: " + (bCanMove ? FString("True") : FString("False")), FColor::Cyan});
 	Info.Data.Add({"Fixed Camera: " + (bFixedCamera ? FString("True") : FString("False")), FColor::Cyan});

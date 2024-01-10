@@ -4,6 +4,7 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+class ACBaseCharacter;
 class UAISenseConfig_Sight;
 class UAIPerceptionComponent;
 class UCAIBehaviorComponent;
@@ -26,9 +27,15 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
-/*
- * Delegate
- */
+public:
+	void SetFacialFocus(ACBaseCharacter* InActor);
+	virtual FVector GetFocalPointOnActor(const AActor* Actor) const override;
+	bool CheckNeckComponent(ACharacter* Actor);
+	void CheckNeckThreshold(const ACharacter* Actor) const;
+
+	/*
+	 * Delegate
+	 */
 private:
 	// 일반 감지시
 	UFUNCTION()
@@ -48,8 +55,22 @@ private:
 	float SightAge = 5.f;
 
 private:
-	ACEnemy_AI* Enemy = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "AI|Neck")
+	float NeckThreshold = 0.1f;
 	
-	UCAIBehaviorComponent* Behavior = nullptr;
+private:
+	UPROPERTY()
 	UAISenseConfig_Sight* Sight = nullptr;
+	
+	TWeakObjectPtr<ACEnemy_AI> Enemy = nullptr;
+	TWeakObjectPtr<UCAIBehaviorComponent> Behavior = nullptr;
+
+	bool bFocusFacial = false;
+	TWeakObjectPtr<ACBaseCharacter> FocusFacialActor = nullptr;
+
+	/*
+	 * Getter
+	 */
+public:
+	FORCEINLINE UCAIBehaviorComponent* GetBehaviorComponent() const;
 };

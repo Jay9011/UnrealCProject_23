@@ -88,3 +88,18 @@ FRotator ACBaseCharacter::LookAt(const ACharacter* InTarget)
 
 	return Rotator;
 }
+
+FTransform ACBaseCharacter::GetHeadTransform(ERelativeTransformSpace TransformSpace) const
+{
+	return GetMesh()->GetSocketTransform(HeadSocket, TransformSpace);
+}
+
+FVector ACBaseCharacter::GetHeadOffset(ERelativeTransformSpace TransformSpace) const
+{
+	return GetMesh()->GetSocketTransform(HeadSocket, TransformSpace).GetTranslation();
+}
+
+FTransform ACBaseCharacter::GetHeadForwardTransform(ERelativeTransformSpace TransformSpace) const
+{
+	return GetMesh()->GetSocketTransform(HeadForwardSocket, TransformSpace);
+}

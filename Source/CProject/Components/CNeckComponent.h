@@ -22,6 +22,11 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	bool CheckNearLimitYaw(float InNearValue = 5.f);
+
+private:
+	FRotator GetHeadRotation();
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	float InterpSpeed = 10.f;
@@ -38,9 +43,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	float MaxYaw = 50.f;
 
-private:
-	FRotator GetHeadRotation();
-	
 private:
 	UPROPERTY()
 	class ACharacter* OwnerCharacter;

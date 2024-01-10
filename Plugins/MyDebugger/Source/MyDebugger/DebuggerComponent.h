@@ -7,7 +7,7 @@
 
 class IIDebugCollector;
 
-UCLASS(NotBlueprintable, ClassGroup=(Debugger))
+UCLASS(NotBlueprintable, ClassGroup=(Debugger), meta=(BlueprintSpawnableComponent))
 class MYDEBUGGER_API UDebuggerComponent : public UActorComponent
 {
 	GENERATED_BODY()

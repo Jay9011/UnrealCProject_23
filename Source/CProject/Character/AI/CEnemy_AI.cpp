@@ -1,6 +1,7 @@
 #include "Character/AI/CEnemy_AI.h"
 
 #include "BehaviorTree/BehaviorTree.h"
+#include "Components/CNeckComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/AI/CAIBehaviorComponent.h"

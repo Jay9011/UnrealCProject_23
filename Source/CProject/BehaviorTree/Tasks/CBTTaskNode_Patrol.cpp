@@ -5,6 +5,7 @@
 #include "Character/AI/CAIController.h"
 #include "Character/AI/CEnemy_AI.h"
 #include "Components/AI/CAIBehaviorComponent.h"
+#include "Components/AI/CAIPatrolComponent.h"
 #include "Components/AI/Parts/CPatrolPath.h"
 #include "Utilities/CheckMacros.h"
 
@@ -19,13 +20,17 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
 	ACEnemy_AI* Enemy_AI = Cast<ACEnemy_AI>(Controller->GetPawn());
+
 	UCAIBehaviorComponent* Behavior = Cast<UCAIBehaviorComponent>(Enemy_AI->GetComponentByClass(UCAIBehaviorComponent::StaticClass()));
 	CheckNullResult(Behavior, EBTNodeResult::Failed);
+	
+	UCAIPatrolComponent* Patrol = Cast<UCAIPatrolComponent>(Enemy_AI->GetComponentByClass(UCAIPatrolComponent::StaticClass()));
+	CheckNullResult(Patrol, EBTNodeResult::Failed);
 
 	// PatrolPath가 있는 경우 PatrolPath의 위치로 이동
-	if (Enemy_AI->GetPatrolPath() != nullptr)
+	if (Patrol->GetPatrolPath() != nullptr)
 	{
-		FVector NextLocation = Enemy_AI->GetPatrolPath()->GetMoveTo();
+		FVector NextLocation = Patrol->GetPatrolPath()->GetMoveTo();
 		Behavior->SetPatrolLocation(NextLocation);
 
 		DrawDebug(Enemy_AI->GetWorld(), NextLocation);
@@ -33,7 +38,6 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::InProgress;
 	}
 	
-
 	// PatrolPath가 없는 경우 랜덤 위치로 이동
 	FVector ActorLocation = Enemy_AI->GetActorLocation();
 
@@ -43,7 +47,7 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 	FNavLocation NextPoint(ActorLocation);
 	while (true)
 	{
-		if (NavSys->GetRandomPointInNavigableRadius(ActorLocation, RandomRange, NextPoint))
+		if (NavSys->GetRandomPointInNavigableRadius(ActorLocation, Patrol->GetRandomRange(), NextPoint))
 		{
 			break;
 		}
@@ -81,15 +85,22 @@ void UCBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		break;
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 		{
-			if (Enemy_AI->GetPatrolPath())
+			UCAIPatrolComponent* Patrol = Cast<UCAIPatrolComponent>(Enemy_AI->GetComponentByClass(UCAIPatrolComponent::StaticClass()));
+			
+			if (Patrol->GetPatrolPath())
 			{
-				Enemy_AI->GetPatrolPath()->UpdateIndex();
+				Patrol->GetPatrolPath()->UpdateIndex();
 			}
 			
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 		break;
 	}
+}
+
+EBTNodeResult::Type UCBTTaskNode_Patrol::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 
 void UCBTTaskNode_Patrol::DrawDebug(const UWorld* InWorld, const FVector& InLocation)

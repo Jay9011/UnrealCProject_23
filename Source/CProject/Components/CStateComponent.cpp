@@ -3,6 +3,7 @@
 #include "MyDebugger/DebuggerCategory.h"
 #include "MyDebugger/DebuggerComponent.h"
 #include "MyDebugger/MyDebuggerModule.h"
+#include "GlobalMacros.h"
 
 UCStateComponent::UCStateComponent()
 {
@@ -83,9 +84,9 @@ FDebugInfo UCStateComponent::GetDebugInfo()
 	
 	UEnum* StateEnum = StaticEnum<EStateType>();
 	FString StateString = "State : " + StateEnum->GetNameStringByValue(static_cast<uint8>(Type));
-	DebugInfo.Data.Add({StateString, FColor::Yellow});
+	DebugInfo.Data.Add({StateString, FColor::Magenta});
 
-	DebugInfo.Data.Add({"SubAction : " + FString(bInSubActionMode ? "true" : "false"), FColor::White});
+	// DebugInfo.Data.Add({"SubAction : " + FString(bInSubActionMode ? "true" : "false"), FColor::White});
 	
 	return DebugInfo;
 }

@@ -13,9 +13,6 @@
 
 ACEnemy::ACEnemy()
 {
-#if WITH_EDITOR
-	Debugger = CreateDefaultSubobject<UDebuggerComponent>("Debugger");
-#endif
 }
 
 void ACEnemy::BeginPlay()
@@ -25,9 +22,13 @@ void ACEnemy::BeginPlay()
 	Air = Cast<UCAirComponent>(GetComponentByClass(UCAirComponent::StaticClass()));
 	HitMontage = Cast<UHitMontageComponent>(GetComponentByClass(UHitMontageComponent::StaticClass()));
 	MovementComponent = Cast<UCMovementComponent>(GetComponentByClass(UCMovementComponent::StaticClass()));
-
+	
+#if WITH_EDITOR
+	Debugger = Cast<UDebuggerComponent>(GetComponentByClass(UDebuggerComponent::StaticClass()));
+#endif
 #if DEBUG_DEFAULT_INFO
-	Debugger->AddCollector(this);
+	if (Debugger != nullptr)
+		Debugger->AddCollector(this);
 #endif
 }
 

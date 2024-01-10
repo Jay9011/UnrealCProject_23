@@ -19,6 +19,7 @@ public:
 
 protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 private:
 	void DrawDebug(const UWorld* InWorld, const FVector& InLocation);
@@ -29,7 +30,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Patrol")
 	float AcceptanceDistance = 20.f;
-
-	UPROPERTY(EditAnywhere, Category = "Patrol")
-	float RandomRange = 1500.f;
 };

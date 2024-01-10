@@ -37,16 +37,11 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "AI")
 	UCAIBehaviorComponent* BehaviorComponent = nullptr;
 
-private:
-	UPROPERTY(EditAnywhere, Category = "Patrol")
-	ACPatrolPath* PatrolPath = nullptr;
-	
 /*
  * Getter
  */
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
-	FORCEINLINE ACPatrolPath* GetPatrolPath() const { return PatrolPath; }
 
 /*
  * Debug

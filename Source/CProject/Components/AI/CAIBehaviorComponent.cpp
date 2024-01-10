@@ -2,6 +2,7 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
+#include "MyDebugger/DebuggerComponent.h"
 
 UCAIBehaviorComponent::UCAIBehaviorComponent()
 {
@@ -11,6 +12,10 @@ void UCAIBehaviorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+#if DEBUG_AI_STATE
+	if (UDebuggerComponent* Debugger = GetOwner()->FindComponentByClass<UDebuggerComponent>())
+		Debugger->AddCollector(this);
+#endif
 }
 
 EAIStateType UCAIBehaviorComponent::GetAIStateType() const
@@ -112,3 +117,14 @@ void UCAIBehaviorComponent::SetDeadMode()
 {
 	ChangeAIState(EAIStateType::Dead);
 }
+
+#if DEBUG_AI_STATE
+FDebugInfo UCAIBehaviorComponent::GetDebugInfo()
+{
+	FDebugInfo Info;
+	Info.Priority = static_cast<uint8>(DEBUG_NUMS::AI_STATE);
+	Info.Data.Add({"AI State : " + StaticEnum<EAIStateType>()->GetNameStringByValue(static_cast<uint8>(GetAIStateType())), FColor::Magenta});
+	
+	return Info;
+}
+#endif

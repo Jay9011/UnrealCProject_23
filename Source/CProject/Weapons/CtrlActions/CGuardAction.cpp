@@ -76,6 +76,9 @@ void UCGuardAction::Released()
 void UCGuardAction::OnBeginEquip()
 {
 	Super::OnBeginEquip();
+
+	CheckNull(GuardComponent);
+	
 	if (GuardComponent != nullptr)
 	{
 		GuardComponent->OnEvaluateBlocking.AddDynamic(this, &UCGuardAction::OnEvaluateBlocking);
@@ -91,6 +94,9 @@ void UCGuardAction::OnBeginEquip()
 void UCGuardAction::OnUnequip()
 {
 	Super::OnUnequip();
+
+	CheckNull(GuardComponent);
+	
 	if (GuardComponent != nullptr)
 	{
 		GuardComponent->OnEvaluateBlocking.RemoveDynamic(this, &UCGuardAction::OnEvaluateBlocking);

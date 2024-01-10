@@ -88,4 +88,8 @@ private:
 
 private:
 	FRotator PrevRotation;
+
+public:
+	void EnableNeckRotation();
+	void DisableNeckRotation();
 };

@@ -45,23 +45,22 @@ ACPlayer::ACPlayer()
 	TSubclassOf<UCAnimInstance> AnimInstance = ConstructorHelpers::FClassFinder<UCAnimInstance>(TEXT("AnimBlueprint'/Game/Character/ABP_BaseCharacter.ABP_BaseCharacter_C'")).Class;
 	GetMesh()->SetAnimClass(AnimInstance);
 
-#if WITH_EDITOR
-	Debugger = CreateDefaultSubobject<UDebuggerComponent>("Debugger");
-#endif
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	MovementComponent->SetSpeed(ESpeedType::Run);
-	MovementComponent->DisableControlRotation();
-
+	
 	HitMontage = Cast<UHitMontageComponent>(GetComponentByClass(UHitMontageComponent::StaticClass()));
 	GuardComponent = Cast<UCGuardComponent>(GetComponentByClass(UCGuardComponent::StaticClass()));
 
+	
+#if WITH_EDITOR
+	Debugger = Cast<UDebuggerComponent>(GetComponentByClass(UDebuggerComponent::StaticClass()));
+#endif
 #if DEBUG_DEFAULT_INFO
-	Debugger->AddCollector(this);
+	if (Debugger != nullptr)
+		Debugger->AddCollector(this);
 #endif
 }
 

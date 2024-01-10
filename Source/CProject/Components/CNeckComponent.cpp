@@ -56,6 +56,11 @@ FRotator UCNeckComponent::GetHeadRotation()
 	return FRotator(ControlRotation.Pitch, ControlRotation.Yaw - ActorRotation.Yaw, 0.f);
 }
 
+bool UCNeckComponent::CheckNearLimitYaw(float InNearValue)
+{
+	return FMath::IsNearlyEqual(EffectorRotation.Yaw, MinYaw, InNearValue) || FMath::IsNearlyEqual(EffectorRotation.Yaw, MaxYaw, InNearValue);
+}
+
 #if DEBUG_HEAD
 bool UCNeckComponent::IsDebugEnable()
 {
