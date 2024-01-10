@@ -155,10 +155,23 @@ void UCMovementComponent::OffCrouch()
 {
 }
 
+void UCMovementComponent::StandUp(EDir InDir)
+{
+	CheckNull(StandUpAsset);
+
+	bStandingProcess = true;
+	StandUpAsset->StandUp(InDir, OwnerCharacter);
+}
+
 void UCMovementComponent::ChangeStandingType(EStandingType InType)
 {
 	EStandingType PrevType = StandingType;
 	StandingType = InType;
+
+	if (bStandingProcess)
+	{
+		bStandingProcess = false;
+	}
 
 	if (OnStandingTypeChanged.IsBound())
 	{

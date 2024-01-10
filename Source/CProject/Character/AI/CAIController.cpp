@@ -115,7 +115,7 @@ void ACAIController::CheckNeckThreshold(const ACharacter* Actor) const
 	if (NeckComponent == nullptr || MovementComponent == nullptr)
 		return;
 
-	if (NeckComponent->CheckNearLimitYaw(NeckThreshold))
+	if (NeckComponent->CheckNearLimitYaw(NeckThreshold) && bSetControlRotationFromPawnOrientation)
 	{
 		MovementComponent->EnableControlRotation();
 	}
@@ -127,6 +127,9 @@ void ACAIController::CheckNeckThreshold(const ACharacter* Actor) const
 
 void ACAIController::OnPerceptionUpdatedDelegate(const TArray<AActor*>& UpdatedActors)
 {
+	CheckNull(Blackboard);
+	CheckFalse(Behavior.IsValid());
+	
 	// 감지 된 액터가 없는 경우
 	if (UpdatedActors.Num() == 0)
 	{

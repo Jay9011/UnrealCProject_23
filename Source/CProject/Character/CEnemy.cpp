@@ -5,9 +5,9 @@
 #include "Weapons/CWeaponStructures.h"
 #include "Components/CAirComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CMontagesComponent.h"
+#include "Components/CMovementComponent.h"
 #include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/CheckMacros.h"
 

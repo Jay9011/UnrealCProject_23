@@ -13,7 +13,7 @@ class UCAIBehaviorComponent;
 /**
  * @brief AI Enemy Base
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CPROJECT_API ACEnemy_AI : public ACEnemy
 {
 	GENERATED_BODY()

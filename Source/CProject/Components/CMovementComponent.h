@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MyDebugger/IDebugCollector.h"
 #include "DebugHeader.h"
+#include "Character/DataAssets/CStandUpAsset.h"
 #include "CMovementComponent.generated.h"
 
 UENUM(BlueprintType)
@@ -66,18 +67,20 @@ public:
 	 * 서있는 상태 관련
 	 */
 public:
-	void SetStandingMode();
-	void SetCrouchMode();
-	void SetKnockDownMode();
+	virtual void SetStandingMode();
+	virtual void SetCrouchMode();
+	virtual void SetKnockDownMode();
 
 	void OnCrouch();
 	void OffCrouch();
 
+	void StandUp(EDir InDir);
+
 	/*
 	 * Delegate 실행 함수
 	 */
-private:
-	void ChangeStandingType(EStandingType InType);
+protected:
+	virtual void ChangeStandingType(EStandingType InType);
 	
 /*
  * Getter / Setter
@@ -108,6 +111,9 @@ public:
 	FORCEINLINE bool IsKnockDown() const { return StandingType == EStandingType::KnockDown; }
 
 	FORCEINLINE bool IsDown() const { return StandingType == EStandingType::KnockDown; }
+
+	FORCEINLINE bool bStandingProcessIsDone() const { return !bStandingProcess; }
+	
 /*
  * Delegate
  */
@@ -132,6 +138,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed[(int32)ESpeedType::Max] = { 240, 600, 800, 140, 240 };
 
+	// Standing
+	UPROPERTY(EditAnywhere, Category = "Standing")
+	UCStandUpAsset* StandUpAsset = nullptr;
+	
 private:
 	bool bCanMove = true;
 	bool bFixedCamera = false;
@@ -140,10 +150,11 @@ private:
 	bool bBackupRotationYaw = false;
 	bool bBackupOrientRotationToMovement = false;
 	
-private:
+protected:
 	class ACharacter* OwnerCharacter;
 
 	EStandingType StandingType;
+	bool bStandingProcess = false;
 
 #if DEBUG_MOVEMENT
 	virtual bool IsDebugEnable() override;

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapons/CCtrlAction.h"
+#include "Interface/CDamagedInterface.h"
 #include "CGuardAction.generated.h"
 
 class UAnimInstance;

@@ -89,7 +89,7 @@ public:
 
 #if DEBUG_AI_STATE
 public:
-	virtual bool IsDebugEnable() { return true; };
+	virtual bool IsDebugEnable();
 	virtual FDebugInfo GetDebugInfo();
 #endif
 };

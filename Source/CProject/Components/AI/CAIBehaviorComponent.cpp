@@ -3,6 +3,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "MyDebugger/DebuggerComponent.h"
+#include "Utilities/CheckMacros.h"
 
 UCAIBehaviorComponent::UCAIBehaviorComponent()
 {
@@ -116,6 +117,13 @@ void UCAIBehaviorComponent::SetEvadeMode()
 void UCAIBehaviorComponent::SetDeadMode()
 {
 	ChangeAIState(EAIStateType::Dead);
+}
+
+bool UCAIBehaviorComponent::IsDebugEnable()
+{
+	CheckNullResult(Blackboard, false);
+
+	return true;
 }
 
 #if DEBUG_AI_STATE
