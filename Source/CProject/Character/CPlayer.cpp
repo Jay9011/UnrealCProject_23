@@ -2,6 +2,7 @@
 #include "Global.h"
 
 #include "CAnimInstance.h"
+#include "NavigationSystem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CAirComponent.h"
 #include "Components/CEvadeComponent.h"
@@ -54,7 +55,6 @@ void ACPlayer::BeginPlay()
 	HitMontage = Cast<UHitMontageComponent>(GetComponentByClass(UHitMontageComponent::StaticClass()));
 	GuardComponent = Cast<UCGuardComponent>(GetComponentByClass(UCGuardComponent::StaticClass()));
 
-	
 #if WITH_EDITOR
 	Debugger = Cast<UDebuggerComponent>(GetComponentByClass(UDebuggerComponent::StaticClass()));
 #endif
@@ -309,6 +309,7 @@ void ACPlayer::End_Evade()
 void ACPlayer::End_Hitted()
 {
 	State->SetIdleMode();
+	MovementComponent->Move();
 }
 
 void ACPlayer::End_Blocking()

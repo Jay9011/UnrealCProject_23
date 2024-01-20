@@ -1,4 +1,4 @@
-#include "BehaviorTree/CBTDecorator_Down.h"
+#include "BehaviorTree/Decorator/CBTDecorator_Down.h"
 
 #include "Character/AI/CAIController.h"
 #include "Character/AI/CEnemy_AI.h"

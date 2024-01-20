@@ -18,6 +18,8 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	UPROPERTY(EditAnywhere, Category = "Action")
 	float MeleeRange = 150.f;
+	UPROPERTY(EditAnywhere, Category = "Action")
+	float MaxMeleeRange = 200.f;
 };

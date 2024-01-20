@@ -23,7 +23,7 @@ enum class DEBUG_NUMS
 #define DEBUG_ATTACHMENT		(WITH_EDITOR && false)
 #define DEBUG_SKILL				(WITH_EDITOR && false)
 #define DEBUG_FEET				(WITH_EDITOR && false)
-#define DEBUG_HEAD				(WITH_EDITOR && true)
+#define DEBUG_HEAD				(WITH_EDITOR && false)
 #define DEBUG_GUARD				(WITH_EDITOR && true)
 #define DEBUG_AI_Label			(WITH_EDITOR && false)
 #define DEBUG_AI_Patrol			(WITH_EDITOR && false)

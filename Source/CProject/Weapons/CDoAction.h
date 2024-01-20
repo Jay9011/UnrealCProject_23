@@ -145,4 +145,6 @@ public:
 
 	FORCEINLINE bool IsInAction() const { return bInAction; }
 	FORCEINLINE bool IsBeginAction() const { return bBeginAction; }
+
+	FORCEINLINE uint32 GetActionDataCount() const { return DoActionDatas.Num(); }
 };

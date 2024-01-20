@@ -36,13 +36,18 @@ protected:
 	virtual void LaunchAttacker(const FRotator& InLookAtRotation) override;
 	virtual void ResetDamagedData(FDamagedData& DamagedData) override;
 	virtual void Hitted() override;
-	virtual void End_Hitted() override;
 	virtual void Dead() override;
-	virtual void End_Dead() override;
-
+	
 private:
 	virtual void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType) override;
 
+	// IIStateNotify
+public:
+	virtual void End_Hitted() override;
+	virtual void End_Blocking() override;
+	virtual void End_Unprotected() override;
+	virtual void End_Dead() override;
+	
 protected:
 	UPROPERTY()
 	class UCAirComponent* Air;

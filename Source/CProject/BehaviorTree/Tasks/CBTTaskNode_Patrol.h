@@ -30,4 +30,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Patrol")
 	float AcceptanceDistance = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "Patrol|Option")
+	uint8 MaxAttempts = 10;
 };

@@ -2,6 +2,7 @@
 
 #include "Global.h"
 #include "Camera/CameraActor.h"
+#include "GameMode/CBattleSystemComponent.h"
 
 ACGameMode::ACGameMode()
 {
@@ -30,4 +31,7 @@ void ACGameMode::StartPlay()
 			PlayerController->SetViewTargetWithBlend(CameraActor);
 		}
 	}
+
+	/* BattleSystem 초기화 */
+	BattleSystem = NewObject<UCBattleSystemComponent>(this, BattleSystemComponent);
 }

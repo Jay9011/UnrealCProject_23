@@ -15,6 +15,7 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Blade,
+	Sword_Pirate,
 	Max UMETA(DisplayName = "Unarmed") // UEnum으로 문자열로 표시될 때 Unarmed로 표시되도록 함
 };
 

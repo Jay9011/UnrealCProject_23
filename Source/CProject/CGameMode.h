@@ -4,6 +4,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "CGameMode.generated.h"
 
+class UCBattleSystemComponent;
+
 UCLASS()
 class CPROJECT_API ACGameMode : public AGameModeBase
 {
@@ -17,11 +19,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Battle")
 	TEnumAsByte<ETraceTypeQuery> EvadableTraceChannel;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Battle")
+	TSubclassOf<UCBattleSystemComponent> BattleSystemComponent = nullptr;
+
+	UPROPERTY()
+	UCBattleSystemComponent* BattleSystem = nullptr;
+	
 /*
  * Getter
  */
 public:
 	FORCEINLINE TEnumAsByte<ETraceTypeQuery> GetEvadableType() const { return EvadableTraceChannel; }
+	FORCEINLINE UCBattleSystemComponent* GetBattleSystemComponent() const { return BattleSystem; }
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintGetter)

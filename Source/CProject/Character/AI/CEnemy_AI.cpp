@@ -83,7 +83,7 @@ void ACEnemy_AI::UpdateLabelRenderScale()
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 
 	FVector CameraLocation = CameraManager->GetCameraLocation();
-	FVector TargetLocation = GetController()->GetTargetLocation();
+	FVector TargetLocation = GetController()->GetPawn()->GetActorLocation();
 
 	float Distance = FVector::Distance(CameraLocation, TargetLocation);
 	float SizeRate = 1.0f - (Distance / LabelViewAmount);

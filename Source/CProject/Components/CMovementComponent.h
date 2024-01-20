@@ -87,8 +87,8 @@ protected:
  */
 public:
 	FORCEINLINE bool CanMove() const { return bCanMove; }
-	FORCEINLINE void Move() { bCanMove = true; }
-	FORCEINLINE void Stop() { bCanMove = false; }
+	FORCEINLINE virtual void Move();
+	FORCEINLINE virtual void Stop();
 
 	FORCEINLINE bool GetFixedCamera() const { return bFixedCamera; }
 	FORCEINLINE void EnableFixedCamera() { bFixedCamera = true; }
@@ -147,11 +147,12 @@ private:
 	bool bFixedCamera = false;
 
 private:
+	bool bBackupControlRotation = false;
 	bool bBackupRotationYaw = false;
 	bool bBackupOrientRotationToMovement = false;
 	
 protected:
-	class ACharacter* OwnerCharacter;
+	TWeakObjectPtr<ACharacter> OwnerCharacter;
 
 	EStandingType StandingType;
 	bool bStandingProcess = false;

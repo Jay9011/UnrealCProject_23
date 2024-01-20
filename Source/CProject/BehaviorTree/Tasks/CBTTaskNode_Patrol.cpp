@@ -38,26 +38,34 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 		return EBTNodeResult::InProgress;
 	}
 	
-	// PatrolPath가 없는 경우 랜덤 위치로 이동
-	FVector ActorLocation = Enemy_AI->GetActorLocation();
-
-	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(Enemy_AI->GetWorld());
-	CheckNullResult(NavSys, EBTNodeResult::Failed);
-
-	FNavLocation NextPoint(ActorLocation);
-	while (true)
+	// PatrolPath가 없는 경우, PatrolComponent의 Random이 true라면, 랜덤 위치로 이동
+	bool bFound = false;
+	if (Patrol->GetRandom())
 	{
-		if (NavSys->GetRandomPointInNavigableRadius(ActorLocation, Patrol->GetRandomRange(), NextPoint))
+		FVector ActorLocation = Enemy_AI->GetActorLocation();
+
+		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(Enemy_AI->GetWorld());
+		CheckNullResult(NavSys, EBTNodeResult::Failed);
+
+		FNavLocation NextPoint(ActorLocation);
+		for (uint8 i = 0; i < MaxAttempts; ++i)
 		{
-			break;
+			if (NavSys->GetRandomPointInNavigableRadius(ActorLocation, Patrol->GetRandomRange(), NextPoint))
+			{
+				bFound = true;
+				break;
+			}
+		}
+		if (bFound)
+		{
+			Behavior->SetPatrolLocation(NextPoint.Location);
+			DrawDebug(Enemy_AI->GetWorld(), NextPoint.Location);
+			
+			return EBTNodeResult::InProgress;
 		}
 	}
 
-	Behavior->SetPatrolLocation(NextPoint.Location);
-
-	DrawDebug(Enemy_AI->GetWorld(), NextPoint.Location);
-
-	return EBTNodeResult::InProgress;
+	return EBTNodeResult::Failed;
 }
 
 void UCBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -100,6 +108,9 @@ void UCBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 EBTNodeResult::Type UCBTTaskNode_Patrol::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	Controller->StopMovement();
+	
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }
 

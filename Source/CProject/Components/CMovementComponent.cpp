@@ -123,12 +123,19 @@ void UCMovementComponent::BackupControlRotation()
 {
 	bBackupRotationYaw = OwnerCharacter->bUseControllerRotationYaw;
 	bBackupOrientRotationToMovement = OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement;
+	bBackupControlRotation = true;
 }
 
 void UCMovementComponent::RestoreControlRotation()
 {
+	if (!bBackupControlRotation)
+	{
+		return;
+	}
+	
 	OwnerCharacter->bUseControllerRotationYaw = bBackupRotationYaw;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = bBackupOrientRotationToMovement;
+	bBackupControlRotation = false;
 }
 
 
@@ -160,7 +167,7 @@ void UCMovementComponent::StandUp(EDir InDir)
 	CheckNull(StandUpAsset);
 
 	bStandingProcess = true;
-	StandUpAsset->StandUp(InDir, OwnerCharacter);
+	StandUpAsset->StandUp(InDir, OwnerCharacter.Get());
 }
 
 void UCMovementComponent::ChangeStandingType(EStandingType InType)
@@ -179,6 +186,16 @@ void UCMovementComponent::ChangeStandingType(EStandingType InType)
 	}
 }
 
+void UCMovementComponent::Move()
+{
+	bCanMove = true;
+}
+
+void UCMovementComponent::Stop()
+{
+	bCanMove = false;
+}
+
 #if DEBUG_MOVEMENT
 bool UCMovementComponent::IsDebugEnable()
 {
@@ -192,6 +209,7 @@ FDebugInfo UCMovementComponent::GetDebugInfo()
 	Info.Data.Add({"Standing Type: " + StaticEnum<EStandingType>()->GetNameStringByValue(static_cast<int64>(StandingType)), FColor::Red});
 	Info.Data.Add({"Speed: " + FString::SanitizeFloat(OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed), FColor::Cyan});
 	Info.Data.Add({"Can Move: " + (bCanMove ? FString("True") : FString("False")), FColor::Cyan});
+	Info.Data.Add({"Use Control Rotation: " + (OwnerCharacter->bUseControllerRotationYaw ? FString("True") : FString("False")), FColor::Cyan});
 	Info.Data.Add({"Fixed Camera: " + (bFixedCamera ? FString("True") : FString("False")), FColor::Cyan});
 
 	return Info;

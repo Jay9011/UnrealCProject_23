@@ -3,9 +3,12 @@
 #include "Character/AI/CAIController.h"
 #include "Character/AI/CEnemy_AI.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/AI/CAIBehaviorComponent.h"
 #include "Utilities/CheckMacros.h"
+#include "Weapons/CComboState.h"
 #include "Weapons/CDoAction.h"
 #include "Weapons/CEquipment.h"
+#include "Weapons/IComboState.h"
 
 UCBTTaskNode_Action::UCBTTaskNode_Action()
 {
@@ -24,8 +27,18 @@ EBTNodeResult::Type UCBTTaskNode_Action::ExecuteTask(UBehaviorTreeComponent& Own
 	UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(Enemy->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNullResult(Weapon, EBTNodeResult::Failed);
 
-	if(!Weapon->GetEquipment()->Data.bCanMove)
-		Controller->StopMovement();
+	IIComboState* IComboState = Cast<IIComboState>(Weapon->GetDoAction());
+	if (bUseCombo && IComboState != nullptr)
+	{
+		if (bUseRandomCombo)
+		{
+			RandomComboIndex = FMath::RandRange(0, Weapon->GetDoAction()->GetActionDataCount() - 1);
+		}
+		else
+		{
+			RandomComboIndex = Weapon->GetDoAction()->GetActionDataCount() - 1;
+		}
+	}
 	
 	Weapon->DoAction();
 	
@@ -41,16 +54,36 @@ void UCBTTaskNode_Action::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(Enemy->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	UCStateComponent* State = Cast<UCStateComponent>(Enemy->GetComponentByClass(UCStateComponent::StaticClass()));
+	if (State == nullptr)
+	{
+		FinishLatentAbort(OwnerComp);
+	}
 
 	bool bCheck = true;
 	bCheck &= (State->IsIdleMode());
 	bCheck &= (Weapon->GetDoAction()->IsInAction() == false);
 
+	// 만약, Action이 끝났다고 판단되면 종료
 	if (bCheck)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 
 		return;
+	}
+
+	// Action이 끝나지 않았고, Combo를 사용한다면
+	if (bUseCombo)
+	{
+		IIComboState* IComboState = Cast<IIComboState>(Weapon->GetDoAction());
+		UCComboState* ComboState = Cast<UCComboState>(IComboState->GetComboState());
+
+		// RandomCombo가 끝났다면, Action이 종료될 때까지 기다린다.
+		if (bUseRandomCombo && (ComboState->GetIndex() >= RandomComboIndex))
+		{
+			return;
+		}
+
+		Weapon->DoAction();
 	}
 }
 
@@ -62,13 +95,22 @@ EBTNodeResult::Type UCBTTaskNode_Action::AbortTask(UBehaviorTreeComponent& Owner
 	UCWeaponComponent* Weapon = Cast<UCWeaponComponent>(Enemy->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNullResult(Weapon, EBTNodeResult::Aborted);
 
-	bool bBeginAction = Weapon->GetDoAction()->IsBeginAction();
-	if (bBeginAction == false)
-	{
-		Weapon->GetDoAction()->Begin_DoAction();
-	}
+	UCAIBehaviorComponent* AIBehavior = Controller->GetBehaviorComponent();
+	CheckNullResult(AIBehavior, EBTNodeResult::Aborted);
 
-	Weapon->GetDoAction()->End_DoAction();
+	// Hit에 의해 Action이 중단되었다면,
+	if (AIBehavior->IsHitted())
+	{
+		bool bBeginAction = Weapon->GetDoAction()->IsBeginAction();
+		if (bBeginAction == false)
+		{
+			Weapon->GetDoAction()->Begin_DoAction();
+		}
+
+		Weapon->GetDoAction()->End_DoAction();
+		return EBTNodeResult::Aborted;
+	}
 	
+	// 그게 아니라 다른 조건에 의해 종료되었다면, 현재까지의 Action을 끝내고 종료한다.
 	return EBTNodeResult::Succeeded;
 }

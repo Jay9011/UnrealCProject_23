@@ -1,15 +1,18 @@
 #include "Character/CEnemy.h"
 
+#include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Utilities/CLog.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Components/CAirComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CGuardComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CMovementComponent.h"
 #include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/CheckMacros.h"
+#include "Utilities/UDirectionalUtilities.h"
 
 ACEnemy::ACEnemy()
 {
@@ -126,12 +129,26 @@ void ACEnemy::AirSuspension(ACharacter& Character, ACharacter& Attacker)
  */
 float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	Damaged.Damage = Damage;
 	Damaged.Character = Cast<ACharacter>(EventInstigator->GetPawn());
 	Damaged.Causer = DamageCauser;
 	Damaged.Event = (FActionDamageEvent*)&DamageEvent;
+
+	UCGuardComponent* GuardComponent = Cast<UCGuardComponent>(GetComponentByClass(UCGuardComponent::StaticClass()));
+	
+	// 가드 상태인 경우
+	if (GuardComponent != nullptr && !GuardComponent->IsUnGuard())
+	{
+		// 가드가 가능한 상태인지 확인
+		if (UDirectionalUtil::GetRotationFromTwoActors(this, Damaged.Character) >= 0.f)
+		{
+			GuardComponent->EvaluateGuard(true, Damaged);
+			return 0;
+		}
+	}
+	
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	Damaged.Damage = Damage;
 
 	State->SetHittedMode();
 	
@@ -216,11 +233,6 @@ void ACEnemy::Hitted()
 	}
 }
 
-void ACEnemy::End_Hitted()
-{
-	State->SetIdleMode();
-}
-
 /*
  * 사망 상태 변화 후 처리
  */
@@ -231,11 +243,6 @@ void ACEnemy::Dead()
 	Montages->Dead();
 }
 
-void ACEnemy::End_Dead()
-{
-	Destroy();
-}
-
 void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
@@ -243,6 +250,27 @@ void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 	case EStateType::Hitted: Hitted(); break;
 	case EStateType::Dead: Dead(); break;
 	}
+}
+
+void ACEnemy::End_Hitted()
+{
+	State->SetIdleMode();
+	MovementComponent->Move();
+}
+
+void ACEnemy::End_Blocking()
+{
+	State->SetIdleMode();
+}
+
+void ACEnemy::End_Unprotected()
+{
+	State->SetIdleMode();
+}
+
+void ACEnemy::End_Dead()
+{
+	Destroy();
 }
 
 #if DEBUG_DEFAULT_INFO

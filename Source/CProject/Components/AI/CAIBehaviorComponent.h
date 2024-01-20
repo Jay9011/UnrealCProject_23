@@ -44,6 +44,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName TargetKey = "Target";
 	UPROPERTY(EditAnywhere, Category = "Key")
+	FName LostTargetKey = "LostTarget";
+	UPROPERTY(EditAnywhere, Category = "Key")
+	FName LostTargetLocationKey = "LostTargetLocation";
+	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PatrolLocationKey = "PatrolLocation";
 
 private:
@@ -57,6 +61,9 @@ public:
 	
 	FORCEINLINE FName GetAIStateTypeKey() const { return AIStateTypeKey; }
 	FORCEINLINE FName GetTargetKey() const { return TargetKey; }
+	FORCEINLINE FName GetLostTargetKey() const { return LostTargetKey; }
+	FORCEINLINE FName GetLostTargetLocationKey() const { return LostTargetLocationKey; }
+	FORCEINLINE FName GetPatrolLocationKey() const { return PatrolLocationKey; }
 
 public:
 	EAIStateType GetAIStateType() const;

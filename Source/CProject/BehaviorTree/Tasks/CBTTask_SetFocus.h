@@ -22,4 +22,6 @@ private:
 	bool bFocus = true;
 	UPROPERTY(EditAnywhere, Category = "Focus")
 	bool bFacialFocus = false;
+	UPROPERTY(EditAnywhere, Category = "Focus")
+	FBlackboardKeySelector FocusActorKey;
 };

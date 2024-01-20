@@ -12,31 +12,36 @@ UCBTTask_SetFocus::UCBTTask_SetFocus()
 
 EBTNodeResult::Type UCBTTask_SetFocus::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AAIController* Controller = Cast<AAIController>(OwnerComp.GetOwner());
 	ACAIController* AIController = Cast<ACAIController>(OwnerComp.GetOwner());
-
+	
 	// Focus 해제
 	if (bFocus == false)
 	{
 		if (AIController != nullptr)
 			AIController->SetFacialFocus(nullptr);
-
-		Controller->SetFocus(nullptr);
+	
+		AIController->SetFocus(nullptr);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FocusActorKey.SelectedKeyName, nullptr);
 		return EBTNodeResult::Succeeded;
 	}
 
 	// Focus 설정
 	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(GetSelectedBlackboardKey()));
-	
-	if (bFacialFocus)
+
+	if(Target != nullptr)
 	{
-		ACBaseCharacter* BCTarget = Cast<ACBaseCharacter>(Target);
-		if (AIController != nullptr && BCTarget != nullptr)
+		if (bFacialFocus)
 		{
-			AIController->SetFacialFocus(BCTarget);
+			ACBaseCharacter* BCTarget = Cast<ACBaseCharacter>(Target);
+			if (AIController != nullptr && BCTarget != nullptr)
+			{
+				AIController->SetFacialFocus(BCTarget);
+			}
 		}
+
+		AIController->SetFocus(Target);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FocusActorKey.SelectedKeyName, Target);
 	}
 
-	Controller->SetFocus(Target);
 	return EBTNodeResult::Succeeded;
 }

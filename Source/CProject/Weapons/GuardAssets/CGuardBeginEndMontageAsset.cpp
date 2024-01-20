@@ -29,7 +29,7 @@ void UCGuardBeginEndMontageAsset::PlaySuccessBlockMontage(UAnimInstance* InAnimI
 	
 	InAnimInstance->Montage_Play(GuardSuccessMontage.Montage, GuardSuccessMontage.PlayRate);
 	
-	InGuardMontageData = GuardMontage;
+	InGuardMontageData = GuardSuccessMontage;
 }
 
 void UCGuardBeginEndMontageAsset::PlayBreakBlockMontage(UAnimInstance* InAnimInstance, FGuardMontageData& InGuardMontageData)
@@ -39,7 +39,7 @@ void UCGuardBeginEndMontageAsset::PlayBreakBlockMontage(UAnimInstance* InAnimIns
 	
 	InAnimInstance->Montage_Play(GuardBreakMontage.Montage, GuardBreakMontage.PlayRate);
 	
-	InGuardMontageData = GuardMontage;
+	InGuardMontageData = GuardBreakMontage;
 }
 
 void UCGuardBeginEndMontageAsset::PlayEndBlockMontage(UAnimInstance* InAnimInstance, FGuardMontageData& InGuardMontageData)
@@ -49,5 +49,5 @@ void UCGuardBeginEndMontageAsset::PlayEndBlockMontage(UAnimInstance* InAnimInsta
 	
 	InAnimInstance->Montage_Play(GuardEndMontage.Montage, GuardEndMontage.PlayRate);
 	
-	InGuardMontageData = GuardMontage;
+	InGuardMontageData = GuardEndMontage;
 }

@@ -81,13 +81,19 @@ void UCGuardAction::OnBeginEquip()
 	
 	if (GuardComponent != nullptr)
 	{
-		GuardComponent->OnEvaluateBlocking.AddDynamic(this, &UCGuardAction::OnEvaluateBlocking);
-		GuardComponent->OnEvaluateParrying.AddDynamic(this, &UCGuardAction::OnEvaluateParrying);
+		if (!GuardComponent->OnEvaluateBlocking.IsAlreadyBound(this, &UCGuardAction::OnEvaluateBlocking))
+		{
+			GuardComponent->OnEvaluateBlocking.AddDynamic(this, &UCGuardAction::OnEvaluateBlocking);			
+		}
+		if (!GuardComponent->OnEvaluateParrying.IsAlreadyBound(this, &UCGuardAction::OnEvaluateParrying))
+		{
+			GuardComponent->OnEvaluateParrying.AddDynamic(this, &UCGuardAction::OnEvaluateParrying);			
+		}
 	}
 
-	if (StateComponent != nullptr)
+	if (StateComponent != nullptr && !StateComponent->OnStateTypeChanged.IsAlreadyBound(this, &UCGuardAction::OnStateTypeChanged))
 	{
-		StateComponent->OnStateTypeChanged.AddDynamic(this, &UCGuardAction::OnStateTypeChanged);
+		StateComponent->OnStateTypeChanged.AddDynamic(this, &UCGuardAction::OnStateTypeChanged);	
 	}
 }
 
@@ -193,6 +199,13 @@ void UCGuardAction::GuardBreak(FDamagedData& DamagedData)
 void UCGuardAction::SetParryingMode()
 {
 	FTimerManager& TimerManager = OwnerCharacter->GetWorld()->GetTimerManager();
+
+	if (FMath::IsNearlyZero(ParryingDuration))
+	{
+		// 만약, 패링 지속 시간이 0이라면, Parrying을 하지 않는다.
+		return;
+	}
+	
 	if (FMath::IsNearlyZero(ParryingDelay))
 	{
 		GuardComponent->SetParryingMode();
@@ -294,6 +307,16 @@ void UCGuardAction::OnStateTypeChanged(EStateType InPrevStateType, EStateType In
 {
 	switch (InPrevStateType)
 	{
+	case EStateType::Guard:
+		{
+			// 만약, 방어중일 때, 공격을 받는다면 방어를 강제로 해제한다.
+			if (InNewStateType == EStateType::Hitted)
+			{
+				BlockCancel = true;
+				EndBlockingMode();
+			}
+		}
+		break;
 	case EStateType::Unprotected:
 		{
 			if (InNewStateType == EStateType::Idle)
