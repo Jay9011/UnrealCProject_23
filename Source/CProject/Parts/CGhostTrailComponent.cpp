@@ -95,6 +95,19 @@ void UCGhostTrailComponent::AddTrailToPool(const FTransform& InTransform)
 	}
 }
 
+void UCGhostTrailComponent::EndUseTrail(FGhostTrailData& InTrailData)
+{
+	auto Node = GhostTrailsPool.FindNode(InTrailData);
+	Node->GetValue().bUse = false;
+	MoveTrailHeadToPool(Node);
+}
+
+void UCGhostTrailComponent::MoveTrailHeadToPool(TDoubleLinkedList<FGhostTrailData>::TDoubleLinkedListNode* InNode)
+{
+	GhostTrailsPool.RemoveNode(InNode, false);
+	GhostTrailsPool.AddHead(InNode);
+}
+
 void UCGhostTrailComponent::ShowAndUpdateTrailData(FGhostTrailData& InTrailData, const FTransform& InTransform)
 {
 	if (InTrailData.GhostTrail->Start(InTransform))
@@ -126,7 +139,10 @@ void UCGhostTrailComponent::StartTrailTimer(FGhostTrailData& InTrailData)
 	TimerDelegate.BindLambda([this, InTrailData]()
 	{
 		InTrailData.GhostTrail->End();
-		GhostTrailsPool.FindNode(InTrailData)->GetValue().bUse = false;
+		auto Node = GhostTrailsPool.FindNode(InTrailData);
+		Node->GetValue().bUse = false;
+		GhostTrailsPool.RemoveNode(Node, false);
+		GhostTrailsPool.AddHead(Node);
 	});
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, DelayDestroyTime, false);

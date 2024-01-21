@@ -32,7 +32,6 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		FVector NextLocation = Patrol->GetPatrolPath()->GetMoveTo();
 		Behavior->SetPatrolLocation(NextLocation);
-
 		DrawDebug(Enemy_AI->GetWorld(), NextLocation);
 
 		return EBTNodeResult::InProgress;
@@ -63,6 +62,12 @@ EBTNodeResult::Type UCBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Own
 			
 			return EBTNodeResult::InProgress;
 		}
+	}
+	// PatrolPath가 없는 경우, PatrolComponent의 Random이 false라면, 기존 위치로 이동
+	else
+	{
+		Behavior->SetPatrolLocation(Patrol->GetPatrolPoint().GetTranslation());
+		return EBTNodeResult::InProgress;
 	}
 
 	return EBTNodeResult::Failed;
@@ -99,6 +104,15 @@ void UCBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 			{
 				Patrol->GetPatrolPath()->UpdateIndex();
 			}
+			// Patrol Path 없이 원래 위치로 돌아온 경우
+			else if (Patrol->GetRandom() == false)
+			{
+				InterpRotation(OwnerComp, DeltaSeconds);
+				if (!Enemy_AI->GetActorRotation().Equals(Patrol->GetPatrolPoint().GetRotation().Rotator(), 1.f))
+				{
+					return;
+				}
+			}
 			
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
@@ -120,4 +134,20 @@ void UCBTTaskNode_Patrol::DrawDebug(const UWorld* InWorld, const FVector& InLoca
 	{
 		DrawDebugSphere(InWorld, InLocation, 10.f, 10, FColor::Green, false, 3.f);
 	}
+}
+
+void UCBTTaskNode_Patrol::InterpRotation(UBehaviorTreeComponent& OwnerComp, float DeltaSeconds)
+{
+	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
+	ACEnemy_AI* Enemy_AI = Cast<ACEnemy_AI>(Controller->GetPawn());
+
+	UCAIPatrolComponent* Patrol = Cast<UCAIPatrolComponent>(Enemy_AI->GetComponentByClass(UCAIPatrolComponent::StaticClass()));
+	if (Patrol == nullptr)
+		return;
+
+	FRotator CurrentRotation = Enemy_AI->GetActorRotation();
+	FRotator TargetRotation = Patrol->GetPatrolPoint().GetRotation().Rotator();
+
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 5.f);
+	Enemy_AI->SetActorRotation(NewRotation);
 }

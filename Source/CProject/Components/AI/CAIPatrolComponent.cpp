@@ -12,7 +12,9 @@
 
 UCAIPatrolComponent::UCAIPatrolComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;	
+	PrimaryComponentTick.bCanEverTick = true;
+
+	SearchMontage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("AnimMontage'/Game/Resources/Anim_Montages/Common/LookAround_Montage.LookAround_Montage'")).Object;
 }
 
 void UCAIPatrolComponent::BeginPlay()

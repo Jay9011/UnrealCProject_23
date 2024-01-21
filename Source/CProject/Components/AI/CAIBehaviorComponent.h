@@ -49,6 +49,8 @@ private:
 	FName LostTargetLocationKey = "LostTargetLocation";
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PatrolLocationKey = "PatrolLocation";
+	UPROPERTY(EditAnywhere, Category = "Key")
+	FName MoveToLocationKey = "MoveToLocation";
 
 private:
 	class UBlackboardComponent* Blackboard = nullptr;
@@ -64,6 +66,7 @@ public:
 	FORCEINLINE FName GetLostTargetKey() const { return LostTargetKey; }
 	FORCEINLINE FName GetLostTargetLocationKey() const { return LostTargetLocationKey; }
 	FORCEINLINE FName GetPatrolLocationKey() const { return PatrolLocationKey; }
+	FORCEINLINE FName GetMoveToLocationKey() const { return MoveToLocationKey; }
 
 public:
 	EAIStateType GetAIStateType() const;

@@ -23,6 +23,8 @@ protected:
 
 private:
 	void DrawDebug(const UWorld* InWorld, const FVector& InLocation);
+
+	void InterpRotation(UBehaviorTreeComponent& OwnerComp, float DeltaSeconds);
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Patrol")

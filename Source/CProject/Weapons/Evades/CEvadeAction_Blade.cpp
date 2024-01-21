@@ -140,5 +140,5 @@ bool UCEvadeAction_Blade::CheckJustEvade()
 
 	FHitResult HitResult;
 
-	return UCTraceUtil::SingleTraceSphereOtherGroupTraceChannel(OwnerCharacter, CheckRadius, TraceTypeQuery, IgnoreActors, HitResult, true, EDrawDebugTrace::ForDuration, 3.f);
+	return UCTraceUtil::SingleTraceSphereOtherGroupTraceChannel(OwnerCharacter, CheckRadius, TraceTypeQuery, IgnoreActors, HitResult);
 }

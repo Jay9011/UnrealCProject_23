@@ -181,11 +181,8 @@ void ACAIController::SightTargetLostEvent(AActor* Actor, const FAIStimulus& Stim
 	// 현재 타겟이 없다면
 	Blackboard->SetValueAsObject(Behavior->GetLostTargetKey(), Actor);
 	Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), Stimulus.StimulusLocation);
-
-#if WITH_EDITOR
-	DrawDebugSphere(GetWorld(), Stimulus.StimulusLocation, 10.f, 10, FColor::Red, false, 3.f);
-#endif
-	
+	// 처음 움직이는 위치는 타겟을 잃어버린 위치로 한다.
+	Blackboard->SetValueAsVector(Behavior->GetMoveToLocationKey(), Stimulus.StimulusLocation);
 }
 
 void ACAIController::SightTargetForgetEvent(const FAIStimulus& Stimulus)

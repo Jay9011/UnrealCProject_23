@@ -48,6 +48,8 @@ public:
 private:
 	void CleanupPool(const int InCount);
 	void AddTrailToPool(const FTransform& InTransform);
+	void EndUseTrail(FGhostTrailData& InTrailData);
+	void MoveTrailHeadToPool(TDoubleLinkedList<FGhostTrailData>::TDoubleLinkedListNode* InNode);
 	void ShowAndUpdateTrailData(FGhostTrailData& InTrailData, const FTransform& InTransform);
 	void SetupTrailData(FGhostTrailData& InTrailData, const FTransform& InTransform);
 	void StartTrailTimer(FGhostTrailData& InTrailData);
