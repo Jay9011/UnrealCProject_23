@@ -16,6 +16,7 @@ enum class EWeaponType : uint8
 {
 	Blade,
 	Sword_Pirate,
+	Stone,
 	Max UMETA(DisplayName = "Unarmed") // UEnum으로 문자열로 표시될 때 Unarmed로 표시되도록 함
 };
 
@@ -27,6 +28,7 @@ enum class EEquipSlotType : uint8
 {
 	MainWeapon UMETA(DisplayName = "Main Weapon"),
 	SubWeapon UMETA(DisplayName = "Sub Weapon"),
+	ThirdWeapon UMETA(DisplayName = "Third Weapon"),
 	Max UMETA(DisplayName = "UnEquipped")
 };
 
@@ -93,6 +95,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void SetSubWeaponMode();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SetThirdWeaponMode();
 	
 private:
 	bool IsIdleMode();
@@ -122,6 +127,7 @@ public:
 	FORCEINLINE bool IsUnarmedMode() const { return Type == EEquipSlotType::Max; }
 	FORCEINLINE bool IsMainWeaponMode() const { return Type == EEquipSlotType::MainWeapon; }
 	FORCEINLINE bool IsSubWeaponMode() const { return Type == EEquipSlotType::SubWeapon; }
+	FORCEINLINE bool IsThirdWeaponMode() const { return Type == EEquipSlotType::ThirdWeapon; }
 
 	FORCEINLINE EEquipSlotType GetType() const { return Type; }
 	

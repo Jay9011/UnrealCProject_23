@@ -91,6 +91,15 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		NeckRotation = Neck->GetEffectorRotation();
 	}
+
+	// Weapon
+	if (Weapon != nullptr)
+	{
+		if (Weapon->GetSubAction() != nullptr)
+		{
+			bSubActionPressed = Weapon->GetSubAction()->IsPressed();
+		}
+	}
 }
 
 void UCAnimInstance::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)

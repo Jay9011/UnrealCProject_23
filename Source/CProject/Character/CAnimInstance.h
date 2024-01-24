@@ -7,6 +7,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Weapons/CDoSubAction.h"
 #include "CAnimInstance.generated.h"
 
 UCLASS()
@@ -75,7 +76,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Head Rotation")
 	FRotator NeckRotation;
-	
+
+/* Weapon 관련 정보 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	bool bSubActionPressed = false;
 	
 private:
 	ACharacter* OwnerCharacter;

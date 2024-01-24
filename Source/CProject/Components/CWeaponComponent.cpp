@@ -195,6 +195,12 @@ void UCWeaponComponent::SetSubWeaponMode()
 	SetMode(EEquipSlotType::SubWeapon);
 }
 
+void UCWeaponComponent::SetThirdWeaponMode()
+{
+	CheckFalse(IsIdleMode())
+	SetMode(EEquipSlotType::ThirdWeapon);
+}
+
 bool UCWeaponComponent::IsIdleMode()
 {
 	return Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()))->IsIdleMode();

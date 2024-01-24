@@ -55,6 +55,11 @@ void UCEquipment::End_Equip_Implementation()
 
 	MovementComponent->Move();
 	StateComponent->SetIdleMode();
+
+	if (OnEquipmentEndEquip.IsBound())
+	{
+		OnEquipmentEndEquip.Broadcast();
+	}
 }
 
 void UCEquipment::Unequip_Implementation()
@@ -62,8 +67,8 @@ void UCEquipment::Unequip_Implementation()
 	bEquipped = false;
 	MovementComponent->DisableControlRotation();
 
-	if(OnEquipmentUnequip.IsBound())
+	if(OnEquipmentUnEquip.IsBound())
 	{
-		OnEquipmentUnequip.Broadcast();
+		OnEquipmentUnEquip.Broadcast();
 	}
 }

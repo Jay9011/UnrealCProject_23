@@ -10,6 +10,7 @@
 #include "Components/CMontagesComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CPredictionPathComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -77,6 +78,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::OnRun);
 	
 	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetMainWeaponMode);
+	PlayerInputComponent->BindAction("SubWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetSubWeaponMode);
+	PlayerInputComponent->BindAction("ThirdWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetThirdWeaponMode);
 	
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::DoAction);
 	

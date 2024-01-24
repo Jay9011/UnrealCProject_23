@@ -80,6 +80,17 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FDoActionData> DoActionDatas;
+
+	/*
+	 * Equipments 관련 바운딩 함수
+	 */
+public:
+	UFUNCTION()
+	virtual void OnBeginEquip(){}
+	UFUNCTION()
+	virtual void OnEndEquip(){}
+	UFUNCTION()
+	virtual void OnUnEquip(){}
 	
 	/*
 	 * 충돌체 관련 바운딩 함수

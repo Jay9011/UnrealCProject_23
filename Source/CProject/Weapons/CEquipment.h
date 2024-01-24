@@ -6,6 +6,7 @@
 #include "CEquipment.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentBeginEquip);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentEndEquip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentUnequip);
 
 /**
@@ -38,7 +39,8 @@ public:
 
 public:
 	FEquipmentBeginEquip OnEquipmentBeginEquip;
-	FEquipmentUnequip OnEquipmentUnequip;
+	FEquipmentEndEquip OnEquipmentEndEquip;
+	FEquipmentUnequip OnEquipmentUnEquip;
 	
 public:
 	class ACharacter* OwnerCharacter;

@@ -38,7 +38,8 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 		{
 			//Attachment가 있다면 Equip관련 이벤트에 Attachmnet의 함수를 바인딩
 			Equipment->OnEquipmentBeginEquip.AddDynamic(Attachment, &ACAttachment::OnBeginEquip);
-			Equipment->OnEquipmentUnequip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
+			Equipment->OnEquipmentEndEquip.AddDynamic(Attachment, &ACAttachment::OnEndEquip);
+			Equipment->OnEquipmentUnEquip.AddDynamic(Attachment, &ACAttachment::OnUnequip);
 		}
 	}// if(!!EquipmentClass)
 
@@ -55,6 +56,13 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 
 			Attachment->OnAttachmentBeginOverlap.AddDynamic(DoAction, &UCDoAction::OnAttachmentBeginOverlap);
 			Attachment->OnAttachmentEndOverlap.AddDynamic(DoAction, &UCDoAction::OnAttachmentEndOverlap);
+		}
+
+		if (!!Equipment)
+		{
+			Equipment->OnEquipmentBeginEquip.AddDynamic(DoAction, &UCDoAction::OnBeginEquip);
+			Equipment->OnEquipmentEndEquip.AddDynamic(DoAction, &UCDoAction::OnEndEquip);
+			Equipment->OnEquipmentUnEquip.AddDynamic(DoAction, &UCDoAction::OnUnEquip);
 		}
 	}// if(!!DoActionClass)
 
@@ -74,7 +82,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 		if(!!Equipment)
 		{
 			Equipment->OnEquipmentBeginEquip.AddDynamic(EvadeAction, &UCEvadeAction::OnBeginEquip);
-			Equipment->OnEquipmentUnequip.AddDynamic(EvadeAction, &UCEvadeAction::OnUnequip);
+			Equipment->OnEquipmentUnEquip.AddDynamic(EvadeAction, &UCEvadeAction::OnUnequip);
 		}
 	}// if(!!EvadeActionClass)
 
@@ -87,7 +95,7 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 		if (!!Equipment)
 		{
 			Equipment->OnEquipmentBeginEquip.AddDynamic(CtrlAction, &UCCtrlAction::OnBeginEquip);
-			Equipment->OnEquipmentUnequip.AddDynamic(CtrlAction, &UCCtrlAction::OnUnequip);
+			Equipment->OnEquipmentUnEquip.AddDynamic(CtrlAction, &UCCtrlAction::OnUnequip);
 		}
 	}// if(!!CtrlActionClass)
 

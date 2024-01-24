@@ -35,11 +35,17 @@ protected:
  */
 public:
 	//장착시 호출 될 이벤트
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginEquip();
+	virtual void OnBeginEquip_Implementation(){}
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEndEquip();
+	virtual void OnEndEquip_Implementation(){}
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUnequip();
+	virtual void OnUnequip_Implementation(){}
 
 /*
  * 충돌체 관련

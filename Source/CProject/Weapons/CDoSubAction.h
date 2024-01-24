@@ -22,9 +22,9 @@ public:
 
 public:
 	// 누르고 있는 동작을 재정의
-	virtual void Pressed() {};
+	virtual void Pressed() { bPressed = true; }
 	// 버튼을 뗄 때의 동작을 재정의
-	virtual void Released() {};
+	virtual void Released() { bPressed = false; }
 
 public:
 	/*
@@ -61,6 +61,8 @@ protected:
 	UPROPERTY()
 	class UCMovementComponent* MovementComponent;
 
+	bool bPressed = false;
+	
 /*
  * Getter / Setter
  */
@@ -69,4 +71,6 @@ public:
 	FORCEINLINE class ACharacter* GetOwnerCharacter() const { return OwnerCharacter; };
 	
 	virtual FString GetActionName() override { return GetName(); }
+
+	FORCEINLINE bool IsPressed() const { return bPressed; }
 };

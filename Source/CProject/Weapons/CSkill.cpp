@@ -6,6 +6,7 @@
 ACSkill::ACSkill()
 {
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
 }
 
 void ACSkill::BeginPlay()
