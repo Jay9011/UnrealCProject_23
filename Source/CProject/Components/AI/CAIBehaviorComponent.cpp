@@ -39,6 +39,11 @@ ACharacter* UCAIBehaviorComponent::GetTarget()
 	return Cast<ACharacter>(Blackboard->GetValueAsObject(TargetKey));
 }
 
+ACharacter* UCAIBehaviorComponent::GetLostTarget()
+{
+	return Cast<ACharacter>(Blackboard->GetValueAsObject(LostTargetKey));
+}
+
 FVector UCAIBehaviorComponent::GetPatrolLocation() const
 {
 	return Blackboard->GetValueAsVector(PatrolLocationKey);
@@ -57,6 +62,11 @@ bool UCAIBehaviorComponent::IsWait() const
 bool UCAIBehaviorComponent::IsPatrol() const
 {
 	return GetAIStateType() == EAIStateType::Patrol;
+}
+
+bool UCAIBehaviorComponent::IsVigilant() const
+{
+	return GetAIStateType() == EAIStateType::Vigilant;
 }
 
 bool UCAIBehaviorComponent::IsApproach() const
@@ -92,6 +102,11 @@ void UCAIBehaviorComponent::SetWaitMode()
 void UCAIBehaviorComponent::SetPatrolMode()
 {
 	ChangeAIState(EAIStateType::Patrol);
+}
+
+void UCAIBehaviorComponent::SetVigilantMode()
+{
+	ChangeAIState(EAIStateType::Vigilant);
 }
 
 void UCAIBehaviorComponent::SetApproachMode()

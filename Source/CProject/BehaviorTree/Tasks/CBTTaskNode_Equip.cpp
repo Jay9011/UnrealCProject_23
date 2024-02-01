@@ -24,6 +24,14 @@ EBTNodeResult::Type UCBTTaskNode_Equip::ExecuteTask(UBehaviorTreeComponent& Owne
 	UCWeaponComponent* WeaponComponent = Cast<UCWeaponComponent>(AI->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNullResult(WeaponComponent, EBTNodeResult::Failed);
 
+	// 만약, UnEquipped를 선택했다면
+	if (EquipSlotType == EEquipSlotType::Max)
+	{
+		WeaponComponent->SetUnarmedMode();
+
+		return EBTNodeResult::Succeeded;
+	}
+	
 	// 해당 슬롯에 장비가 있는지 확인
 	if (!WeaponComponent->CheckOwnEquipSlot(EquipSlotType))
 	{

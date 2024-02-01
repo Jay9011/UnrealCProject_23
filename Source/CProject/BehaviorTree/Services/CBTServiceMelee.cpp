@@ -46,7 +46,16 @@ void UCBTServiceMelee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	ACharacter* Target = Behavior->GetTarget();
 	if (Target == nullptr)
 	{
-		Behavior->SetPatrolMode();
+		ACharacter* LostTarget = Behavior->GetLostTarget();
+		if (LostTarget == nullptr)
+		{
+			Behavior->SetPatrolMode();
+		}
+		else
+		{
+			Behavior->SetVigilantMode();
+		}
+		
 		BattleSystem->UnregisterAIController(OwnerController);
 
 		return;

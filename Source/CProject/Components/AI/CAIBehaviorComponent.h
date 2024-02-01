@@ -10,7 +10,7 @@ UENUM()
 enum class EAIStateType : uint8
 {
 	Wait = 0,
-	Patrol,
+	Patrol, Vigilant,
 	Approach,
 	Action, Hitted,
 	Evade,
@@ -73,6 +73,7 @@ public:
 	void ChangeAIState(EAIStateType InType);
 	
 	ACharacter* GetTarget();
+	ACharacter* GetLostTarget();
 	
 	FVector GetPatrolLocation() const;
 	void SetPatrolLocation(const FVector& InLocation);
@@ -83,6 +84,7 @@ public:
 public:
 	bool IsWait() const;
 	bool IsPatrol() const;
+	bool IsVigilant() const;
 	bool IsApproach() const;
 	bool IsAction() const;
 	bool IsHitted() const;
@@ -91,6 +93,7 @@ public:
 
 	void SetWaitMode();
 	void SetPatrolMode();
+	void SetVigilantMode();
 	void SetApproachMode();
 	void SetActionMode();
 	void SetHittedMode();
