@@ -17,6 +17,7 @@ public class CProject : ModuleRules
 		PrivateDependencyModuleNames.Add("AIModule");
 		PrivateDependencyModuleNames.Add("GameplayTasks");
 		PrivateDependencyModuleNames.Add("NavigationSystem");
+		PrivateDependencyModuleNames.Add("PhysicsCore");
 		
 		PrivateDependencyModuleNames.Add("MyDebugger");
 	}

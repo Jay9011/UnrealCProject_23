@@ -3,7 +3,6 @@
 #include "CAIPerceptionComponentAddExpired.h"
 #include "CEnemy_AI.h"
 #include "CGameMode.h"
-#include "DrawDebugHelpers.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -11,7 +10,6 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CNeckComponent.h"
 #include "Components/AI/CAIBehaviorComponent.h"
-#include "GameMode/CBattleSystemComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Utilities/CheckMacros.h"
 
@@ -21,18 +19,28 @@ ACAIController::ACAIController()
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>("Blackboard");
 
 	// Sight
-	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
-	Sight->SightRadius = SightRadius;
-	Sight->LoseSightRadius = LoseSightRadius;
-	Sight->PeripheralVisionAngleDegrees = PeripheralVisionAngleDegrees;
-	Sight->SetMaxAge(SightAge);
+	{
+		Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
 
-	Sight->DetectionByAffiliation.bDetectEnemies = true;
-	Sight->DetectionByAffiliation.bDetectFriendlies = false;
-	Sight->DetectionByAffiliation.bDetectNeutrals = false;
+		Sight->DetectionByAffiliation.bDetectEnemies = true;
+		Sight->DetectionByAffiliation.bDetectFriendlies = false;
+		Sight->DetectionByAffiliation.bDetectNeutrals = false;
 
-	Perception->ConfigureSense(*Sight);
-	Perception->SetDominantSense(*Sight->GetSenseImplementation());
+		Perception->ConfigureSense(*Sight);
+		Perception->SetDominantSense(*Sight->GetSenseImplementation());
+	}
+
+	// Hearing
+	{
+		Hearing = CreateDefaultSubobject<UAISenseConfig_Hearing>("Hearing");
+
+		Hearing->DetectionByAffiliation.bDetectEnemies = true;
+		Hearing->DetectionByAffiliation.bDetectFriendlies = false;
+		Hearing->DetectionByAffiliation.bDetectNeutrals = false;
+
+		Perception->ConfigureSense(*Hearing);
+		Perception->SetDominantSense(*Hearing->GetSenseImplementation());
+	}
 
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -41,7 +49,6 @@ void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Perception->OnPerceptionUpdated.AddDynamic(this, &ACAIController::OnPerceptionUpdatedDelegate);
 	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIController::OnTargetPerceptionUpdatedDelegate);
 	Perception->OnHandleExpired.AddDynamic(this, &ACAIController::OnHandleExpiredDelegate);
 
@@ -49,7 +56,10 @@ void ACAIController::BeginPlay()
 	if (Sight == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Sight is nullptr"));
-		return;
+	}
+	if (Hearing == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Hearing is nullptr"));
 	}
 #endif
 	
@@ -77,6 +87,7 @@ void ACAIController::OnPossess(APawn* InPawn)
 
 	Behavior = Cast<UCAIBehaviorComponent>(Enemy->GetComponentByClass(UCAIBehaviorComponent::StaticClass()));
 	Behavior->SetBlackboard(Blackboard);
+	Blackboard->InitializeBlackboard(*Enemy->GetBehaviorTree()->BlackboardAsset);
 	
 	RunBehaviorTree(Enemy->GetBehaviorTree());
 }
@@ -166,14 +177,14 @@ bool ACAIController::UpdateCurrentTarget()
 	return true;
 }
 
-void ACAIController::SightTargetInEvent(AActor* Actor, const FAIStimulus& Stimulus)
+void ACAIController::SightTargetInEvent(AActor* Actor, FAIStimulus& Stimulus)
 {
 	UpdateCurrentTarget();
 	Blackboard->SetValueAsObject(Behavior->GetLostTargetKey(), nullptr);
 	Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), FVector::ZeroVector);
 }
 
-void ACAIController::SightTargetLostEvent(AActor* Actor, const FAIStimulus& Stimulus)
+void ACAIController::SightTargetLostEvent(AActor* Actor, FAIStimulus& Stimulus)
 {
 	if (UpdateCurrentTarget())
 		return;
@@ -185,7 +196,7 @@ void ACAIController::SightTargetLostEvent(AActor* Actor, const FAIStimulus& Stim
 	Blackboard->SetValueAsVector(Behavior->GetMoveToLocationKey(), Stimulus.StimulusLocation);
 }
 
-void ACAIController::SightTargetForgetEvent(const FAIStimulus& Stimulus)
+void ACAIController::SightTargetForgetEvent(FAIStimulus& Stimulus)
 {
 	// 혹시 모를 경우를 대비해 다시 한번 타겟을 업데이트 한다.
 	if (UpdateCurrentTarget())
@@ -195,10 +206,29 @@ void ACAIController::SightTargetForgetEvent(const FAIStimulus& Stimulus)
 	Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), FVector::ZeroVector);
 }
 
-void ACAIController::OnPerceptionUpdatedDelegate(const TArray<AActor*>& UpdatedActors)
+void ACAIController::HearingEvent(AActor* Actor, FAIStimulus& Stimulus)
 {
-	CheckNull(Blackboard);
-	CheckFalse(Behavior.IsValid());
+	// 새로운 듣기라면
+	if (Blackboard->GetValueAsInt(HearingBlackboardKey) == 0)
+	{
+		Blackboard->SetValueAsInt(HearingBlackboardKey, 1);
+		Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), Stimulus.StimulusLocation);
+		return;
+	}
+	// 듣기 중에 듣기가 감지된 경우
+	if (Blackboard->GetValueAsInt(HearingBlackboardKey) == 1)
+	{
+		Blackboard->SetValueAsInt(HearingBlackboardKey, 2);
+		Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), Stimulus.StimulusLocation);
+		Blackboard->SetValueAsVector(Behavior->GetMoveToLocationKey(), Stimulus.StimulusLocation);
+		return;
+	}
+}
+
+void ACAIController::VigilanceHearingEvent(AActor* Actor, FAIStimulus& Stimulus)
+{
+	Blackboard->SetValueAsInt(HearingBlackboardKey, 1);
+	Blackboard->SetValueAsVector(Behavior->GetLostTargetLocationKey(), Stimulus.StimulusLocation);
 }
 
 void ACAIController::OnTargetPerceptionUpdatedDelegate(AActor* Actor, FAIStimulus Stimulus)
@@ -211,7 +241,7 @@ void ACAIController::OnTargetPerceptionUpdatedDelegate(AActor* Actor, FAIStimulu
 		return;
 
 	// Sense가 Sight였으면
-	if (Sight.IsValid() && Stimulus.Type == Sight->GetSenseID())
+	if (Sight != nullptr && Stimulus.Type == Sight->GetSenseID())
 	{
 		// 타겟이 시야에 들어온 경우
 		if (Stimulus.WasSuccessfullySensed())
@@ -224,6 +254,16 @@ void ACAIController::OnTargetPerceptionUpdatedDelegate(AActor* Actor, FAIStimulu
 			SightTargetLostEvent(Actor, Stimulus);
 		}
 	}
+	// Sense가 Hearing이었다면,
+	else if (Hearing != nullptr && Stimulus.Type == Hearing->GetSenseID() && Stimulus.WasSuccessfullySensed())
+	{
+		EAIStateType AIStateType = Behavior->GetAIStateType();
+		// 만약, 순찰 중이었다면
+		if (Behavior->IsPatrol())
+		{
+			HearingEvent(Actor, Stimulus);
+		}
+	}
 }
 
 void ACAIController::OnHandleExpiredDelegate(FAIStimulus& StimulusStore)
@@ -232,9 +272,14 @@ void ACAIController::OnHandleExpiredDelegate(FAIStimulus& StimulusStore)
 	CheckFalse(Behavior.IsValid());
 
 	// 만약, 만료되는 감지 정보가 Sight라면
-	if (Sight.IsValid() && StimulusStore.Type == Sight->GetSenseID())
+	if (Sight != nullptr && StimulusStore.Type == Sight->GetSenseID())
 	{
 		SightTargetForgetEvent(StimulusStore);
+	}
+	// 만약, 만료되는 감지 정보가 Hearing 이라면
+	else if (Hearing != nullptr && StimulusStore.Type == Hearing->GetSenseID())
+	{
+		Blackboard->SetValueAsInt(HearingBlackboardKey, 0);
 	}
 	
 }

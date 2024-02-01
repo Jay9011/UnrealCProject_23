@@ -4,6 +4,7 @@
 #include "AIController.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionTypes.h"
+#include "Perception/AISenseConfig_Hearing.h"
 #include "CAIController.generated.h"
 
 class UCAIPerceptionComponentAddExpired;
@@ -50,27 +51,20 @@ public:
 	 */
 public:
 	// 타겟이 시야에 들어온 경우
-	void SightTargetInEvent(AActor* Actor, const FAIStimulus& Stimulus);
+	void SightTargetInEvent(AActor* Actor, FAIStimulus& Stimulus);
 	// 타겟을 시야에서 잃어버린 경우
-	void SightTargetLostEvent(AActor* Actor, const FAIStimulus& Stimulus);
+	void SightTargetLostEvent(AActor* Actor, FAIStimulus& Stimulus);
 	// 타겟을 완전히 잃는 경우
-	void SightTargetForgetEvent(const FAIStimulus& Stimulus);
+	void SightTargetForgetEvent(FAIStimulus& Stimulus);
 	// 새로운 듣기가 감지된 경우
-	void NewHearingEvent(AActor* Actor, const FAIStimulus& Stimulus);
+	void HearingEvent(AActor* Actor, FAIStimulus& Stimulus);
 	// 경계 중 듣기가 감지된 경우
-	void VigilanceHearingEvent(AActor* Actor, const FAIStimulus& Stimulus);
-	
-	// 타겟을 추적 중(잃어버린 타겟이 있는 경우), 탐색 위치의 변경
-	void UpdateLostTargetLocationEvent(const FVector& Location);
-	
+	void VigilanceHearingEvent(AActor* Actor, FAIStimulus& Stimulus);
 	
 	/*
 	 * Delegate
 	 */
 private:
-	// 일반 감지시
-	UFUNCTION()
-	void OnPerceptionUpdatedDelegate(const TArray<AActor*>& UpdatedActors);
 	// 감지된 타겟의 변경점이 있을 때(Actor와 FAIStimulus 사용)
 	UFUNCTION()
 	void OnTargetPerceptionUpdatedDelegate(AActor* Actor, FAIStimulus Stimulus);
@@ -82,17 +76,15 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UCAIPerceptionComponentAddExpired* Perception = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Perception|Sight")
-	float SightRadius = 600.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Perception|Sight")
-	float LoseSightRadius = 800.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Perception|Sight")
-	float PeripheralVisionAngleDegrees = 45.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Perception|Sight")
-	float SightAge = 5.f;
-
+	/* Hearing */
+	UPROPERTY(EditDefaultsOnly, Category = "Perception|Hearing")
+	FName HearingBlackboardKey = "Hearing";
+	
 protected:
-	TWeakObjectPtr<UAISenseConfig_Sight> Sight = nullptr;
+	UPROPERTY()
+	UAISenseConfig_Sight* Sight = nullptr;
+	UPROPERTY()
+	UAISenseConfig_Hearing* Hearing = nullptr;
 
 	bool Vigilance = false;
 	
