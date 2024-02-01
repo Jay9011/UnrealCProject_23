@@ -141,11 +141,13 @@ void UCMovementComponent::RestoreControlRotation()
 
 void UCMovementComponent::SetStandingMode()
 {
+	OwnerCharacter->UnCrouch();
 	ChangeStandingType(EStandingType::Standing);
 }
 
 void UCMovementComponent::SetCrouchMode()
 {
+	OwnerCharacter->Crouch();
 	ChangeStandingType(EStandingType::Crouch);
 }
 
@@ -154,12 +156,32 @@ void UCMovementComponent::SetKnockDownMode()
 	ChangeStandingType(EStandingType::KnockDown);
 }
 
+void UCMovementComponent::SwitchCrouchMode()
+{
+	if (IsCrouch())
+	{
+		SetStandingMode();
+	}
+	else
+	{
+		SetCrouchMode();		
+	}
+}
+
 void UCMovementComponent::OnCrouch()
 {
+	if (StandingType == EStandingType::Standing)
+	{
+		SetCrouchMode();
+	}
 }
 
 void UCMovementComponent::OffCrouch()
 {
+	if (StandingType == EStandingType::Crouch)
+	{
+		SetStandingMode();
+	}
 }
 
 void UCMovementComponent::StandUp(EDir InDir)
@@ -174,7 +196,7 @@ void UCMovementComponent::ChangeStandingType(EStandingType InType)
 {
 	EStandingType PrevType = StandingType;
 	StandingType = InType;
-
+	
 	if (bStandingProcess)
 	{
 		bStandingProcess = false;

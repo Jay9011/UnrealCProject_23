@@ -71,6 +71,8 @@ public:
 	virtual void SetCrouchMode();
 	virtual void SetKnockDownMode();
 
+	void SwitchCrouchMode();
+	
 	void OnCrouch();
 	void OffCrouch();
 
@@ -154,7 +156,7 @@ private:
 protected:
 	TWeakObjectPtr<ACharacter> OwnerCharacter;
 
-	EStandingType StandingType;
+	EStandingType  StandingType;
 	bool bStandingProcess = false;
 
 #if DEBUG_MOVEMENT

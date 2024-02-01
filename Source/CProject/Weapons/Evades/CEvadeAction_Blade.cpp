@@ -94,6 +94,7 @@ void UCEvadeAction_Blade::BeginEvade()
 	}
 
 	// 회피 애니메이션을 재생한다.
+	MovementComponent->OffCrouch();
 	EvadeDataPtr[static_cast<int32>(Dir)]->PlayMontage(OwnerCharacter);
 
 	// Just 회피를 체크한다.

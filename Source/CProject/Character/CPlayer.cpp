@@ -76,6 +76,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::OnWalk);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, MovementComponent, &UCMovementComponent::OnRun);
+
+	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::SwitchCrouchMode);
 	
 	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetMainWeaponMode);
 	PlayerInputComponent->BindAction("SubWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetSubWeaponMode);

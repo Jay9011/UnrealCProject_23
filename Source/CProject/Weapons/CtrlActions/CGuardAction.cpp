@@ -41,6 +41,9 @@ void UCGuardAction::Pressed()
 
 	if (CanBlocking())
 	{
+		// 만약 가드가 가능하다면, 먼저 일어난 다음 가드를 시작
+		MovementComponent->OffCrouch();
+		
 		FGuardMontageData MontageData;
 		GuardMontageAsset->PlayStartBlockMontage(AnimInstance, MontageData);
 		MovementProcess(MontageData.CanMove, MontageData.FixedCamera);

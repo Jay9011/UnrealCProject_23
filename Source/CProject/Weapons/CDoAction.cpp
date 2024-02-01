@@ -57,6 +57,11 @@ void UCDoAction::DoAction_Implementation()
 	
 	StateComponent->SetActionMode();
 	Weapon->ReserveAction(this);
+
+	if (DoOffCrouch)
+	{
+		MovementComponent->OffCrouch();
+	}
 }
 
 void UCDoAction::InitDoActionData()

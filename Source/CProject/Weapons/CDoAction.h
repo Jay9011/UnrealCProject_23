@@ -81,6 +81,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FDoActionData> DoActionDatas;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	bool DoOffCrouch = true;
+
 	/*
 	 * Equipments 관련 바운딩 함수
 	 */
