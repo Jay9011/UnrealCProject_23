@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AISense_Hearing.h"
+#include "Utilities/UFootStepSoundManager.h"
 
 ACSkill_Stone::ACSkill_Stone()
 {
@@ -100,9 +101,11 @@ void ACSkill_Stone::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	if (!bPlayedHitSound)
 	{
 		const FVector Location = GetActorLocation();
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Location);
-		FAINoiseEvent NoiseEvent(OwnerCharacter, Location, 1.f, 1000.f);
-		bPlayedHitSound = true;
+
+		if(UFootStepSoundManager::PlayAndReportNoiseEvent(OwnerCharacter, Location, HitSound, 1.f, 1000.f))
+		{
+			bPlayedHitSound = true;			
+		}
 	}
 }
 

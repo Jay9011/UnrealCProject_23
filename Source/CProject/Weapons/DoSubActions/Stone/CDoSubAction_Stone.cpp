@@ -1,6 +1,7 @@
 #include "Weapons/DoSubActions/Stone/CDoSubAction_Stone.h"
 
 #include "Components/CPredictionPathComponent.h"
+#include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
 #include "Weapons/DoActions/CDoAction_Stone.h"
 
@@ -17,7 +18,11 @@ void UCDoSubAction_Stone::Tick_Implementation(float InDeltaTime)
 {
 	Super::Tick_Implementation(InDeltaTime);
 
-	if (PredictionPath.IsValid() && bPressed && StoneAction->ReadyProjectileCheck())
+	if (StateComponent->IsIdleMode()
+		&& PredictionPath.IsValid()
+		&& bPressed
+		&& StoneAction->ReadyProjectileCheck()
+		)
 	{
 		FPredictProjectilePathParams Params
 		(

@@ -90,7 +90,7 @@ bool UCDoAction_Stone::CreateStone()
 	if (World->bIsTearingDown)
 		return false;
 
-	ACSkill_Stone* Stone = World->SpawnActorDeferred<ACSkill_Stone>(ProjectileClass, FTransform::Identity, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	ACSkill_Stone* Stone = World->SpawnActorDeferred<ACSkill_Stone>(ProjectileClass, FTransform::Identity, OwnerCharacter, OwnerCharacter, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	CheckNullResult(Stone, false);
 
 	Stone->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);

@@ -41,5 +41,6 @@ class CPROJECT_API UFootStepSoundManager: public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
-	static void PlayFootStepSound(AActor* InInstigator, const FVector& InLocation, const FFootStepRowData& InTableRow, const FFootStepSoundData& InData);
+	static bool PlayFootStepSound(AActor* InInstigator, const FVector& InLocation, const FFootStepRowData& InTableRow, const FFootStepSoundData& InData);
+	static bool PlayAndReportNoiseEvent(AActor* InInstigator, const FVector& InLocation, USoundBase* InSound, float InLoudness, float InMaxRange);
 };

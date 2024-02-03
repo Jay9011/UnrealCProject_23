@@ -41,10 +41,10 @@ private:
 	UProjectileMovementComponent* ProjectileMovement = nullptr;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Default")
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	float LifeSpan = 5.f;
 
-	UPROPERTY(EditAnywhere, Category = "Default")
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* HitSound = nullptr;
 	
 private:
