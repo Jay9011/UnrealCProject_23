@@ -3,6 +3,7 @@
 
 #include "CAnimInstance.h"
 #include "NavigationSystem.h"
+#include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CAirComponent.h"
 #include "Components/CEvadeComponent.h"
@@ -10,9 +11,9 @@
 #include "Components/CMontagesComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
-#include "Components/CPredictionPathComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/Interactive/CInteractiveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MyDebugger/DebuggerComponent.h"
 #include "Utilities/UDirectionalUtilities.h"
@@ -29,6 +30,15 @@ ACPlayer::ACPlayer()
 	
 	Camera = this->CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
+	MainCam = this->CreateDefaultSubobject<UChildActorComponent>("MainCam");
+	MainCam->SetupAttachment(Camera);
+	MainCam->SetChildActorClass(ACameraActor::StaticClass());
+
+	SceneCamera = this->CreateDefaultSubobject<UCameraComponent>("SceneCamera");
+	SceneCamera->SetupAttachment(GetMesh());
+	SceneCam = this->CreateDefaultSubobject<UChildActorComponent>("SceneCam");
+	SceneCam->SetupAttachment(SceneCamera);
+	SceneCam->SetChildActorClass(ACameraActor::StaticClass());
 
 	MovementComponent = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
 	Weapon = this->CreateDefaultSubobject<UCWeaponComponent>("Weapon");
@@ -44,9 +54,14 @@ ACPlayer::ACPlayer()
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->bEnableCameraLag = true;
 
+	SceneCamera->SetRelativeLocation(FVector(238.f, -55.66f, 71.07f));
+	SceneCamera->SetRelativeRotation(FRotator(-2.266f, 166.f, 0.f));
+
 	TSubclassOf<UCAnimInstance> AnimInstance = ConstructorHelpers::FClassFinder<UCAnimInstance>(TEXT("AnimBlueprint'/Game/Character/ABP_BaseCharacter.ABP_BaseCharacter_C'")).Class;
 	GetMesh()->SetAnimClass(AnimInstance);
 
+	//====================================================================================================
+	InteractiveComponent = this->CreateDefaultSubobject<UCInteractiveComponent>("Interactive");
 }
 
 void ACPlayer::BeginPlay()
@@ -79,9 +94,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, MovementComponent, &UCMovementComponent::SwitchCrouchMode);
 	
-	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetMainWeaponMode);
-	PlayerInputComponent->BindAction("SubWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetSubWeaponMode);
-	PlayerInputComponent->BindAction("ThirdWeapon", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::SetThirdWeaponMode);
+	PlayerInputComponent->BindAction("MainWeapon", EInputEvent::IE_Pressed, this, &ACPlayer::WeaponChange_MainWeapon);
+	PlayerInputComponent->BindAction("SubWeapon", EInputEvent::IE_Pressed, this, &ACPlayer::WeaponChange_SubWeapon);
+	PlayerInputComponent->BindAction("ThirdWeapon", EInputEvent::IE_Pressed, this, &ACPlayer::WeaponChange_ThirdWeapon);
 	
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::DoAction);
 	
@@ -92,6 +107,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("CtrlAction", EInputEvent::IE_Pressed, Weapon, &UCWeaponComponent::Ctrl_Pressed);
 	PlayerInputComponent->BindAction("CtrlAction", EInputEvent::IE_Released, Weapon, &UCWeaponComponent::Ctrl_Released);
+
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, InteractiveComponent, &UCInteractiveComponent::OnInteract);
 }
 
 void ACPlayer::Falling()
@@ -337,6 +354,44 @@ void ACPlayer::SetGenericTeamId(const FGenericTeamId& NewTeamID)
 		TeamID = NewTeamID;
 }
 
+void ACPlayer::WeaponChange_MainWeapon()
+{
+	WeaponChangeAction(EEquipSlotType::MainWeapon);
+}
+
+void ACPlayer::WeaponChange_SubWeapon()
+{
+	WeaponChangeAction(EEquipSlotType::SubWeapon);
+}
+
+void ACPlayer::WeaponChange_ThirdWeapon()
+{
+	WeaponChangeAction(EEquipSlotType::ThirdWeapon);
+}
+
+void ACPlayer::WeaponChangeAction(EEquipSlotType InSlotType)
+{
+	switch (InSlotType) {
+	case EEquipSlotType::MainWeapon:
+		Weapon->SetMainWeaponMode();
+		break;
+	case EEquipSlotType::SubWeapon:
+		Weapon->SetSubWeaponMode();
+		break;
+	case EEquipSlotType::ThirdWeapon:
+		Weapon->SetThirdWeaponMode();
+		break;
+	case EEquipSlotType::Max:
+		Weapon->SetUnarmedMode();
+		break;
+	}
+
+	if (InteractiveComponent != nullptr)
+	{
+		InteractiveComponent->CheckTarget();
+	}
+}
+
 #if DEBUG_DEFAULT_INFO
 FDebugInfo ACPlayer::GetDebugInfo()
 {
@@ -373,4 +428,5 @@ FDebugInfo ACPlayer::GetDebugInfo()
 	
 	return Info;
 }
+
 #endif

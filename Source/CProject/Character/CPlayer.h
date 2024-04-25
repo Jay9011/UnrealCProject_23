@@ -6,6 +6,7 @@
 #include "Components/IStateNotify.h"
 #include "DebugHeader.h"
 #include "GenericTeamAgentInterface.h"
+#include "Components/CWeaponComponent.h"
 #include "CPlayer.generated.h"
 
 /**
@@ -58,6 +59,17 @@ public:
 public:
 	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
 	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
+
+// Weapon Change 관련
+public:
+	UFUNCTION()
+	void WeaponChange_MainWeapon();
+	UFUNCTION()
+	void WeaponChange_SubWeapon();
+	UFUNCTION()
+	void WeaponChange_ThirdWeapon();
+	
+	void WeaponChangeAction(EEquipSlotType InSlotType);
 	
 /*
  * 카메라 관련
@@ -68,6 +80,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+	class UChildActorComponent* MainCam;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* SceneCamera;
+
+	UPROPERTY(VisibleAnywhere)
+	class UChildActorComponent* SceneCam;
 
 /*
  *	기본 컴포넌트 
@@ -94,6 +115,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Extension")
 	class UCGuardComponent* GuardComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Extension")
+	class UCInteractiveComponent* InteractiveComponent;
 	
 private:
 	float MinimumLiftZ = 100.f;
@@ -103,6 +127,8 @@ private:
  */
 public:
 	USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	UChildActorComponent* GetMainCam() const { return MainCam; }
+	UChildActorComponent* GetSceneCam() const { return SceneCam; }
 	
 #if WITH_EDITOR
 public:

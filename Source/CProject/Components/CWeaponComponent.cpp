@@ -216,6 +216,11 @@ EWeaponType UCWeaponComponent::GetWeaponType() const
 	return WeaponAssets[static_cast<int32>(Type)]->GetWeaponType();
 }
 
+UCWeaponObject* UCWeaponComponent::GetWeapon() const
+{
+	return WeaponObject[static_cast<int32>(Type)] ? WeaponObject[static_cast<int32>(Type)] : nullptr;
+}
+
 bool UCWeaponComponent::CheckOwnEquipSlot(EEquipSlotType InSlotType) const
 {
 	return WeaponAssets[static_cast<int8>(InSlotType)] != nullptr && WeaponAssets[static_cast<int8>(InSlotType)]->GetWeaponType() != EWeaponType::Max;

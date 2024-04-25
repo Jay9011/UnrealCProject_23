@@ -42,6 +42,7 @@ private:
  */
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
+	FORCEINLINE UCAIBehaviorComponent* GetBehaviorComponent() const { return BehaviorComponent; }
 
 /*
  * Debug

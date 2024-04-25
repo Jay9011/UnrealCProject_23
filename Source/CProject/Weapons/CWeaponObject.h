@@ -5,6 +5,7 @@
 #include "Weapons/CWeaponStructures.h"
 #include "CWeaponObject.generated.h"
 
+class UCAddOnComponent;
 /**
  * @brief Weapon 인스턴스를 관리하는 UObject
  */
@@ -15,6 +16,20 @@ class CPROJECT_API UCWeaponObject : public UObject
 private:
 	friend class UCWeaponAsset;
 
+public:
+	void RegisterAddOnComponent(UCAddOnComponent* InAddOnComponent);
+	
+	template <typename T>
+	T* GetAddOnComponent()
+	{
+		for (auto AddOnComponent : AddOnComponents)
+		{
+			if (T* Casted = Cast<T>(AddOnComponent))
+				return Casted;
+		}
+		return nullptr;
+	}
+	
 /*
  * Action 예약 관련
  */
@@ -37,6 +52,11 @@ private:
 	class UCEvadeAction* EvadeAction;
 	UPROPERTY()
 	class UCCtrlAction* CtrlAction;
+
+private:
+	UPROPERTY()
+	TArray<UCAddOnComponent*> AddOnComponents;
+
 	
 public:
 	FORCEINLINE IIExcuteAction* GetCurrentAction() const { return CurrentAction; }

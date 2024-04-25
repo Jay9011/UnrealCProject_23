@@ -19,6 +19,9 @@ public class CProject : ModuleRules
 		PrivateDependencyModuleNames.Add("NavigationSystem");
 		PrivateDependencyModuleNames.Add("PhysicsCore");
 		
+		PrivateDependencyModuleNames.Add("LevelSequence");
+		PrivateDependencyModuleNames.Add("MovieScene");
+		
 		PrivateDependencyModuleNames.Add("MyDebugger");
 	}
 }

@@ -55,7 +55,11 @@ EBTNodeResult::Type UCBTTask_SetFocus::ExecuteTask(UBehaviorTreeComponent& Owner
 		ACEnemy_AI* Enemy = Cast<ACEnemy_AI>(AIController->GetPawn());
 		if (Enemy != nullptr)
 		{
-			Enemy->SetActorRotation((AIController->GetFocalPoint() - Enemy->GetActorLocation()).Rotation());
+			FRotator Rotator = (AIController->GetFocalPoint() - Enemy->GetActorLocation()).Rotation();
+			Rotator.Pitch = 0.f;
+			Rotator.Roll = 0.f;
+			
+			Enemy->SetActorRotation(Rotator);
 		}
 		return EBTNodeResult::Succeeded;
 	}

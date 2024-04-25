@@ -32,8 +32,15 @@ EBTNodeResult::Type UCBTTask_SearchMontage::AbortTask(UBehaviorTreeComponent& Ow
 {
 	ACAIController* Controller = Cast<ACAIController>(OwnerComp.GetOwner());
 	ACEnemy_AI* Enemy = Cast<ACEnemy_AI>(Controller->GetPawn());
+	
+	if (Controller == nullptr || Enemy == nullptr)
+		return EBTNodeResult::Failed;
 
-	Enemy->StopAnimMontage();
+	UCAIPatrolComponent* Patrol = Cast<UCAIPatrolComponent>(Enemy->GetComponentByClass(UCAIPatrolComponent::StaticClass()));
+	if (Patrol == nullptr)
+		return EBTNodeResult::Failed;
+
+	Patrol->StopSearchMontage();
 
 	return Super::AbortTask(OwnerComp, NodeMemory);
 }

@@ -83,6 +83,11 @@ void UCAIPatrolComponent::PlaySearchMontage()
 	return;
 }
 
+void UCAIPatrolComponent::StopSearchMontage()
+{
+	Owner->StopAnimMontage(SearchMontage);
+}
+
 void UCAIPatrolComponent::EndSearchMontage(UAnimMontage* Montage, bool bInterrupted)
 {
 	AAIController* Controller = Owner->GetController<AAIController>();

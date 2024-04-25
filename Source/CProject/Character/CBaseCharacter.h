@@ -58,6 +58,7 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, BlueprintGetter, Category = "Base")
 	FORCEINLINE class UCStateComponent* GetStateComponent() const { return State; };
+	FORCEINLINE class UCStatusComponent* GetStatusComponent() const { return Status; };
 
 	FORCEINLINE uint8 GetTeamID() const { return TeamID; };
 

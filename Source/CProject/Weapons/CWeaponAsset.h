@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AddOn/CAddOnComponent.h"
 #include "Engine/DataAsset.h"
 #include "Weapons/CWeaponStructures.h"
 #include "Components/CWeaponComponent.h"
@@ -56,6 +57,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Evade")
 	TArray<FEvadeData> EvadeData;
 
+	/*
+	 * Components
+	 */
+private:
+	UPROPERTY(EditAnywhere, Category = "Components", DisplayName = "Add-On Components")
+	TArray<TSubclassOf<UCAddOnComponent>> AddOnComponents;
+	
 /*
  * Getter / Setter
  */

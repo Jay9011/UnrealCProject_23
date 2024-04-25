@@ -105,4 +105,15 @@ void UCWeaponAsset::BeginPlay(ACharacter* InOwner, class UCWeaponObject** OutWea
 	(*OutWeaponObject)->DoSubAction = DoSubAction;
 	(*OutWeaponObject)->EvadeAction = EvadeAction;
 	(*OutWeaponObject)->CtrlAction = CtrlAction;
+
+	
+	for (TSubclassOf<UCAddOnComponent> AddOnComponent : AddOnComponents)
+	{
+		if (!!AddOnComponent)
+		{
+			UCAddOnComponent* AddOn = NewObject<UCAddOnComponent>((*OutWeaponObject), AddOnComponent);
+			(*OutWeaponObject)->AddOnComponents.Add(AddOn);
+			AddOn->BeginPlay(InOwner, *OutWeaponObject);
+		}
+	}
 }

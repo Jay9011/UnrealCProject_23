@@ -30,6 +30,9 @@ public:
 	UFUNCTION()
 	void PlaySearchMontage();
 
+	UFUNCTION()
+	void StopSearchMontage();
+
 private:
 	UFUNCTION()
 	void EndSearchMontage(UAnimMontage* Montage, bool bInterrupted);

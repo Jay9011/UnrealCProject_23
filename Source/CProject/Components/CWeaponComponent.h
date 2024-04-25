@@ -136,6 +136,7 @@ public:
 	FORCEINLINE bool IsBladeMode() const;
 
 	FORCEINLINE EWeaponType GetWeaponType() const;
+	FORCEINLINE UCWeaponObject* GetWeapon() const;
 
 public:
 	FORCEINLINE bool CheckOwnEquipSlot(EEquipSlotType InSlotType) const;

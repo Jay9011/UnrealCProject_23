@@ -149,5 +149,9 @@ void UCBTTaskNode_Patrol::InterpRotation(UBehaviorTreeComponent& OwnerComp, floa
 	FRotator TargetRotation = Patrol->GetPatrolPoint().GetRotation().Rotator();
 
 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 5.f);
+	
+	NewRotation.Pitch = 0.f;
+	NewRotation.Roll = 0.f;
+	
 	Enemy_AI->SetActorRotation(NewRotation);
 }
