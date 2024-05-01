@@ -1,5 +1,6 @@
 #include "Weapons/CWeaponStructures.h"
 
+#include "Character/CPlayer.h"
 #include "Components/CMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,6 +44,16 @@ void FHitData::PlaySoundWave(ACharacter* InOwner)
 	FVector Location = InOwner->GetActorLocation();
 
 	UGameplayStatics::SpawnSoundAtLocation(World, Sound, Location);
+}
+
+void FHitData::PlayShake(AController* InOwner)
+{
+	CheckNull(Shake);
+
+	APlayerController* PlayerController = Cast<APlayerController>(InOwner);
+	CheckNull(PlayerController);
+
+	PlayerController->PlayerCameraManager->StartCameraShake(Shake, 1.f);
 }
 
 void FHitData::PlayEffect(UWorld* InWorld, const FVector& InLocation)

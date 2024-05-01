@@ -149,6 +149,7 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Damaged.Damage = Damage;
+	Damaged.Event->HitData->PlayShake(EventInstigator);
 
 	State->SetHittedMode();
 	

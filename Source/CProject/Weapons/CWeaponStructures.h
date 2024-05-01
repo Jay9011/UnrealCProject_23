@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/HitMontageComponent.h"
+#include "Particles/ParticleSystem.h"
 #include "UObject/NoExportTypes.h"
 #include "CWeaponStructures.generated.h"
 
@@ -70,17 +71,17 @@ public:
 	float PlayRate = 1;
 
 	// 피격시 특수 효과
-	UPROPERTY(EditAnywhere, Category = "Effect")
+	UPROPERTY(EditAnywhere, Category = "Time")
 	float HitStopTime = 0;
 	
-	UPROPERTY(EditAnywhere, Category = "Effect")
-	class USoundWave* Sound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundWave* Sound;
 
-	UPROPERTY(EditAnywhere, Category = "Effect")
-	class UMatineeCameraShake* Shake;
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	TSubclassOf<UMatineeCameraShake> Shake;
 	
 	UPROPERTY(EditAnywhere, Category = "Effect")
-	class UFXSystemAsset* Effect;
+	UFXSystemAsset* Effect;
 
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	FVector EffectLocation = FVector::ZeroVector;
@@ -93,6 +94,7 @@ public:
 	void PlayMontage(class ACharacter* InOwner);
 	void PlayHitStop(UWorld* InWorld);
 	void PlaySoundWave(class ACharacter* InOwner);
+	void PlayShake(AController* InOwner);
 	void PlayEffect(UWorld* InWorld, const FVector& InLocation);
 	void PlayEffect(UWorld* InWorld, const FVector& InLocation, const FRotator& InRotation);
 };
