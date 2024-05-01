@@ -57,8 +57,8 @@ private:
 	 * ICInteractiveInterface
 	 */
 public:
-	virtual void OnInteract(ACPlayer* InInteractPlayer) override;
-	virtual bool CanInteract(ACPlayer* InInteractPlayer) override;
-	virtual AActor* GetInteractTarget() override;
-	virtual FText GetInteractText() override;
+	virtual void OnInteract_Implementation(ACPlayer* InInteractPlayer) override;
+	virtual bool CanInteract_Implementation(ACPlayer* InInteractPlayer) override;
+	virtual AActor* GetInteractTarget_Implementation() override;
+	virtual FText GetInteractText_Implementation() override;
 };

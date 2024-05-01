@@ -51,33 +51,29 @@ void UCInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UCInteractiveComponent::SetTarget(AActor* InTarget, ICInteractiveInterface* InInteractiveTarget)
+void UCInteractiveComponent::SetTarget(AActor* InTarget, UObject* InInteractiveTarget)
 {
 	CheckNull(InInteractiveTarget);
-
-	UObject* IInteractiveObject = Cast<UObject>(InInteractiveTarget);
-
-	if (IInteractiveObject != nullptr)
-	{
-		InteractiveTarget = IInteractiveObject;
-		Widget->SetText(InInteractiveTarget->GetInteractText());
-		OnChangeTarget(InTarget);
-	}
+	CheckFalse(InInteractiveTarget->GetClass()->ImplementsInterface(UCInteractiveInterface::StaticClass()));
 	
+	InteractiveTarget = InInteractiveTarget;
+	Widget->SetText(ICInteractiveInterface::Execute_GetInteractText(InInteractiveTarget));
+	
+	CheckNull(InTarget);
+	OnChangeTarget(InTarget);
 }
 
-void UCInteractiveComponent::ClearTarget(ICInteractiveInterface* InInteractiveTarget)
+void UCInteractiveComponent::ClearTarget(UObject* InInteractiveTarget)
 {
 	CheckNull(InInteractiveTarget);
+	CheckFalse(InInteractiveTarget->GetClass()->ImplementsInterface(UCInteractiveInterface::StaticClass()));
 
-	ICInteractiveInterface* IInteractiveInterface = Cast<ICInteractiveInterface>(InteractiveTarget.Get());
-
-	if (IInteractiveInterface != nullptr && IInteractiveInterface == InInteractiveTarget)
+	if (InteractiveTarget.Get() == InInteractiveTarget)
 	{
 		InteractiveTarget.Reset();
 		OnChangeTarget(nullptr);
 	}
-	else if (IInteractiveInterface == nullptr)
+	else if (!InteractiveTarget.IsValid())
 	{
 		InteractiveTarget.Reset();
 		OnChangeTarget(nullptr);
@@ -91,9 +87,9 @@ void UCInteractiveComponent::CheckTarget()
 	ICInteractiveInterface* IInteractiveInterface = Cast<ICInteractiveInterface>(InteractiveTarget.Get());
 	CheckNull(IInteractiveInterface);
 	
-	if (IInteractiveInterface->CanInteract(OwnerPlayer))
+	if (IInteractiveInterface->Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
 	{
-		OnChangeTarget(IInteractiveInterface->GetInteractTarget());
+		OnChangeTarget(IInteractiveInterface->Execute_GetInteractTarget(InteractiveTarget.Get()));
 	}
 	else
 	{
@@ -108,9 +104,9 @@ void UCInteractiveComponent::OnInteract()
 	ICInteractiveInterface* IInteractiveInterface = Cast<ICInteractiveInterface>(InteractiveTarget.Get());
 	CheckNull(IInteractiveInterface);
 
-	if (WidgetTarget.IsValid() && IInteractiveInterface->CanInteract(OwnerPlayer))
+	if (WidgetTarget.IsValid() && IInteractiveInterface->Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
 	{
-		IInteractiveInterface->OnInteract(OwnerPlayer);
+		IInteractiveInterface->Execute_OnInteract(InteractiveTarget.Get(), OwnerPlayer);
 	}
 }
 

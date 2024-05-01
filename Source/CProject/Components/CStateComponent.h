@@ -65,15 +65,24 @@ public:
 	void OffSubActionMode() { bInSubActionMode = false; };
 
 public:
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsIdleMode() const { return Type == EStateType::Idle; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsEquipMode() const { return Type == EStateType::Equip; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsHittedMode() const { return Type == EStateType::Hitted; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsBlockingMode() const { return Type == EStateType::Guard; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsUnprotectedMode() const { return Type == EStateType::Unprotected; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsDeadMode() const { return Type == EStateType::Dead; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsActionMode() const { return Type == EStateType::Action; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsEvadeMode() const { return Type == EStateType::Evade; }
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsSubActionMode() const { return bInSubActionMode; }
 
 /*
@@ -84,8 +93,9 @@ public:
 	
 public:
 	FBeforeStateChange OnBeforeStateChange;
-	FStateTypeChanged OnStateTypeChanged;
 	
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FStateTypeChanged OnStateTypeChanged;
 
 private:
 	EStateType Type;

@@ -11,8 +11,10 @@
 #include "Components/CMontagesComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CPlayerInfoComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Components/Interactive/CInteractiveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MyDebugger/DebuggerComponent.h"
@@ -30,6 +32,10 @@ ACPlayer::ACPlayer()
 	
 	Camera = this->CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
+
+	PostProcess = this->CreateDefaultSubobject<UPostProcessComponent>("PostProcess");
+	PostProcess->SetupAttachment(Camera);
+	
 	MainCam = this->CreateDefaultSubobject<UChildActorComponent>("MainCam");
 	MainCam->SetupAttachment(Camera);
 	MainCam->SetChildActorClass(ACameraActor::StaticClass());
@@ -42,6 +48,8 @@ ACPlayer::ACPlayer()
 
 	MovementComponent = this->CreateDefaultSubobject<UCMovementComponent>("Movement");
 	Weapon = this->CreateDefaultSubobject<UCWeaponComponent>("Weapon");
+
+	PlayerInfoComponent = this->CreateDefaultSubobject<UCPlayerInfoComponent>("PlayerInfoComponent");
 	
 	Evade = this->CreateDefaultSubobject<UCEvadeComponent>("Evade");
 	Air = this->CreateDefaultSubobject<UCAirComponent>("Air");

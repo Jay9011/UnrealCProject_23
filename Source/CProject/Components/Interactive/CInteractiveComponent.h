@@ -29,9 +29,11 @@ public:
 	 * @param InTarget Widget을	표시할 대상
 	 * @param InInteractiveTarget 상호작용 인터페이스가 존재하는 객체
 	 */
-	void SetTarget(AActor* InTarget, ICInteractiveInterface* InInteractiveTarget);
-	
-	void ClearTarget(ICInteractiveInterface* InInteractiveTarget);
+	UFUNCTION(BlueprintCallable, Category = "Interactive")
+	void SetTarget(AActor* InTarget, UObject* InInteractiveTarget);
+
+	UFUNCTION(BlueprintCallable, Category = "Interactive")
+	void ClearTarget(UObject* InInteractiveTarget);
 	void CheckTarget();
 
 	UFUNCTION()

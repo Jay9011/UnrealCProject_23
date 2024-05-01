@@ -57,7 +57,7 @@ void UCTakedownAreaComponent::OnTakedownAreaBeginOverlap(UPrimitiveComponent* Ov
 	
 	if (CheckStealthKillable(Player))
 	{
-		InteractiveComponent->SetTarget(GetInteractTarget(), this);		
+		InteractiveComponent->SetTarget(GetInteractTarget_Implementation(), this);		
 	}
 	else
 	{
@@ -123,7 +123,7 @@ void UCTakedownAreaComponent::OnTakedownEnd()
 	StatusComponent->Damage(MaxHealth);
 }
 
-void UCTakedownAreaComponent::OnInteract(ACPlayer* InInteractPlayer)
+void UCTakedownAreaComponent::OnInteract_Implementation(ACPlayer* InInteractPlayer)
 {
 	UCWeaponComponent* WeaponComponent = Cast<UCWeaponComponent>(InInteractPlayer->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	CheckNull(WeaponComponent);
@@ -137,17 +137,17 @@ void UCTakedownAreaComponent::OnInteract(ACPlayer* InInteractPlayer)
 	StealthKill->OnStealthKill(OwnerEnemy, this);
 }
 
-bool UCTakedownAreaComponent::CanInteract(ACPlayer* InInteractPlayer)
+bool UCTakedownAreaComponent::CanInteract_Implementation(ACPlayer* InInteractPlayer)
 {
 	return CheckStealthKillable(InInteractPlayer);
 }
 
-AActor* UCTakedownAreaComponent::GetInteractTarget()
+AActor* UCTakedownAreaComponent::GetInteractTarget_Implementation()
 {
 	return OwnerEnemy;
 }
 
-FText UCTakedownAreaComponent::GetInteractText()
+FText UCTakedownAreaComponent::GetInteractText_Implementation()
 {
 	return FText::FromString(TEXT("암살"));
 }

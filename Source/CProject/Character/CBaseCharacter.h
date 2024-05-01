@@ -37,10 +37,10 @@ protected:
 	FDamagedData Damaged;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Base")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base")
 	class UCStatusComponent* Status;
 	
-	UPROPERTY(VisibleAnywhere, Category = "Base")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base")
 	class UCStateComponent* State;
 
 	UPROPERTY(VisibleAnywhere, Category = "Base")

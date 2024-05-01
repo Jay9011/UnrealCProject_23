@@ -9,6 +9,7 @@
 #include "Components/CWeaponComponent.h"
 #include "CPlayer.generated.h"
 
+class UPostProcessComponent;
 /**
  * @brief 플레이어
  */
@@ -90,6 +91,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UChildActorComponent* SceneCam;
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UPostProcessComponent* PostProcess;
+
+	
 /*
  *	기본 컴포넌트 
  */
@@ -99,6 +105,10 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Base")
 	class UCWeaponComponent* Weapon;
+
+	// 플레이어 정보 컴포넌트
+	UPROPERTY(VisibleAnywhere, Category = "Base")
+	class UCPlayerInfoComponent* PlayerInfoComponent;
 
 /*
  * 확장 컴포넌트

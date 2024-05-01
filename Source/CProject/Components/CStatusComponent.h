@@ -19,7 +19,7 @@ protected:
 public:
 	void Damage(float InAmount);
 	
-private:
+protected:
 	float Health = 0.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Health")
@@ -32,11 +32,12 @@ private:
  * Getter
  */
 public:
-	UFUNCTION(BlueprintGetter, Category = "Health")
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	FORCEINLINE float GetHealth() const { return Health; };
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; };
 
-	UFUNCTION(BlueprintGetter, Category = "Status")
+	UFUNCTION(BlueprintCallable, Category = "Status")
 	FORCEINLINE bool IsDead() const { return Health <= 0.f; };
 };
