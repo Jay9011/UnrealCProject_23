@@ -83,13 +83,11 @@ void UCInteractiveComponent::ClearTarget(UObject* InInteractiveTarget)
 void UCInteractiveComponent::CheckTarget()
 {
 	CheckNull(InteractiveTarget);
-
-	ICInteractiveInterface* IInteractiveInterface = Cast<ICInteractiveInterface>(InteractiveTarget.Get());
-	CheckNull(IInteractiveInterface);
+	CheckFalse(InteractiveTarget->GetClass()->ImplementsInterface(UCInteractiveInterface::StaticClass()));
 	
-	if (IInteractiveInterface->Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
+	if (ICInteractiveInterface::Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
 	{
-		OnChangeTarget(IInteractiveInterface->Execute_GetInteractTarget(InteractiveTarget.Get()));
+		OnChangeTarget(ICInteractiveInterface::Execute_GetInteractTarget(InteractiveTarget.Get()));
 	}
 	else
 	{
@@ -100,13 +98,11 @@ void UCInteractiveComponent::CheckTarget()
 void UCInteractiveComponent::OnInteract()
 {
 	CheckFalse(InteractiveTarget.IsValid());
+	CheckFalse(InteractiveTarget->GetClass()->ImplementsInterface(UCInteractiveInterface::StaticClass()));
 	
-	ICInteractiveInterface* IInteractiveInterface = Cast<ICInteractiveInterface>(InteractiveTarget.Get());
-	CheckNull(IInteractiveInterface);
-
-	if (WidgetTarget.IsValid() && IInteractiveInterface->Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
+	if (WidgetTarget.IsValid() && ICInteractiveInterface::Execute_CanInteract(InteractiveTarget.Get(), OwnerPlayer))
 	{
-		IInteractiveInterface->Execute_OnInteract(InteractiveTarget.Get(), OwnerPlayer);
+		ICInteractiveInterface::Execute_OnInteract(InteractiveTarget.Get(), OwnerPlayer);
 	}
 }
 
