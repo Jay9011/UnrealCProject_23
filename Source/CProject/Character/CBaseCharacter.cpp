@@ -61,6 +61,11 @@ void ACBaseCharacter::ApplyDamage()
 	{
 		Status->Damage(Damaged.Damage);
 	}
+
+#if DEBUG_STATUS
+	UE_LOG(LogTemp, Log, TEXT("Damage : %.2f"), Damaged.Damage);
+#endif
+	
 	Damaged.Damage = 0;
 }
 

@@ -53,6 +53,7 @@ void UCInteractiveComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UCInteractiveComponent::SetTarget(AActor* InTarget, UObject* InInteractiveTarget)
 {
+	CheckNull(Widget);
 	CheckNull(InInteractiveTarget);
 	CheckFalse(InInteractiveTarget->GetClass()->ImplementsInterface(UCInteractiveInterface::StaticClass()));
 	

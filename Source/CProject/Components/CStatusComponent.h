@@ -20,24 +20,36 @@ public:
 	void Damage(float InAmount);
 	
 protected:
+	UPROPERTY(BlueprintReadWrite, Category = "Health")
 	float Health = 0.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Health")
 	float MaxHealth = 100.f;
 
-private:
-	class ACharacter* OwnerCharacter = nullptr;
-	
 /*
  * Getter
  */
 public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	FORCEINLINE float GetHealth() const { return Health; };
+	float GetHealth() const { return Health; };
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	FORCEINLINE float GetMaxHealth() const { return MaxHealth; };
+	float GetMaxHealth() const { return MaxHealth; };
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
-	FORCEINLINE bool IsDead() const { return Health <= 0.f; };
+	bool IsDead() const { return Health <= 0.f; };
+
+	/// Setter
+	UFUNCTION(BlueprintCallable, BlueprintSetter = "SetHealth", Category = "Health")
+	void SetHealth(float InHealth)
+	{
+		Health = FMath::Clamp(InHealth, 0.f, MaxHealth);
+	};
+
+	UFUNCTION(BlueprintCallable, BlueprintSetter, Category = "Health")
+	void SetMaxHealth(float InMaxHealth)
+	{
+		MaxHealth = FMath::Max(0.f, InMaxHealth);
+	};
+
 };

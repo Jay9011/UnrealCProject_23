@@ -5,6 +5,7 @@ enum class DEBUG_NUMS
 	DEFAULT_INFO,
 	STATE,
 	AI_STATE,
+	STATUS,
 	MOVEMENT,
 	JUST_EVADE,
 	GUARD,
@@ -16,6 +17,7 @@ enum class DEBUG_NUMS
 
 #define DEBUG_DEFAULT_INFO		(WITH_EDITOR && true)
 #define DEBUG_STATE				(WITH_EDITOR && true)
+#define DEBUG_STATUS			(WITH_EDITOR && true)
 #define DEBUG_AI_STATE			(WITH_EDITOR && true)
 #define DEBUG_MOVEMENT			(WITH_EDITOR && false)
 #define DEBUG_JUST_EVADE		(WITH_EDITOR && false)
