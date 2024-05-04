@@ -98,14 +98,16 @@ EBTNodeResult::Type UCBTTaskNode_Action::AbortTask(UBehaviorTreeComponent& Owner
 	UCAIBehaviorComponent* AIBehavior = Controller->GetBehaviorComponent();
 	CheckNullResult(AIBehavior, EBTNodeResult::Aborted);
 
+	UCStateComponent* State = Cast<UCStateComponent>(Enemy->GetComponentByClass(UCStateComponent::StaticClass()));
+
 	// Hit에 의해 Action이 중단되었다면,
 	if (AIBehavior->IsHitted())
 	{
-		bool bBeginAction = Weapon->GetDoAction()->IsBeginAction();
-		if (bBeginAction == false)
-		{
-			Weapon->GetDoAction()->Begin_DoAction();
-		}
+		// bool bBeginAction = Weapon->GetDoAction()->IsBeginAction();
+		// if (bBeginAction == false)
+		// {
+		// 	Weapon->GetDoAction()->Begin_DoAction();
+		// }
 
 		Weapon->GetDoAction()->End_DoAction();
 		return EBTNodeResult::Aborted;
